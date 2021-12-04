@@ -10,36 +10,9 @@ dist/
 coverage/
 /target/
 
-## Python
-
-.env
-__pycache__/
-*.pyc
-
-### Django
-
-*.sqlite3
-
 ## JavaScript
 
 .nuxt/
 npm-debug.log
 node_modules/
 .nyc_output
-
-## Rust
-
-**/*.rs.bk
-
-## Remove/comment this line for executables:
-
-Cargo.lock
-
-## Godot
-
-.import/
-export.cfg
-export_presets.cfg
-*.translation
-.mono/
-data_*/
