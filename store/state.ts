@@ -2,4 +2,9 @@
  * The actual state objects used in the Redux store.
  */
 
-export {};
+/**
+ * The default root state interface.
+ */
+export interface RootState {
+  // Empty.
+}

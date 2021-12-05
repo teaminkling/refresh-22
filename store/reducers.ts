@@ -7,4 +7,10 @@
  * In other words: `(state, action) => newState`.
  */
 
-export {};
+import {combineReducers} from "redux";
+import {RootState} from "./state";
+
+// Define all of the reducers in the app and then combine them. It is up to contributors to keep
+// track of what the reducer names are as they map directly to the root state object.
+
+export default combineReducers<RootState>({});
