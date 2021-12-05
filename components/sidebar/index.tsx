@@ -4,6 +4,7 @@
  * @returns {JSX.Element} the element
  * @constructor
  */
+import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 import {faBars, faSortAmountUp, faTimes, faUserClock} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useState} from "react";
@@ -53,7 +54,7 @@ const NavItem = (props: NavItemProps) => {
 
   return (
     <a className={
-      "block uppercase px-4 py-1 md:text-sm focus:text-gray-900 "
+      "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
       + boldedClasses
       + hoverAndActiveClasses
     } href={props.location}>
@@ -95,8 +96,28 @@ const Sidebar = (): JSX.Element => {
     </div>
   );
 
+  const isAuthenticated = false;
+
+  const auth = isAuthenticated ? (
+    <>
+      <NavItem location={"#"} title={"Logout"} strong />
+      <NavItem location={"#"} title={"View Profile"} />
+
+      <div className={"my-5"} />
+
+      <NavItem location={"#"} title={"Submit"} />
+      <NavItem location={"#"} title={"My Submissions"} />
+    </>
+  ) : (
+    <>
+      <NavItem location={"#"} title={"Login"} strong icon={
+        <FontAwesomeIcon icon={faDiscord} />
+      } />
+    </>
+  );
+
   return (
-    <div className={"md:w-80 md:h-screen bg-white overflow-scroll"}>
+    <div className={"md:w-96 md:h-screen bg-white overflow-scroll"}>
       {
         /*
 
@@ -133,13 +154,7 @@ const Sidebar = (): JSX.Element => {
 
             <div className={"my-5"} />
 
-            <NavItem location={"#"} title={"Logout"} strong />
-            <NavItem location={"#"} title={"View Profile"} />
-
-            <div className={"my-5"} />
-
-            <NavItem location={"#"} title={"Submit"} />
-            <NavItem location={"#"} title={"My Submissions"} />
+            {auth}
           </div>
 
           <hr className={"my-5 md:hidden border-black"} />
