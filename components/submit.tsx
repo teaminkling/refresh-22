@@ -5,3 +5,5 @@
  * using an editing ID, the frontend will find information about the existing post using a
  * Function (more or less directly from Contentful, but authenticated).
  */
+
+export {};
