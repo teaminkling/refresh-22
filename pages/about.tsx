@@ -7,7 +7,7 @@ import Head from "next/head";
  * @returns {JSX.Element} the element
  * @constructor
  */
-const Home: NextPage = () => {
+const About: NextPage = () => {
   return (
     <div className={"mx-8 my-4"}>
       <Head>
@@ -17,7 +17,7 @@ const Home: NextPage = () => {
       </Head>
 
       <h1 className={"text-4xl my-10"}>
-        [GALLERY_VIEW]
+        [ABOUT_VIEW]
       </h1>
 
       <footer />
@@ -25,4 +25,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default About;

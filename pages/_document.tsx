@@ -1,4 +1,7 @@
+import {config, dom} from "@fortawesome/fontawesome-svg-core";
 import {Head, Html, Main, NextScript} from "next/document";
+
+config.autoAddCss = false;
 
 /**
  * The overridden document element.
@@ -11,14 +14,14 @@ export const Document = () => {
   return (
     <Html>
       <Head>
+        <style>{dom.css()}</style>
         <link
           href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap"
           rel="stylesheet"
         />
       </Head>
-      <body>
+      <body className={"antialiased"}>
         <Main />
-
         <NextScript />
       </body>
     </Html>

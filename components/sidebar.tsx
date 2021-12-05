@@ -7,12 +7,18 @@
 import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 import {faBars, faSortAmountUp, faTimes, faUserClock} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import {useState} from "react";
 
 /**
  * Props for a navigation item.
  */
 interface NavItemProps {
+  /**
+   * Whether the item is a Next link.
+   */
+  nextLink?: boolean;
+
   /**
    * Where the nav item goes.
    *
@@ -50,17 +56,35 @@ const NavItem = (props: NavItemProps) => {
 
   const boldedClasses = props.strong ? " font-bold" : "";
 
+  // The spacing is different when there's an icon.
+
   const spacing = props.icon ? "px-1.5" : "";
 
-  return (
-    <a className={
-      "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
-      + boldedClasses
-      + hoverAndActiveClasses
-    } href={props.location}>
-      {props.icon}<span className={spacing} />{props.title}
-    </a>
-  );
+  if (props.nextLink && props.location) {
+    return (
+      <Link href={props.location} passHref={false}>
+        <a className={
+          "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
+          + boldedClasses
+          + hoverAndActiveClasses
+        }>
+          {props.icon}<span className={spacing} />{props.title}
+        </a>
+      </Link>
+    );
+  } else {
+    // Link is not a Next link.
+
+    return (
+      <a className={
+        "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
+        + boldedClasses
+        + hoverAndActiveClasses
+      } href={props.location}>
+        {props.icon}<span className={spacing} />{props.title}
+      </a>
+    );
+  }
 };
 
 /**
@@ -84,7 +108,7 @@ const Sidebar = (): JSX.Element => {
 
   const burgerHeader = (
     <div className={
-      "flex-shrink-0 px-8 py-4 flex flex-row items-center justify-between md:hidden"
+      "flex-shrink-0 px-8 py-4 flex flex-row items-center justify-between md:hidden z-10"
     }>
       {logo}
 
@@ -148,9 +172,9 @@ const Sidebar = (): JSX.Element => {
               {logo}
             </div>
 
-            <NavItem location={"#"} title={"Home"} />
-            <NavItem location={"#"} title={"About"} />
-            <NavItem location={"#"} title={"Rules"} />
+            <NavItem location={"/"} title={"Home"} nextLink />
+            <NavItem location={"/about/"} title={"About"} nextLink />
+            <NavItem location={"/rules/"} title={"Rules"} nextLink />
 
             <div className={"my-5"} />
 
