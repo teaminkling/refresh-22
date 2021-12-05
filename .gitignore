@@ -13,6 +13,7 @@ coverage/
 ## JavaScript
 
 .nuxt/
+.next/
 npm-debug.log
 node_modules/
 .nyc_output
