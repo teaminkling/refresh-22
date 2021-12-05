@@ -6,6 +6,9 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {},
+    fontFamily: {
+      sans: ["Work Sans", "sans-serif"],
+    }
   },
   variants: {
     extend: {},
