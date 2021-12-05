@@ -6,3 +6,5 @@
  *
  * In other words: `(state, action) => newState`.
  */
+
+export {};
