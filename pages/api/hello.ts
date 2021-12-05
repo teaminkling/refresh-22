@@ -5,7 +5,7 @@ type Data = {
   name: string
 }
 
-export default function handler(
+export default function hello(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
