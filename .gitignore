@@ -6,6 +6,7 @@
 
 # Environment
 
+out/
 dist/
 coverage/
 /target/
