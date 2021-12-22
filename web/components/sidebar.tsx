@@ -146,12 +146,7 @@ const Sidebar = (): JSX.Element => {
     user, isLoading, isAuthenticated, loginWithRedirect, logout
   }: Auth0ContextInterface = useAuth0();
 
-  const loading = (
-    <>
-      <NavItem title={"Loading..."} />
-    </>
-  );
-
+  const loading = <NavItem title={"Loading..."} />;
   const auth = isAuthenticated ? (
     <>
       <NavItem location={"#"} clickBack={logout} title={"Logout"} strong />
@@ -164,7 +159,6 @@ const Sidebar = (): JSX.Element => {
       <div className={"my-5"} />
 
       <NavItem location={"#"} title={"Submit"} />
-      <NavItem location={"#"} title={"My Submissions"} />
     </>
   ) : (
     <>
