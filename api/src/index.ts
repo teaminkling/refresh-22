@@ -8,9 +8,6 @@ const NOT_FOUND_RESPONSE = new Response("Resource not found.", {status: 404});
  *
  * - AUTHENTICATED POST /api/submit -> Submit or edit a post.
  * - AUTHENTICATED POST /api/upload -> Retrieve a one-time upload URL.
- *
- * Note that fetching posts per week/artist/all via any kind of sorting, retrieving a single
- * post, and retrieving user profiles are entirely handled by the headless CMS, Contentful.
  */
 const worker = {
   fetch(request: Request, _env: unknown) {

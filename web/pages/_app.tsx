@@ -1,3 +1,4 @@
+import {Auth0Provider} from "@auth0/auth0-react";
 import type {AppProps} from "next/app";
 import {Provider} from "react-redux";
 import Sidebar from "../components/sidebar";
@@ -15,18 +16,26 @@ import "../styles/globals.css";
 const App = ({Component, pageProps}: AppProps): JSX.Element => {
   const store = useStore(pageProps.initialReduxState);
 
+  // TODO: move to .env files for this.
+
   return (
-    <Provider store={store}>
-      <div className={"md:flex md:flex-row"}>
-        {/* Create a sticky sidebar: */}
+    <Auth0Provider
+      domain={"refresh.au.auth0.com"}
+      clientId={"kuTjew7XeDDUVZ2k0QlrhFxwuDV8aaGc"}
+      redirectUri={"http://localhost:3000"}
+    >
+      <Provider store={store}>
+        <div className={"md:flex md:flex-row"}>
+          {/* Create a sticky sidebar: */}
 
-        <aside className={"md:h-screen sticky top-0"}>
-          <Sidebar />
-        </aside>
+          <aside className={"md:h-screen sticky top-0"}>
+            <Sidebar />
+          </aside>
 
-        <Component {...pageProps} />
-      </div>
-    </Provider>
+          <Component {...pageProps} />
+        </div>
+      </Provider>
+    </Auth0Provider>
   );
 };
 

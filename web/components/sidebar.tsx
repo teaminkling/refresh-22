@@ -4,8 +4,15 @@
  * @returns {JSX.Element} the element
  * @constructor
  */
+import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faDiscord} from "@fortawesome/free-brands-svg-icons";
-import {faBars, faSortAmountUp, faTimes, faUserClock} from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faSortAmountUp,
+  faTimes,
+  faUser,
+  faUserClock
+} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import {useState} from "react";
@@ -22,7 +29,8 @@ interface NavItemProps {
   /**
    * Where the nav item goes.
    *
-   * If this is not present, it's not a link.
+   * If this is not present, it's not a link. If it is simply intended to log in a user or
+   * perform some other kind of callback, it should be set to "#".
    */
   location?: string;
 
@@ -40,6 +48,13 @@ interface NavItemProps {
    * Whether the item should be semibold.
    */
   strong?: boolean;
+
+  /**
+   * An optional callback that will be called when the nav item is clicked.
+   *
+   * This only applies if the link is not a Next link.
+   */
+  clickBack?: () => void;
 }
 
 /**
@@ -75,12 +90,17 @@ const NavItem = (props: NavItemProps) => {
   } else {
     // Link is not a Next link.
 
+    const clickBack: () => void = props.clickBack || (() => null);
     return (
-      <a className={
-        "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
-        + boldedClasses
-        + hoverAndActiveClasses
-      } href={props.location}>
+      <a
+        className={
+          "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
+          + boldedClasses
+          + hoverAndActiveClasses
+        }
+        href={props.location}
+        onClick={clickBack}
+      >
         {props.icon}<span className={spacing} />{props.title}
       </a>
     );
@@ -120,12 +140,26 @@ const Sidebar = (): JSX.Element => {
     </div>
   );
 
-  const isAuthenticated = false;
+  // Handle authentication views.
+
+  const {
+    user, isLoading, isAuthenticated, loginWithRedirect, logout
+  }: Auth0ContextInterface = useAuth0();
+
+  const loading = (
+    <>
+      <NavItem title={"Loading..."} />
+    </>
+  );
 
   const auth = isAuthenticated ? (
     <>
-      <NavItem location={"#"} title={"Logout"} strong />
-      <NavItem location={"#"} title={"View Profile"} />
+      <NavItem location={"#"} clickBack={logout} title={"Logout"} strong />
+      <NavItem
+        location={"#"}
+        title={user?.name || "ERROR"}
+        icon={<FontAwesomeIcon icon={faUser} />}
+      />
 
       <div className={"my-5"} />
 
@@ -134,9 +168,13 @@ const Sidebar = (): JSX.Element => {
     </>
   ) : (
     <>
-      <NavItem location={"#"} title={"Login"} strong icon={
-        <FontAwesomeIcon icon={faDiscord} />
-      } />
+      <NavItem
+        location={"#"}
+        clickBack={() => loginWithRedirect({connection: "discord"})}
+        title={"Login"}
+        strong
+        icon={<FontAwesomeIcon icon={faDiscord} />}
+      />
     </>
   );
 
@@ -178,7 +216,7 @@ const Sidebar = (): JSX.Element => {
 
             <div className={"my-5"} />
 
-            {auth}
+            {isLoading ? loading : auth}
           </div>
 
           <hr className={"my-5 md:hidden border-black"} />
