@@ -17,3 +17,7 @@ coverage/
 npm-debug.log
 node_modules/
 .nyc_output
+
+## Project
+
+wrangler.toml

@@ -1,5 +1,5 @@
 {
-  "name": "refresh",
+  "name": "@teaminkling/refresh-web",
   "private": true,
   "scripts": {
     "dev": "next dev",

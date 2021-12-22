@@ -29,10 +29,7 @@ $5 a month.
 
 ### Additionally
 
-There are additional parts of the system:
-
-- Cloudflare K/V is used to provide cached dynamic details via a direct read-only connection.
-- Contentful is a headless CMS that provides a response for much of the static information.
+Contentful is a headless CMS that provides a response for much of the static information.
 
 The browser performs most of the logic in displaying this information and will use hand-built Redux
 structures to cache frequently accessed information.
