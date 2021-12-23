@@ -25,14 +25,16 @@ const App = ({Component, pageProps}: AppProps): JSX.Element => {
       redirectUri={"http://localhost:3000"}
     >
       <Provider store={store}>
-        <div className={"md:flex md:flex-row"}>
+        <div className={"lg:flex lg:flex-row"}>
           {/* Create a sticky sidebar: */}
 
-          <aside className={"md:h-screen sticky top-0"}>
+          <aside className={"lg:h-screen sticky top-0"}>
             <Sidebar />
           </aside>
 
-          <Component {...pageProps} />
+          <div className={"flex-col w-full"}>
+            <Component {...pageProps} />
+          </div>
         </div>
       </Provider>
     </Auth0Provider>

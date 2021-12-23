@@ -1,6 +1,8 @@
 import {config, dom} from "@fortawesome/fontawesome-svg-core";
 import {Head, Html, Main, NextScript} from "next/document";
 
+// Handle some issues with Font Awesome on some browsers.
+
 config.autoAddCss = false;
 
 /**
