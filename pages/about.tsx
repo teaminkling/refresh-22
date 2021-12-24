@@ -1,5 +1,6 @@
 import type {NextPage} from "next";
 import Head from "next/head";
+import Link from "next/link";
 import StaticPage, {
   Header,
   ListItem,
@@ -54,8 +55,12 @@ const About: NextPage = () => {
       </Paragraph>
 
       <UnorderedList>
-        <ListItem><b>Director</b>: CindryTuna</ListItem>
-        <ListItem><b>Engineer</b>: papapastry</ListItem>
+        <ListItem>
+          <b>UX Design</b>: <Link href={"/artists/cindrytuna"}>FiveClawD</Link>
+        </ListItem>
+        <ListItem>
+          <b>Engineering</b>: <Link href={"/artists/papapastry"}>papapastry</Link>
+        </ListItem>
       </UnorderedList>
 
       <Paragraph>

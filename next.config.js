@@ -1,18 +1,6 @@
 /** @type {import("next").NextConfig} */
 module.exports = {
   reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: "/artists",
-        destination: "/lists/artists",
-      },
-      {
-        source: "/weeks",
-        destination: "/lists/weeks",
-      },
-    ]
-  },
   async redirects() {
     return [
       {
@@ -23,6 +11,11 @@ module.exports = {
       {
         source: "/themes",
         destination: "/weeks",
+        permanent: true,
+      },
+      {
+        source: "/works",
+        destination: "/",
         permanent: true,
       },
     ]
