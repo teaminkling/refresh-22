@@ -2,7 +2,7 @@ import {faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import type {NextPage} from "next";
 import Head from "next/head";
-import NavItem from "../components/navitem";
+import SidebarLink from "../components/sidebar-link";
 
 const Item = (props: { id: string }) => {
   // TODO: Limit props length. 380 characters description
@@ -56,10 +56,11 @@ const Item = (props: { id: string }) => {
             Lorem ipsum dolor amet mustache knausgaard +1, blue bottle waistcoat tbh semiotics
             artisan synth stumptown gastropub cornhole celiac swag. Brunch raclette vexillologist
             post-ironic glossier ennui XOXO mlkshk godard pour-over blog tumblr humblebrag. Blue
-            bottle put a bird on it twee prism biodiesel brooklyn. Blue bottle ennui tbh succulents. abcde...
+            bottle put a bird on it twee prism biodiesel brooklyn. Blue bottle ennui tbh
+            succulents...
           </p>
           <p className={"pt-8 px-4 hidden 2xl:block"}>
-            <NavItem
+            <SidebarLink
               location={"#"}
               title={"See More"}
               icon={<FontAwesomeIcon icon={faAngleDoubleLeft} />}

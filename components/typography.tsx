@@ -9,8 +9,8 @@ import {PropsWithChildren} from "react";
  */
 const StaticPage = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
-    <div className={"xl:max-8 xl:mr-10 my-4"}>
-      <div className={"text-xl px-8"} style={{maxWidth: 1024}}>
+    <div className={"xl:mr-10 my-4 pb-8"}>
+      <div className={"text-xl px-8"} style={{maxWidth: 880}}>
         {children}
       </div>
     </div>
@@ -26,7 +26,7 @@ const StaticPage = ({children}: PropsWithChildren<Record<string, unknown>>) => {
  */
 export const Header = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
-    <h1 className={"text-5xl font-bold py-3"}>
+    <h1 className={"text-5xl font-bold py-3 xl:pt-10"}>
       {children}
     </h1>
   );
@@ -57,7 +57,7 @@ export const SubHeader = ({children}: PropsWithChildren<Record<string, unknown>>
  */
 export const Paragraph = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
-    <p className={"py-3"}>
+    <p className={"py-3"} style={{hyphens: "auto"}} lang={"en"}>
       {children}
     </p>
   );

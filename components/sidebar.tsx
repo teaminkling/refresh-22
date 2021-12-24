@@ -6,10 +6,19 @@
  */
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faDiscord, faTwitch} from "@fortawesome/free-brands-svg-icons";
-import {faBars, faClock, faTimes, faUser} from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faBug,
+  faClock,
+  faCode,
+  faLink,
+  faTimes,
+  faUser
+} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useState} from "react";
-import NavItem from "./navitem";
+import SidebarLink from "./sidebar-link";
+import SquareLink from "./square-link";
 
 /**
  * The sidebar which controls all content on the right side of the screen.
@@ -50,11 +59,11 @@ const Sidebar = (): JSX.Element => {
     user, isLoading, isAuthenticated, loginWithRedirect, logout
   }: Auth0ContextInterface = useAuth0();
 
-  const loading = <NavItem title={"Loading..."} />;
+  const loading = <SidebarLink title={"Loading..."} />;
   const auth = isAuthenticated ? (
     <>
-      <NavItem location={"#"} clickBack={logout} title={"Logout"} strong />
-      <NavItem
+      <SidebarLink location={"#"} clickBack={logout} title={"Logout"} strong />
+      <SidebarLink
         location={`/artist/${user?.name}`}
         title={user?.name || "ERROR"}
         icon={<FontAwesomeIcon icon={faUser} />}
@@ -63,11 +72,11 @@ const Sidebar = (): JSX.Element => {
 
       <div className={"my-5"} />
 
-      <NavItem location={"#"} title={"Submit"} />
+      <SidebarLink location={"#"} title={"Submit"} />
     </>
   ) : (
     <>
-      <NavItem
+      <SidebarLink
         location={"#"}
         clickBack={() => loginWithRedirect({connection: "discord"})}
         title={"Login"}
@@ -110,14 +119,14 @@ const Sidebar = (): JSX.Element => {
               {logo}
             </div>
 
-            <NavItem location={"/"} title={"Home"} nextLink />
-            <NavItem location={"/about/"} title={"About"} nextLink />
-            <NavItem location={"/guide/"} title={"Guide"} nextLink />
+            <SidebarLink location={"/"} title={"Home"} nextLink />
+            <SidebarLink location={"/about/"} title={"About"} nextLink />
+            <SidebarLink location={"/guide/"} title={"Guide"} nextLink />
 
             <div className={"my-5"} />
 
-            <NavItem location={"/weeks/"} title={"Weeks"} nextLink />
-            <NavItem location={"/artists/"} title={"Artists"} nextLink />
+            <SidebarLink location={"/weeks/"} title={"Weeks"} nextLink />
+            <SidebarLink location={"/artists/"} title={"Artists"} nextLink />
 
             <div className={"my-5"} />
 
@@ -127,30 +136,40 @@ const Sidebar = (): JSX.Element => {
           <hr className={"my-5 lg:hidden border-black"} />
 
           <div className={"items-center"}>
-            <NavItem title={"Countdown"} strong />
-            <NavItem title={"99 days 23:59:59"} icon={<FontAwesomeIcon icon={faClock} />} />
+            <SidebarLink title={"Countdown"} strong />
+            <SidebarLink title={"99 days 23:59:59"} icon={<FontAwesomeIcon icon={faClock} />} />
           </div>
 
           <hr className={"my-5 lg:hidden border-black"} />
 
           <div className={"flex-shrink-0"}>
-            <NavItem
-              location={"#"}
-              title={"CindryTuna"}
-              icon={<FontAwesomeIcon icon={faTwitch} />}
-              isExternal
-            />
-            <NavItem
-              location={"#"}
-              title={"CindryTuna"}
-              icon={<FontAwesomeIcon icon={faDiscord} />}
-              isExternal
-            />
+            <div id={"refresh-socials"} className={"text-center sm:text-left"}>
+              <SquareLink
+                location={"https://fiveclawd.com"}
+                icon={<FontAwesomeIcon icon={faLink} />}
+              />
+              <SquareLink
+                location={"https://twitch.tv/cindrytuna"}
+                icon={<FontAwesomeIcon icon={faTwitch} />}
+              />
+              <SquareLink
+                location={"https://discord.gg/NuUB469UXM"}
+                icon={<FontAwesomeIcon icon={faDiscord} />}
+              />
+              <SquareLink
+                location={"https://github.com/teaminkling/refresh-22"}
+                icon={<FontAwesomeIcon icon={faCode} />}
+              />
+              <SquareLink
+                location={"https://github.com/teaminkling/refresh-22/issues/new"}
+                icon={<FontAwesomeIcon icon={faBug} />}
+              />
+            </div>
 
             <div className={"my-5"} />
 
-            <NavItem location={"/terms"} title={"Terms"} nextLink />
-            <NavItem location={"/privacy"} title={"Privacy"} nextLink />
+            <SidebarLink location={"/terms"} title={"Terms"} nextLink />
+            <SidebarLink location={"/privacy"} title={"Privacy"} nextLink />
           </div>
         </nav>
       </div>
