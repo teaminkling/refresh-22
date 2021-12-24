@@ -71,7 +71,7 @@ const Guide: NextPage = () => {
 
       <UnorderedList>
         <ListItem>
-          Posts will need to be approved by moderators before they appear on the front page.
+          Works will need to be approved by moderators before they appear on the front page.
         </ListItem>
         <ListItem>
           Cindy can see all content for showcases even if the post is not approved.

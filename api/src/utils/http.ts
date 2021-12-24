@@ -8,7 +8,7 @@
  * @param {BodyInit} body the body
  * @returns {Response} the JSON response
  */
-export const createJsonResponse = (body?: BodyInit): Response => {
+export const createJsonResponse = async (body?: BodyInit): Promise<Response> => {
   return new Response(body || "{}", {
     headers: {"Content-Type": "application/json"},
   });

@@ -7,12 +7,14 @@ usage_model = ""
 route = ""
 zone_id = ""
 
+kv_namespaces = []
+
 compatibility_date = "2021-12-19"
 
 [build.upload]
 format = "modules"
 dir = "./out"
-main = "./out.js"
+main = "./index.js"
 
 [[build.upload.rules]]
 type = "ESModule"

@@ -2,9 +2,9 @@
   "name": "@teaminkling/refresh-api",
   "private": true,
   "type": "module",
-  "main": "./out/out.js",
+  "main": "./out/index.js",
   "scripts": {
-    "build": "tsc; esbuild dist/index.js --bundle --outfile=out/out.js"
+    "build": "tsc; esbuild dist/index.js --bundle --format=esm --outfile=out/index.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.2.0",

@@ -2,53 +2,47 @@
  * Define HTTP entry points for this API worker.
  */
 
-import {getArtist, getArtists, putArtist} from "./services/artists";
-import {getPost, getPosts, postPost, postUpload, putPost} from "./services/posts";
-import {getWeek, getWeeks, postWeek, putWeek} from "./services/weeks";
+import {getMeta, putArtist, putWeeks} from "./services/meta";
+import {getWork, getWorks, postUpload, postWork, putWork} from "./services/works";
 
 /**
- * Define the following endpoints (defined in more detail in their function code-doc).
+ * Define the following endpoints:
  *
- * - `GET /api/weeks?year=<year>`
+ * - `GET /api/meta`
  *
- * Retrieve a list of weeks (redacting future weeks).
+ * In the active year (hardcoded), retrieve all artists and all weeks (and information). Artists
+ * without any posts are not counted nor are weeks that haven't been published.
  *
- * - `GET /api/week?year=<year>&week=<week>`
+ * If the user is authenticated and is staff, all of the posts are retrieved, not just the
+ * redacted ones.
  *
- * Retrieve information about a given week.
+ * - `PUT/POST /api/weeks?year=<year>`
  *
- * - `PUT/POST /api/week?year=<year>&week=<week>`
+ * Update the weeks information all at once, including ordering information.
  *
- * PUT: edit a week and its info. POST: create it instead.
- *
- * - `GET /api/artists?year=<year>`
- *
- * Retrieve all artists in the given year.
- *
- * - `GET /api/artist?name=<name>`
- *
- * Retrieve information pertaining to a given artist by name.
+ * This is a staff-only endpoint.
  *
  * - `PUT /api/artist?name=<name>`
  *
  * Edit the social media information for any given artist by name.
  *
- * - `GET /api/posts?year=<year>&week=<week>&artist=<name>&page=<page>&sort=<sort>`
+ * - `GET /api/works?year=<year>&week=<week>&artist=<name>&sort=<sort>&search=<query>`
  *
- * Get posts according to the search criteria. If week is provided, artist cannot be provided
- * and vice versa. If neither are required,
+ * Get posts according to the search criteria.
  *
- * Sort can be "ascending", "descending", or "random".
+ * Internally, there are three indices: by ID, by week, and by artist. When neither the
+ * week/year nor artist is provided, the weeks index is flattened (requires the theoretically
+ * fewest KV reads) and the search is performed on the lowercase fields with spaces removed.
  *
- * - `GET /api/post?id=<id>`
+ * - `GET /api/work?id=<id>`
  *
  * Retrieve a post directly.
  *
- * - `PUT /api/post?id=<id>`
+ * - `PUT /api/work?id=<id>`
  *
- * Edit a post by known ID.
+ * Idempotently edit a post by known ID.
  *
- * - `POST /api/post`
+ * - `POST /api/work`
  *
  * Create a post.
  *
@@ -58,17 +52,14 @@ import {getWeek, getWeeks, postWeek, putWeek} from "./services/weeks";
  *
  * Notes:
  *
- * - Years supported by the system are so infrequently written, they're part of the environment
- *   variables and not controlled by the K/V store. A code change is needed to prepare for a new
- *   year of work leading to a transition period over the new year.
+ * - Years supported by the system are so infrequently written, changes need to be done using a
+ * code change.
  * - All PUT and POST requests are authenticated.
  * - Artist information is empty when they are first authenticated with Auth0. In these cases,
  *   the frontend must send a subsequent authenticated request to update their socials.
- * - Some GET endpoints will have more information provided to the caller as long as the
- *   authentication is for a staff user.
  */
 const worker = {
-  fetch(request: Request, _env: unknown) {
+  fetch(request: Request, env: { REFRESH_KV: KVNamespace }) {
     // Constants must be placed inside the worker for the module syntax.
 
     /**
@@ -80,24 +71,20 @@ const worker = {
      * A map of method to route to callable for specific endpoints.
      */
     const ROUTE_AND_METHOD_TO_SERVICE: Record<string, Record<string, (
-      params: URLSearchParams, body: Body
-    ) => Response>> = {
+      params: URLSearchParams, body: Body, kv: KVNamespace
+    ) => Promise<Response>>> = {
       "get": {
-        "weeks": getWeeks,
-        "week": getWeek,
-        "artists": getArtists,
-        "artist": getArtist,
-        "posts": getPosts,
-        "post": getPost,
+        "meta": getMeta,
+        "posts": getWorks,
+        "post": getWork,
       },
       "put": {
-        "week": putWeek,
+        "weeks": putWeeks,
         "artist": putArtist,
-        "post": putPost,
+        "post": putWork,
       },
       "post": {
-        "week": postWeek,
-        "post": postPost,
+        "post": postWork,
         "upload": postUpload,
       },
     };
@@ -114,8 +101,11 @@ const worker = {
 
     const isPutOrPost: boolean = ["post", "put"].includes(method);
 
+    // TODO: Check Cloudflare Cache for responses.
+
     if (isPutOrPost) {
       // TODO: Check auth.
+      // TODO: Validate CSRF token.
     } else if (method !== "get") {
       return NOT_FOUND_RESPONSE;
     }
@@ -130,10 +120,8 @@ const worker = {
       ROUTE_AND_METHOD_TO_SERVICE[request.method.toLowerCase()][pathParts[0]]
     );
 
-    if (isPutOrPost && callable) {
-      return callable(url.searchParams, request.body);
-    } else if (callable) {
-      return callable(url.searchParams);
+    if (callable) {
+      return callable(url.searchParams, request.body, env.REFRESH_KV);
     }
 
     return NOT_FOUND_RESPONSE;
