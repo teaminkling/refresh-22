@@ -11,13 +11,9 @@ compatibility_date = "2021-12-19"
 
 [build.upload]
 format = "modules"
-dir = "./dist"
-main = "./index.js"
+dir = "./out"
+main = "./out.js"
 
 [[build.upload.rules]]
 type = "ESModule"
-globs = ["**/*.js", "**/*.mjs"]
-
-[[build.upload.rules]]
-type = "CommonJS"
-globs = ["**/*.cjs"]
+globs = ["**/*.js"]

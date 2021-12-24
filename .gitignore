@@ -18,6 +18,7 @@ coverage/
 npm-debug.log
 node_modules/
 .nyc_output
+tsconfig.tsbuildinfo
 
 ## Project
 

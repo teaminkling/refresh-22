@@ -2,30 +2,9 @@
  * Define HTTP entry points for this API worker.
  */
 
-/**
- * A 404 response.
- */
-const NOT_FOUND_RESPONSE = new Response("Resource not found.", {status: 404});
-
-const ROUTE_AND_METHOD_TO_SERVICE = {
-  "get": {
-    "weeks": "",
-    "week": "",
-    "artists": "",
-    "artist": "",
-    "posts": "",
-    "post": "",
-  },
-  "put": {
-    "week": "",
-    "artist": "",
-    "post": "",
-  },
-  "post": {
-    "week": "",
-    "post": "",
-  },
-};
+import {getArtist, getArtists, putArtist} from "./services/artists";
+import {getPost, getPosts, postPost, postUpload, putPost} from "./services/posts";
+import {getWeek, getWeeks, postWeek, putWeek} from "./services/weeks";
 
 /**
  * Define the following endpoints (defined in more detail in their function code-doc).
@@ -90,31 +69,71 @@ const ROUTE_AND_METHOD_TO_SERVICE = {
  */
 const worker = {
   fetch(request: Request, _env: unknown) {
+    // Constants must be placed inside the worker for the module syntax.
+
+    /**
+     * A 404 response.
+     */
+    const NOT_FOUND_RESPONSE = new Response("Resource not found.", {status: 404});
+
+    /**
+     * A map of method to route to callable for specific endpoints.
+     */
+    const ROUTE_AND_METHOD_TO_SERVICE: Record<string, Record<string, (
+      params: URLSearchParams, body: Body
+    ) => Response>> = {
+      "get": {
+        "weeks": getWeeks,
+        "week": getWeek,
+        "artists": getArtists,
+        "artist": getArtist,
+        "posts": getPosts,
+        "post": getPost,
+      },
+      "put": {
+        "week": putWeek,
+        "artist": putArtist,
+        "post": putPost,
+      },
+      "post": {
+        "week": postWeek,
+        "post": postPost,
+        "upload": postUpload,
+      },
+    };
+
+    // Start non-constant part of the code.
+
     const url = new URL(request.url);
 
     // If POST or PUT, check authentication. Otherwise, the request must be GET.
 
+    // TODO: Check if user is authenticated and what their role is.
+
     const method: string = request.method.toLowerCase();
 
+    const isPutOrPost: boolean = ["post", "put"].includes(method);
 
-    if (["post", "put"].includes(method)) {
-      // TODO: CHECK AUTH.
-
-      console.log("boop");
+    if (isPutOrPost) {
+      // TODO: Check auth.
     } else if (method !== "get") {
       return NOT_FOUND_RESPONSE;
     }
 
-    // The route rule is defined on the dashboard, not in code. Read it.
+    // Read the route and call the appropriate endpoint if it exists.
 
     const pathParts: string[] = url.pathname.split("/").filter(
       (part: string) => part && part !== "api"
     );
 
-    if (pathParts[0] === "submit") {
-      return new Response("Submit called!");
-    } else if (pathParts[0] === "upload") {
-      return new Response("Upload called!");
+    const callable: CallableFunction | undefined = (
+      ROUTE_AND_METHOD_TO_SERVICE[request.method.toLowerCase()][pathParts[0]]
+    );
+
+    if (isPutOrPost && callable) {
+      return callable(url.searchParams, request.body);
+    } else if (callable) {
+      return callable(url.searchParams);
     }
 
     return NOT_FOUND_RESPONSE;
