@@ -6,4 +6,5 @@
  * Function (more or less directly from Contentful, but authenticated).
  */
 
-export {};
+const temp = () => <></>;
+export default temp;

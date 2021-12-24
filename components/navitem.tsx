@@ -82,6 +82,7 @@ const NavItem = (props: NavItemProps) => {
 
     const clickBack: () => void = props.clickBack || (() => null);
     return (
+      // eslint-disable-next-line react/jsx-no-target-blank
       <a
         className={
           "block uppercase px-4 py-1 lg:text-lg focus:text-gray-900 "

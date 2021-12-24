@@ -55,9 +55,10 @@ const Sidebar = (): JSX.Element => {
     <>
       <NavItem location={"#"} clickBack={logout} title={"Logout"} strong />
       <NavItem
-        location={"#"}
+        location={`/artist/${user?.name}`}
         title={user?.name || "ERROR"}
         icon={<FontAwesomeIcon icon={faUser} />}
+        nextLink
       />
 
       <div className={"my-5"} />
