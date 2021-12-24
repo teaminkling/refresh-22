@@ -1,0 +1,23 @@
+type = "javascript"
+name = "api"
+workers_dev = true
+
+account_id = ""
+usage_model = ""
+route = ""
+zone_id = ""
+
+compatibility_date = "2021-12-19"
+
+[build.upload]
+format = "modules"
+dir = "./dist"
+main = "./index.js"
+
+[[build.upload.rules]]
+type = "ESModule"
+globs = ["**/*.js", "**/*.mjs"]
+
+[[build.upload.rules]]
+type = "CommonJS"
+globs = ["**/*.cjs"]
