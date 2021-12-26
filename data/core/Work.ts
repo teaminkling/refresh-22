@@ -1,3 +1,5 @@
+import {KeysEnum} from "../utils/typescript";
+
 /**
  * A work.
  */
@@ -15,9 +17,9 @@ export default interface Work {
   weekNumbers: string[];
 
   /**
-   * The ID of the artist.
+   * The name of the artist.
    */
-  artistId: string;
+  artistName: string;
 
   /**
    * The title of the work.
@@ -74,3 +76,20 @@ export default interface Work {
    */
   discordId?: string;
 }
+
+/**
+ * The keys of {@link Work}.
+ */
+export const WorkKeys: KeysEnum<Work> = {
+  year: true,
+  weekNumbers: true,
+  artistName: true,
+  title: true,
+  medium: true,
+  description: true,
+  prose: true,
+  urls: true,
+  thumbnailUrl: true,
+  isApproved: true,
+  discordId: true,
+};

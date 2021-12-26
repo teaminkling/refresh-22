@@ -1,6 +1,8 @@
 /**
  * An artist.
  */
+import {KeysEnum} from "../utils/typescript";
+
 export default interface Artist {
   /**
    * The ID of this user.
@@ -27,3 +29,13 @@ export default interface Artist {
    */
   socials: string[];
 }
+
+/**
+ * The keys of {@link Artist}.
+ */
+export const ArtistKeys: KeysEnum<Artist> = {
+  discordId: true,
+  name: true,
+  workIds: true,
+  socials: true,
+};
