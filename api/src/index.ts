@@ -2,8 +2,93 @@
  * Define HTTP entry points for this API worker.
  */
 
+import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} from "jose";
+import {GetKeyFunction} from "jose/dist/types/types";
+import {CORS_HEADERS} from "./constants/http";
 import {getMeta, putArtist, putWeeks} from "./services/meta";
 import {getWork, getWorks, postUpload, postWork, putWork} from "./services/works";
+import {createNotFoundResponse} from "./utils/http";
+
+/**
+ * Handle an API request.
+ *
+ * @param {string} method the method name
+ * @param {string} routine the routine name
+ * @param {URLSearchParams} params the URL parameters
+ * @param {Request} request the request
+ * @param {KVNamespace} kv the main key-value store
+ * @param {KVNamespace} authKv the auth key-value store
+ * @param {string | null} identifier if provided, the recognised ID of the calling user
+ * @returns {Promise<Response>} the response
+ */
+const handleRequest = (
+  method: string,
+  routine: string,
+  params: URLSearchParams,
+  request: Request,
+  kv: KVNamespace,
+  authKv: KVNamespace,
+  identifier: string | null,
+): Promise<Response> => {
+  if (method === "get") {
+    if (routine === "meta") {
+      return getMeta(kv, authKv, identifier);
+    } else if (routine === "works") {
+      return getWorks(params, request, kv);
+    } else if (routine === "work") {
+      return getWork(params, request, kv);
+    }
+  } else if (method === "put") {
+    if (routine === "weeks") {
+      return putWeeks(request, kv, authKv, identifier);
+    } else if (routine === "artist") {
+      return putArtist(params, request, kv);
+    } else if (routine === "work") {
+      return putWork(params, request, kv);
+    }
+  } else if (method === "post") {
+    if (routine === "work") {
+      return postWork(params, request, kv);
+    } else if (routine === "upload") {
+      return postUpload(params, request, kv);
+    }
+  }
+
+  return createNotFoundResponse();
+};
+
+/**
+ * Handle a JWT and return an auth identifier.
+ *
+ * @param {string | null} jwt the JWT in condensed format, if applicable
+ * @returns {string | null} if found, the auth identifier
+ */
+const handleJwt = async (jwt: string | null): Promise<string | null> => {
+  if (jwt) {
+    // Now that the JWT is decrypted, continue verifying it.
+
+    const jwks: GetKeyFunction<JWSHeaderParameters, FlattenedJWSInput> = createRemoteJWKSet(
+      new URL("https://refresh.au.auth0.com/.well-known/jwks.json")
+    );
+
+    const {payload} = await jwtVerify(jwt, jwks, {
+      issuer: "https://refresh.au.auth0.com/", audience: "https://refresh.fiveclawd.com/api/"
+    });
+
+    // E.g., oauth2|discord|<id>
+
+    const rawTokenParts: string[] | undefined = payload["sub"]?.split("|");
+    const rawTokenLength: number | undefined = rawTokenParts?.length;
+
+    // The end result should be a bunch of numbers only.
+
+    if (rawTokenParts && rawTokenLength) {
+      return rawTokenParts[rawTokenLength - 1] || null;
+    }
+  }
+
+  return null;
+};
 
 /**
  * Define the following endpoints:
@@ -26,9 +111,9 @@ import {getWork, getWorks, postUpload, postWork, putWork} from "./services/works
  *
  * Edit the social media information for any given artist by name.
  *
- * - `GET /api/works?year=<year>&week=<week>&artist=<name>&sort=<sort>&search=<query>`
+ * - `GET /api/works?year=<year>&week=<week>&artist=<name>&sort=<sort>`
  *
- * Get posts according to the search criteria.
+ * Get works according to the search criteria.
  *
  * Internally, there are three indices: by ID, by week, and by artist. When neither the
  * week/year nor artist is provided, the weeks index is flattened (requires the theoretically
@@ -59,72 +144,33 @@ import {getWork, getWorks, postUpload, postWork, putWork} from "./services/works
  *   the frontend must send a subsequent authenticated request to update their socials.
  */
 const worker = {
-  fetch(request: Request, env: { REFRESH_KV: KVNamespace }) {
-    // Constants must be placed inside the worker for the module syntax.
-
-    /**
-     * A 404 response.
-     */
-    const NOT_FOUND_RESPONSE = new Response("Resource not found.", {status: 404});
-
-    /**
-     * A map of method to route to callable for specific endpoints.
-     */
-    const ROUTE_AND_METHOD_TO_SERVICE: Record<string, Record<string, (
-      params: URLSearchParams, body: Body, kv: KVNamespace
-    ) => Promise<Response>>> = {
-      "get": {
-        "meta": getMeta,
-        "posts": getWorks,
-        "post": getWork,
-      },
-      "put": {
-        "weeks": putWeeks,
-        "artist": putArtist,
-        "post": putWork,
-      },
-      "post": {
-        "post": postWork,
-        "upload": postUpload,
-      },
-    };
-
-    // Start non-constant part of the code.
-
-    const url = new URL(request.url);
-
-    // If POST or PUT, check authentication. Otherwise, the request must be GET.
-
-    // TODO: Check if user is authenticated and what their role is.
-
+  async fetch(request: Request, env: { REFRESH_KV: KVNamespace; AUTH_KV: KVNamespace }) {
     const method: string = request.method.toLowerCase();
 
-    const isPutOrPost: boolean = ["post", "put"].includes(method);
+    // Handle preflight request without handling JWT since it's not necessary.
 
-    // TODO: Check Cloudflare Cache for responses.
-
-    if (isPutOrPost) {
-      // TODO: Check auth.
-      // TODO: Validate CSRF token.
-    } else if (method !== "get") {
-      return NOT_FOUND_RESPONSE;
+    if (method === "options") {
+      return new Response("{}", {headers: CORS_HEADERS});
     }
 
-    // Read the route and call the appropriate endpoint if it exists.
+    // If there's a JWT, validate it.
 
+    const jwt: string | null = (
+      request.headers.get("Authorization")?.replace("Bearer ", "")?.trim()
+    ) || null;
+
+    const identifier: string | null = await handleJwt(jwt);
+
+    // If it's a normal request, check the URL and handle normally.
+
+    const url = new URL(request.url);
     const pathParts: string[] = url.pathname.split("/").filter(
       (part: string) => part && part !== "api"
     );
 
-    const callable: CallableFunction | undefined = (
-      ROUTE_AND_METHOD_TO_SERVICE[request.method.toLowerCase()][pathParts[0]]
+    return handleRequest(
+      method, pathParts[0], url.searchParams, request, env.REFRESH_KV, env.AUTH_KV, identifier,
     );
-
-    if (callable) {
-      return callable(url.searchParams, request.body, env.REFRESH_KV);
-    }
-
-    return NOT_FOUND_RESPONSE;
   }
 };
 
