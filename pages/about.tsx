@@ -17,7 +17,7 @@ const About: NextPage = () => {
   return (
     <StaticPage>
       <Head>
-        <title>2022 Design Refresh</title>
+        <title>Design Refresh</title>
 
         <meta name="description" content="To be rewritten." />
       </Head>
@@ -27,8 +27,8 @@ const About: NextPage = () => {
       </Header>
 
       <Paragraph>
-        Following the success of the 2021 Design Refresh, the sequel - the 2022 Design Refresh -
-        is a community-centered weekly creative art challenge.
+        Following the success of the 2021 Design Refresh, the sequel - the Design Refresh - is a
+        community-centered weekly creative art challenge.
       </Paragraph>
 
       <Paragraph>
@@ -43,7 +43,7 @@ const About: NextPage = () => {
       </Paragraph>
 
       <Paragraph>
-        The hashtag for the Refresh is <b>#2022DesignRefresh</b>.
+        The hashtag for the Refresh this year is <b>#2022DesignRefresh</b>.
       </Paragraph>
 
       <SubHeader>

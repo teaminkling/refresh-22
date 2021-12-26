@@ -23,6 +23,7 @@ const App = ({Component, pageProps}: AppProps): JSX.Element => {
       domain={"refresh.au.auth0.com"}
       clientId={"kuTjew7XeDDUVZ2k0QlrhFxwuDV8aaGc"}
       redirectUri={"http://localhost:3000"}
+      audience={"https://refresh.fiveclawd.com/api/"}
     >
       <Provider store={store}>
         <div className={"lg:flex lg:flex-row"}>

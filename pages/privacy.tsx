@@ -10,7 +10,7 @@ const Privacy: NextPage = () => {
   return (
     <StaticPage>
       <Head>
-        <title>2022 Design Refresh - Privacy Policy</title>
+        <title>Design Refresh - Privacy Policy</title>
 
         <meta name="description" content="To be rewritten." />
       </Head>

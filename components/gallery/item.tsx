@@ -69,24 +69,24 @@ const Item = (props: ItemProps) => {
   }
 
   return (
-    <div className={"flex-col xl:flex xl:flex-row"}>
-      <div className={"px-2 py-2 lg:px-3 lg:py-4 hover:bg-gray-100"}>
+    <div className={"flex-col 2xl:flex 2xl:flex-row"}>
+      <div className={"px-2 py-2 lg:px-3 lg:py-4 hover:opacity-95"}>
         <Link href={`/works/${props.id}`}>
-          <a className={"hover:scale-150"}>
+          <a>
             <img
               src={props.retinaPreview}
               srcSet={`${props.preview}, ${props.retinaPreview} 1.5x`}
               className={"align-bottom"}
-              style={{width: 1024, height: 720}}
+              style={{width: 1120}}
               alt={`"A gallery preview image with the title: ${props.title}`}
             />
           </a>
         </Link>
       </div>
 
-      {/* Mobile-only gallery caption and horizontal rule + pad. */}
+      {/* Smaller screen gallery caption and horizontal rule + pad. */}
 
-      <div className={"px-2 flex xl:hidden text-xs"}>
+      <div className={"px-2 flex 2xl:hidden text-xs"}>
         <div className={"flex-grow"}>
           <p><b>{title}</b></p>
         </div>
@@ -101,7 +101,7 @@ const Item = (props: ItemProps) => {
 
       {/* Responsive caption on the right side for wider screens. */}
 
-      <div className={"py-4 w-96 hidden xl:flex"}>
+      <div className={"py-4 w-96 hidden 2xl:flex"}>
         <span className={"self-end"}>
           <p className={"px-4"}>
             <b>{title}</b>

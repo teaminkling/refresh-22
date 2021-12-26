@@ -16,7 +16,7 @@ const Guide: NextPage = () => {
   return (
     <StaticPage>
       <Head>
-        <title>2022 Design Refresh - Participant Guide</title>
+        <title>Design Refresh - Participant Guide</title>
 
         <meta name="description" content="To be rewritten." />
       </Head>

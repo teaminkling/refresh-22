@@ -10,7 +10,7 @@ const Terms: NextPage = () => {
   return (
     <StaticPage>
       <Head>
-        <title>2022 Design Refresh - Terms and Conditions</title>
+        <title>Design Refresh - Terms and Conditions</title>
 
         <meta name="description" content="To be rewritten." />
       </Head>
@@ -198,7 +198,7 @@ const Terms: NextPage = () => {
         without notice. Users of the site agree to these conditions immediately on change even if
         they are not made aware of the changes.
       </Paragraph>
-      
+
       <SubHeader>
         Revisions and Errata
       </SubHeader>
