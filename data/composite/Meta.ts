@@ -12,13 +12,17 @@ import Week from "../core/Week";
 export default interface Meta {
   /**
    * All of the artists with at least one post in this year.
+   *
+   * The record points from a Discord ID to an {@link Artist}.
    */
-  artists: Artist[];
+  artists: Record<string, Artist>;
 
   /**
    * All of the weeks of this year.
    *
    * For non-staff users, this will return without unpublished weeks.
+   *
+   * The record points from the week number to a week.
    */
-  weeks: Week[];
+  weeks: Record<number, Week>;
 }

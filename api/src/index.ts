@@ -6,7 +6,7 @@ import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} f
 import {GetKeyFunction} from "jose/dist/types/types";
 import {CORS_HEADERS} from "./constants/http";
 import {getMeta, putArtist, putWeeks} from "./services/meta";
-import {getWork, getWorks, postUpload, postWork, putWork} from "./services/works";
+import {getWork, getWorks, postUpload, putWork} from "./services/works";
 import {createNotFoundResponse} from "./utils/http";
 
 /**
@@ -34,7 +34,7 @@ const handleRequest = (
     if (routine === "meta") {
       return getMeta(kv, authKv, identifier);
     } else if (routine === "works") {
-      return getWorks(params, request, kv);
+      return getWorks(params, kv, authKv, identifier);
     } else if (routine === "work") {
       return getWork(params, request, kv);
     }
@@ -42,14 +42,12 @@ const handleRequest = (
     if (routine === "weeks") {
       return putWeeks(request, kv, authKv, identifier);
     } else if (routine === "artist") {
-      return putArtist(params, request, kv);
+      return putArtist(request, kv, authKv, identifier);
     } else if (routine === "work") {
-      return putWork(params, request, kv);
+      return putWork(request, kv, authKv, identifier);
     }
   } else if (method === "post") {
-    if (routine === "work") {
-      return postWork(params, request, kv);
-    } else if (routine === "upload") {
+    if (routine === "upload") {
       return postUpload(params, request, kv);
     }
   }

@@ -1,5 +1,3 @@
-import {KeysEnum} from "../utils/typescript";
-
 /**
  * A week.
  */
@@ -13,6 +11,11 @@ export default interface Week {
    * The week number of this year.
    */
   week: number;
+
+  /**
+   * The actual timestamp to be parsed as a {@link Date}.
+   */
+  timestamp: string;
 
   /**
    * The theme short-name.
@@ -29,14 +32,3 @@ export default interface Week {
    */
   isPublished: boolean;
 }
-
-/**
- * The keys of {@link Week}.
- */
-export const WeekKeys: KeysEnum<Week> = {
-  year: true,
-  week: true,
-  theme: true,
-  information: true,
-  isPublished: true,
-};

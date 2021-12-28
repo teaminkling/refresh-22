@@ -4,7 +4,7 @@ import Week from "../../../data/core/Week";
 import {META} from "../constants/kv";
 import {ACTIVE_YEAR} from "../constants/setup";
 import {validateIsStaff} from "../utils/auth";
-import {createJsonResponse, createNotFoundResponse} from "../utils/http";
+import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 
 /**
  * Internal and external handlers for week endpoints.
@@ -41,7 +41,11 @@ export const getMeta = async (
   if (isStaff) {
     output["weeks"] = meta.weeks;
   } else {
-    output["weeks"] = meta.weeks.filter((week: Week) => week.isPublished);
+    const filteredEntries: [string, Week][] = Object.entries(meta.weeks).filter(
+      ([_id, week]: [string, Week]) => week.isPublished
+    );
+
+    output["weeks"] = Object.fromEntries(filteredEntries);
   }
 
   return createJsonResponse(JSON.stringify(output) || undefined);
@@ -99,20 +103,19 @@ export const putWeeks = async (
 /**
  * Edit the username and/or social media information for any given artist by (current) name.
  *
- * This is an idempotent call. We are not concerned about race conditions. The rate limit is set
- * to 8 changes per 30 minutes, which is the most aggressive rate limit in the codebase.
+ * This is an idempotent call. We are not concerned about race conditions, though in this case
+ * they can certainly happen. The rate limit is set to 8 changes per 30 minutes, which is the
+ * most aggressive rate limit in the codebase.
  *
- * @param {URLSearchParams} _params
- * @param {Body} _body
- * @param {KVNamespace} _kv
- * @returns {Promise<>Response>}
+ * @param {Request} request
+ * @param {KVNamespace} kv
+ * @param {KVNamespace} authKv
+ * @param {string | null} identifier
+ * @returns {Promise<Response>}
  */
 export const putArtist = async (
-  request: Request, _kv: KVNamespace, authKv: KVNamespace, identifier: string | null,
+  request: Request, kv: KVNamespace, authKv: KVNamespace, identifier: string | null,
 ): Promise<Response> => {
-  // Only allow the owner of the artist object or a staff member perform mutations on the object.
-
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
 
   // Validate type and length and escape the correct request variables.
 
@@ -120,18 +123,48 @@ export const putArtist = async (
 
   const input: Artist = await request.json();
 
+  // Only allow the owner of the artist object or a staff member perform mutations on the object.
+
+  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  if (!isStaff || identifier !== input.discordId) {
+    return createNotFoundResponse();
+  }
+
+  // Retrieve the object.
+
+  const rawMeta: string = (await kv.get(`${META}/${ACTIVE_YEAR}`)) || "{}";
+  if (rawMeta === "{}") {
+    throw new Error(
+      "The meta variable has not been set up for the first time!"
+    );
+  }
+
+  const meta: Meta = JSON.parse(rawMeta);
+  const backendArtist: Artist = meta.artists[input.discordId];
+
   // Determine if the username has been changed.
 
-  // Determine if the new username is already taken.
+  const isUsernameChanged: boolean = input.name !== backendArtist.name;
 
-  // If the username has changed from last time and is unique, update (4 writes):
+  // If the username has changed from last time and is unique, update it.
 
-  // 1. The week to work index so the username present in the payloads is swapped.
-  // 2. The artist to work index such that the new username is a key to the existing payload.
-  // 3. The artist to work index such that the old key no longer has a payload.
-  // 4. The ID to work index such that the username present in the payloads is swapped.
+  if (isUsernameChanged && meta.artists[input.name]) {
+    return createBadRequestResponse("New username is taken!");
+  } else if (isUsernameChanged) {
+    backendArtist.name = input.name;
+  }
 
-  // Update the socials for this user if they have changed (skip a write if they haven't).
+  // Update the socials for this user.
+
+  backendArtist.socials = input.socials;
+  meta.artists[input.discordId] = backendArtist;
+
+  // Perform the actual write. Yeah, this is race condition central. Doesn't matter: this is not
+  // meant to be frequently called and we're working for free here. If we wanted to improve
+  // this, maybe we could use a mutex on Upstash/Redis or use a Durable Object, but we're
+  // explicitly working for free here.
+
+  await kv.put(`${META}/${ACTIVE_YEAR}`, JSON.stringify(meta));
 
   return createJsonResponse();
 };
