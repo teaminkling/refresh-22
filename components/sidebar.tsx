@@ -32,22 +32,26 @@ const Sidebar = (): JSX.Element => {
   // The "bar" logo, only used in the sidebar.
 
   const logo = (
-    <a href="#" className={"text-lg font-semibold tracking-widest uppercase px-4"}>
-      Refresh 22
-    </a>
+    <>
+      <a href="#" className={"pr-24 lg:hidden"}>
+        <img src={"/logo/rect_logo.png"} alt={"The site's logo on the sidebar."} />
+      </a>
+
+      <a href="#" className={"px-4 pt-4 pb-16 hidden lg:block"}>
+        <img src={"/logo/full_logo.png"} alt={"The site's logo on the sidebar."} />
+      </a>
+    </>
   );
 
   // A burger menu that only appears on smaller screens.
 
   const burgerHeader = (
     <div className={
-      "flex-shrink-0 px-8 py-4 flex flex-row items-center justify-between lg:hidden z-10"
+      "flex-shrink-0 px-4 py-4 flex flex-row items-center justify-between lg:hidden z-10"
     }>
       {logo}
 
-      <button className={
-        "rounded-lg lg:hidden rounded-lg focus:outline-none focus:shadow-outline"
-      } onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <button className={"w-32 text-2xl lg:hidden"} onClick={() => setIsMenuOpen(!isMenuOpen)}>
         {isMenuOpen ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}
       </button>
     </div>
@@ -56,7 +60,7 @@ const Sidebar = (): JSX.Element => {
   // Handle authentication views.
 
   const {
-    user, isLoading, isAuthenticated, loginWithRedirect, logout
+    user, isLoading, isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently
   }: Auth0ContextInterface = useAuth0();
 
   const loading = <SidebarLink title={"Loading..."} />;

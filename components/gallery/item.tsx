@@ -86,7 +86,7 @@ const Item = (props: ItemProps) => {
 
       {/* Smaller screen gallery caption and horizontal rule + pad. */}
 
-      <div className={"px-2 flex 2xl:hidden text-xs"}>
+      <div className={"px-2 flex 2xl:hidden text-xs xl:text-sm"}>
         <div className={"flex-grow"}>
           <p><b>{title}</b></p>
         </div>
