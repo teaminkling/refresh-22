@@ -6,7 +6,7 @@ export default interface Work {
    * The internal ID.
    */
   id: string;
-  
+
   /**
    * The year in which this work was created.
    */
@@ -17,7 +17,7 @@ export default interface Work {
    *
    * There are frontend and backend validations for this to have at least one entry.
    */
-  weekNumbers: string[];
+  weekNumbers: number[];
 
   /**
    * The ID of the artist.
@@ -41,7 +41,7 @@ export default interface Work {
   /**
    * The description of the work.
    *
-   * Max of 2048 characters.
+   * Max of 1920 characters.
    */
   description: string;
 

@@ -1,8 +1,13 @@
 import Work from "../../../data/core/Work";
-import {WORKS_WITH_ARTIST_INDEX, WORKS_WITH_ID_INDEX, WORKS_WITH_WEEK_INDEX} from "../constants/kv";
-import {ACTIVE_YEAR} from "../constants/setup";
+import {
+  WORKS_WITH_ARTIST_INDEX,
+  WORKS_WITH_ID_INDEX,
+  WORKS_WITH_WEEK_INDEX,
+  WORKS_WITHOUT_INDEX
+} from "../constants/kv";
+import {ACTIVE_YEAR, LAST_ACTIVE_WEEK} from "../constants/setup";
 import {validateIsStaff} from "../utils/auth";
-import {createJsonResponse, createNotFoundResponse} from "../utils/http";
+import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
 
 /**
@@ -20,7 +25,7 @@ import {determineShortId, sanitize} from "../utils/io";
  * Sorting and direct member searching is not possible through this endpoint. It is expected to
  * be done on the frontend as repeated changes of the sort and search would waste backend calls.
  *
- * Params pattern: `?year=<year>&week=<week>&artist=<artist>`
+ * Params pattern: `?year=<year>&week=<week>&artistId=<artist>`
  *
  * @param {URLSearchParams} params the search parameters
  * @param {KVNamespace} kv the main key-value store
@@ -33,40 +38,32 @@ export const getWorks = async (
 ): Promise<Response> => {
   // Escape search terms (remove slashes).
 
-  const year: string | null = sanitize(params.get("year"));
+  const year: string | null = sanitize(params.get("year")) || ACTIVE_YEAR.toString();
   const week: string | null = sanitize(params.get("week"));
-  const artist: string | null = sanitize(params.get("artist"));
+  const artistId: string | null = sanitize(params.get("artistId"));
 
   // If the artist is present, that cancels the most results, so use that as search. Otherwise
-  // use the week. If neither are present, we will squash the results down.
+  // use the week. If neither are present, use all posts in the list.
 
   let results: Work[] = [];
-  if (artist) {
-    const works_with_artist_index: Record<string, Work[]> = JSON.parse(
-      (await kv.get(`${WORKS_WITH_ARTIST_INDEX}`)) || "{}",
+  if (artistId) {
+    const works_with_artist_index: Record<string, Work> = JSON.parse(
+      (await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${artistId}`)) || "[]",
     );
 
-    (works_with_artist_index[artist] || []).forEach((work: Work) => {
-      results.push(work);
-    });
+    Object.values(works_with_artist_index).forEach((work: Work) => results.push(work));
+  } else if (week) {
+    const works_with_week_index: Record<string, Work> = JSON.parse(
+      (await kv.get(`${WORKS_WITH_WEEK_INDEX}/${year}/${week}`)) || "[]",
+    );
+
+    Object.values(works_with_week_index).forEach((work: Work) => results.push(work));
   } else {
-    const works_with_week_index: Record<string, Work[]> = JSON.parse(
-      (await kv.get(`${WORKS_WITH_WEEK_INDEX}`)) || "{}",
+    const works_without_index: Work[] = JSON.parse(
+      (await kv.get(`${WORKS_WITHOUT_INDEX}`)) || "[]"
     );
 
-    if (week) {
-      // Use the active year if the year is not specified.
-
-      (works_with_week_index[`${year || ACTIVE_YEAR}/${week}`] || []).forEach((work: Work) => {
-        results.push(work);
-      });
-    } else {
-      Object.keys(works_with_week_index).forEach(
-        (key: string) => {
-          works_with_week_index[key].forEach((work: Work) => results.push(work));
-        }
-      );
-    }
+    works_without_index.forEach((work: Work) => results.push(work));
   }
 
   // The output currently has all works, not just published ones. Check the auth now. If it's
@@ -99,11 +96,10 @@ export const getWork = async (
     return createNotFoundResponse();
   }
 
-  const works_with_id_index: Record<string, Work> = JSON.parse(
-    (await kv.get(WORKS_WITH_ID_INDEX)) || "{}"
+  const work: Work | undefined | null = JSON.parse(
+    (await kv.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
   );
 
-  const work: Work | undefined | null = works_with_id_index[id];
   if (!work) {
     return createNotFoundResponse();
   }
@@ -141,22 +137,35 @@ export const putWork = async (
 
   const input: Work = await request.json();
 
-  // If the work exists, validate that the user PUTing is a staff member or the creating user.
-  // There is no need to validate credentials of a user if the
+  // Before doing expensive work, ensure that there is at least one week and it appears within
+  // the range of acceptable weeks in the active year.
+
+  if (!input.weekNumbers || input.weekNumbers.map(
+    (weekNumber: number) => weekNumber <= 0 || weekNumber > LAST_ACTIVE_WEEK)
+  ) {
+    return createBadRequestResponse(
+      "Week numbers must have at least one valid value, and all values must be valid."
+    );
+  }
+
+  // Try to retrieve an existing work.
 
   const rawBackendWork: string | null = await kv.get(`${WORKS_WITH_ID_INDEX}/${input.id}`);
   const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
 
-  let effectiveId: string = input.id;
-  if (backendWork) {
-    const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
-    if (!isStaff || input.artistId !== backendWork.artistId) {
-      return createNotFoundResponse();
-    }
+  // Verify poster is either the same as the one in the work or is a staff member.
 
-    // TODO: Edit indices.
-  } else {
-    // Determine what the ID should be, ignoring what the user put.
+  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  if (!isStaff || input.artistId !== identifier) {
+    return createNotFoundResponse();
+  }
+
+  // Determine the work ID.
+
+  let effectiveId: string = input.id;
+  if (!backendWork) {
+    // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
+    // client is valid, the ID will be some kind of random string.
 
     const newId: string = await determineShortId(input.artistId, input.urls);
 
@@ -168,11 +177,50 @@ export const putWork = async (
     }
 
     effectiveId = newId;
-
-    // TODO: Add indices.
   }
 
-  // TODO: Do the actual update of all three indices.
+  // Important: all our validations are for nothing if we don't make sure we re-set the input ID.
+
+  input.id = effectiveId;
+
+  // Update all three indices: ID, artist, and week. Also update the works list.
+
+  await kv.put(`${WORKS_WITH_ID_INDEX}/${input.id}`, JSON.stringify(input));
+
+  const worksByArtist: Record<string, Work> = JSON.parse(
+    await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${input.artistId}`) || "[]"
+  );
+
+  worksByArtist[input.id] = input;
+
+  await kv.put(`${WORKS_WITH_ARTIST_INDEX}/${input.artistId}`, JSON.stringify(worksByArtist));
+
+  // Updating weeks requires:
+
+  // 1. Updating the overlapping old and new weeks (which can be done by writing to the new weeks).
+  // 2. Deleting the old weeks that don't appear in the new array.
+
+  for (const weekNumber of input.weekNumbers) {
+    const weekIndex: Record<string, Work> = JSON.parse(
+      await kv.get(
+        `${WORKS_WITH_WEEK_INDEX}/${input.year}/${weekNumber}`
+      ) || "{}"
+    );
+
+    weekIndex[input.id] = input;
+
+    await kv.put(
+      `${WORKS_WITH_WEEK_INDEX}/${input.year}/${weekNumber}`, JSON.stringify(weekIndex),
+    );
+  }
+
+  const worksWithoutIndex: Work[] = JSON.parse(
+    await kv.get(`${WORKS_WITHOUT_INDEX}`) || "[]"
+  );
+
+  worksWithoutIndex.push(input);
+
+  await kv.put(WORKS_WITHOUT_INDEX, JSON.stringify(worksWithoutIndex));
 
   // Edit the Discord post for this work (can fail without 500).
 

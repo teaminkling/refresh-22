@@ -109,7 +109,7 @@ const handleJwt = async (jwt: string | null): Promise<string | null> => {
  *
  * Edit the social media information for any given artist by name.
  *
- * - `GET /api/works?year=<year>&week=<week>&artist=<name>&sort=<sort>`
+ * - `GET /api/works?year=<year>&week=<week>&artistId=<id>&sort=<sort>`
  *
  * Get works according to the search criteria.
  *

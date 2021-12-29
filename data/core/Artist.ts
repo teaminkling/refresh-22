@@ -9,6 +9,11 @@ export default interface Artist {
   discordId: string;
 
   /**
+   * The image URL for the user retrieved from the Auth0 integration.
+   */
+  discordImageUrl: string;
+
+  /**
    * The name of the artist as a trimmed UTF-8 string.
    */
   name: string;

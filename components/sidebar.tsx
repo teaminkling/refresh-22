@@ -17,6 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useState} from "react";
+import {getMeta} from "../utils/connectors";
 import SidebarLink from "./sidebar-link";
 import SquareLink from "./square-link";
 
@@ -73,6 +74,11 @@ const Sidebar = (): JSX.Element => {
         icon={<FontAwesomeIcon icon={faUser} />}
         nextLink
       />
+
+      <a
+        href={"#"}
+        onClick={() => getAccessTokenSilently().then(token => getMeta(token))}
+      >Fetch</a>
 
       <div className={"my-5"} />
 
