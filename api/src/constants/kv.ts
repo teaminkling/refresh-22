@@ -48,8 +48,13 @@ export const META = "meta";
 export const EDITORS = "editors";
 
 /**
- * The key for the discord webhook used to publish and edit messages.
+ * The key for the Discord webhook used to publish and edit messages.
  *
  * This must not end with a slash when retrieved.
  */
 export const DISCORD_WEBHOOK = "discord-webhook";
+
+/**
+ * The key for the Redis (Upstash) URI.
+ */
+export const REDIS_URI = "redis-uri";

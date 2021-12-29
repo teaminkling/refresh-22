@@ -1,3 +1,5 @@
+import {Redis} from "ioredis";
+import Redlock from "redlock";
 import Work from "../../../data/core/Work";
 import {
   WORKS_WITH_ARTIST_INDEX,
@@ -9,6 +11,7 @@ import {ACTIVE_YEAR, LAST_ACTIVE_WEEK} from "../constants/setup";
 import {validateIsStaff} from "../utils/auth";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
+import {placeWork} from "../utils/kv";
 
 /**
  * Handlers for works endpoints.
@@ -108,6 +111,62 @@ export const getWork = async (
 };
 
 /**
+ * Perform the work for the {@link putWork} function.
+ *
+ * @param {Redis} redisClient the Redis client
+ * @param {Redlock} redlock the Redis distributed lock client
+ * @param {Work} work the work
+ * @param {string} identifier the identifier of the calling user
+ * @param {KVNamespace} authKv the auth key-value store
+ * @returns {Promise<Response>} the response
+ */
+const updateWorkIndices = async (
+  redisClient: Redis, redlock: Redlock, work: Work, identifier: string, authKv: KVNamespace
+): Promise<Response> => redlock.using(
+  ["adding_work"], 5000, async () => {
+    // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
+
+    const rawBackendWork: string | null = await redisClient.get(
+      `${WORKS_WITH_ID_INDEX}/${work.id}`
+    );
+    const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
+
+    // Verify poster is either the same as the one in the work or is a staff member.
+
+    const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+    if (!isStaff || work.artistId !== identifier) {
+      return createNotFoundResponse();
+    }
+
+    // Determine the work ID.
+
+    let effectiveId: string = work.id;
+    if (!backendWork) {
+      // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
+      // client is valid, the ID will be some kind of random string.
+
+      const newId: string = await determineShortId(work.artistId, work.urls);
+
+      // This isn't very robust, but we don't ever expect anything to ever collide.
+
+      if (await redisClient.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
+        throw new Error("Collision error! This requires developer intervention.");
+      }
+
+      effectiveId = newId;
+    }
+
+    // Important: all our validations are for nothing if we don't make sure we re-set this ID.
+
+    work.id = effectiveId;
+
+    await placeWork(redisClient, work);
+
+    return createJsonResponse();
+  }
+);
+
+/**
  * Create or update a post in the database.
  *
  * The ID provided by the user is used to find an existing post. If it doesn't exist, the ID is
@@ -117,13 +176,20 @@ export const getWork = async (
  * edits per minute. We are not concerned about race conditions.
  *
  * @param {Request} request the request
+ * @param {Redis} redisClient the Redis client
+ * @param {Redlock} redlock the Redis distributed lock client
  * @param {KVNamespace} kv the main key-value store
  * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putWork = async (
-  request: Request, kv: KVNamespace, authKv: KVNamespace, identifier: string | null,
+  request: Request,
+  redisClient: Redis,
+  redlock: Redlock,
+  kv: KVNamespace,
+  authKv: KVNamespace,
+  identifier: string | null,
 ): Promise<Response> => {
   // Ensure user is authenticated at all before doing any other CPU computation.
 
@@ -148,85 +214,19 @@ export const putWork = async (
     );
   }
 
-  // Try to retrieve an existing work.
+  // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
 
-  const rawBackendWork: string | null = await kv.get(`${WORKS_WITH_ID_INDEX}/${input.id}`);
-  const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
+  const response = await updateWorkIndices(redisClient, redlock, input, identifier, authKv);
 
-  // Verify poster is either the same as the one in the work or is a staff member.
+  // Update the KV store with what we placed in Redis.
 
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
-  if (!isStaff || input.artistId !== identifier) {
-    return createNotFoundResponse();
-  }
-
-  // Determine the work ID.
-
-  let effectiveId: string = input.id;
-  if (!backendWork) {
-    // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
-    // client is valid, the ID will be some kind of random string.
-
-    const newId: string = await determineShortId(input.artistId, input.urls);
-
-    // Check that there isn't a work at that endpoint. This isn't very robust, but we don't ever
-    // expect anything to ever collide.
-
-    if (await kv.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
-      throw new Error("Collision error! This requires developer intervention.");
-    }
-
-    effectiveId = newId;
-  }
-
-  // Important: all our validations are for nothing if we don't make sure we re-set the input ID.
-
-  input.id = effectiveId;
-
-  // Update all three indices: ID, artist, and week. Also update the works list.
-
-  await kv.put(`${WORKS_WITH_ID_INDEX}/${input.id}`, JSON.stringify(input));
-
-  const worksByArtist: Record<string, Work> = JSON.parse(
-    await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${input.artistId}`) || "[]"
-  );
-
-  worksByArtist[input.id] = input;
-
-  await kv.put(`${WORKS_WITH_ARTIST_INDEX}/${input.artistId}`, JSON.stringify(worksByArtist));
-
-  // Updating weeks requires:
-
-  // 1. Updating the overlapping old and new weeks (which can be done by writing to the new weeks).
-  // 2. Deleting the old weeks that don't appear in the new array.
-
-  for (const weekNumber of input.weekNumbers) {
-    const weekIndex: Record<string, Work> = JSON.parse(
-      await kv.get(
-        `${WORKS_WITH_WEEK_INDEX}/${input.year}/${weekNumber}`
-      ) || "{}"
-    );
-
-    weekIndex[input.id] = input;
-
-    await kv.put(
-      `${WORKS_WITH_WEEK_INDEX}/${input.year}/${weekNumber}`, JSON.stringify(weekIndex),
-    );
-  }
-
-  const worksWithoutIndex: Work[] = JSON.parse(
-    await kv.get(`${WORKS_WITHOUT_INDEX}`) || "[]"
-  );
-
-  worksWithoutIndex.push(input);
-
-  await kv.put(WORKS_WITHOUT_INDEX, JSON.stringify(worksWithoutIndex));
+  await placeWork(redisClient, input, kv);
 
   // Edit the Discord post for this work (can fail without 500).
 
   // TODO
 
-  return createJsonResponse();
+  return response;
 };
 
 // TODO: Rate limit: 8 uploads a minute.

@@ -17,6 +17,8 @@ import {EDITORS} from "../constants/kv";
 export const validateIsStaff = async (
   identifier: string, authKv: KVNamespace
 ): Promise<boolean> => {
+  // TODO: use an API-call based approach instead.
+
   const editorsMap: Record<string, string[]> = JSON.parse(await authKv.get(EDITORS) || "{}");
   const editors: string[] = editorsMap["editors"] || [];
 
