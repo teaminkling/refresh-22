@@ -24,7 +24,7 @@ const createNoOpStorage = (): WebStorage => {
 };
 
 const storage: WebStorage = (
-  typeof window !== "undefined" ? createWebStorage("session") : createNoOpStorage()
+  typeof window !== "undefined" ? createWebStorage("local") : createNoOpStorage()
 );
 
 export default storage;

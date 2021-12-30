@@ -10,7 +10,7 @@ import Item from "../components/gallery/item";
  */
 const Home: NextPage = () => {
   return (
-    <div className={"mx-2 my-2 lg:mr-5"}>
+    <div className={"mx-2 my-2 md:mr-5"}>
       <Head>
         <title>Design Refresh</title>
 

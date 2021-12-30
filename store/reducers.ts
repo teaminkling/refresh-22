@@ -10,7 +10,7 @@
 import {combineReducers, Reducer} from "redux";
 import Artist from "../data/core/Artist";
 import {AddArtistsAction} from "./actions";
-import {ArtistState} from "./state";
+import {ArtistState, RootState} from "./state";
 import {ADD_ARTISTS_TYPE} from "./types";
 
 /**
@@ -21,7 +21,7 @@ import {ADD_ARTISTS_TYPE} from "./types";
  * @returns {ArtistState} the resultant (future) state
  */
 const artistsReducer: Reducer<ArtistState, AddArtistsAction> = (
-  state: ArtistState = {artists: {}, artistsLastRetrieved: null},
+  state: ArtistState = {artists: {}, usernameToId: {}, artistsLastRetrieved: null},
   action: AddArtistsAction = {type: ADD_ARTISTS_TYPE, artists: []},
 ): ArtistState => {
   const type: string = action.type;
@@ -34,6 +34,11 @@ const artistsReducer: Reducer<ArtistState, AddArtistsAction> = (
         ])
       ),
       artistsLastRetrieved: new Date().toISOString(),
+      usernameToId: Object.fromEntries(
+        action.artists.map((artist: Artist) => [
+          artist.name, artist.discordId
+        ])
+      ),
     };
   }
 
@@ -43,7 +48,7 @@ const artistsReducer: Reducer<ArtistState, AddArtistsAction> = (
 // Define all of the reducers in the app and then combine them. It is up to contributors to keep
 // track of what the reducer names are as they map directly to the root state object.
 
-export default combineReducers(
+export default combineReducers<RootState>(
   {
     artistsData: artistsReducer,
   }

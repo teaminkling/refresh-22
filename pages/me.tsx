@@ -1,6 +1,8 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {AnyAction} from "redux";
+import {ThunkDispatch} from "redux-thunk";
 import {TextareaInput, TextInput} from "../components/forms";
 import InterfaceLink from "../components/interface-link";
 import StaticPage, {
@@ -11,12 +13,15 @@ import StaticPage, {
   UnorderedList
 } from "../components/typography";
 import Artist from "../data/core/Artist";
+import {addArtists} from "../store/actions";
 import {ArtistState, RootState} from "../store/state";
 import {updateArtists} from "../utils/connectors";
 
 /**
- * Send a request to the backend.
+ * Send a request to the backend and save it locally if it succeeds.
  *
+ * @param {ArtistState} artistsData the original artist state as it is known in the client
+ * @param {ThunkDispatch} dispatch the dispatch
  * @param {string} token the auth token
  * @param {string} discordId the discord ID
  * @param {string} name the username
@@ -24,6 +29,8 @@ import {updateArtists} from "../utils/connectors";
  * @param {string[]} socials the socials
  */
 const sendArtistUpdateRequest = async (
+  artistsData: ArtistState,
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
   token: string,
   discordId: string,
   name?: string,
@@ -39,6 +46,8 @@ const sendArtistUpdateRequest = async (
   }
 
   const effectiveSocials = socials || [];
+
+  console.log(effectiveSocials);
 
   const data: Artist = {
     discordId: discordId,
@@ -60,6 +69,14 @@ const sendArtistUpdateRequest = async (
   );
 
   if (response.ok) {
+    artistsData.artists[discordId] = {data: data, timestamp: new Date()};
+
+    const artists: Artist[] = Object.values(artistsData.artists).map(
+      wrapped => wrapped.data
+    );
+
+    dispatch(addArtists(artists));
+
     alert("Done! Please check back in 24 hours.");
   } else {
     alert(
@@ -79,6 +96,7 @@ const Me = (): JSX.Element => {
   const {
     user, isLoading, isAuthenticated, getAccessTokenSilently,
   }: Auth0ContextInterface = useAuth0();
+
   // HTML-based refs.
 
   const nameInput = useRef<HTMLInputElement>(null);
@@ -109,13 +127,16 @@ const Me = (): JSX.Element => {
     </>
   );
 
-  updateArtists(dispatch, artistsData);
+  useEffect(() => {
+    updateArtists(dispatch, artistsData);
+  });
 
   if (isAuthenticated) {
     const idParts: string[] = user?.sub?.split("|") || [];
     const id: string = idParts ? idParts[idParts.length - 1] : "Unknown";
 
-    existingUsername.current = artistsData.artists[id]?.data.name || "Unknown User";
+    existingUsername.current = artistsData.artists[id]?.data.name || user?.name || "Unknown";
+    existingSocials.current = artistsData.artists[id]?.data.socials || [];
 
     const thumbnailUrl: string = (
       user?.picture || `https://placem.at/things?w=512&h=512&random=${id}`
@@ -128,7 +149,7 @@ const Me = (): JSX.Element => {
         <img src={thumbnailUrl} alt={"The user's thumbnail URL."} className={"pt-8"} />
 
         <Header>
-          {existingUsername.current || user?.name || "undefined"}
+          {existingUsername.current}
         </Header>
 
         <Paragraph>
@@ -136,27 +157,37 @@ const Me = (): JSX.Element => {
         </Paragraph>
 
         <SubHeader>
+          View Profile
+        </SubHeader>
+
+        <InterfaceLink
+          title={"Switch to Public Profile"}
+          location={`/artists/${existingUsername.current}`}
+          nextLink
+        />
+
+        <SubHeader>
+          View Your Works
+        </SubHeader>
+
+        <InterfaceLink
+          title={"View Filtered Gallery"}
+          location={`/?artist=${existingUsername.current}`}
+          nextLink
+        />
+
+        <SubHeader>
           Edit Profile
         </SubHeader>
 
-        <Paragraph>
-          <b>Note:</b> Changes made here can take up to a day to appear on the site.
-        </Paragraph>
-
-        <Paragraph>
-          <b>Warning!</b> Editing your username can have unexpected consequences.
-        </Paragraph>
-
         <UnorderedList>
-          <ListItem>Your links might not work anymore.</ListItem>
           <ListItem>
-            Some people might not be able to find you on the site for up to 24 hours.
+            Changes made here can take up to a day to appear on the site.
+          </ListItem>
+          <ListItem>
+            <b>Warning:</b> Editing your username can have unexpected consequences.
           </ListItem>
         </UnorderedList>
-
-        <Paragraph>
-          Editing socials should be fairly straightforward, however.
-        </Paragraph>
 
         <form className={"mt-6"}>
           <div className={"mb-4"}>
@@ -164,7 +195,7 @@ const Me = (): JSX.Element => {
               passedRef={nameInput}
               id={"name"}
               placeholder={existingUsername.current}
-              label={"Change Username"}
+              label={"Set Username"}
               initialValue={existingUsername.current}
             />
           </div>
@@ -183,48 +214,21 @@ const Me = (): JSX.Element => {
             title={"Send"}
             clickBack={async () => {
               await sendArtistUpdateRequest(
+                artistsData,
+                dispatch,
                 await getAccessTokenSilently(),
                 id,
                 nameInput.current?.value || existingUsername.current,
                 user?.picture,
-                socialsInput.current?.value.split("\n"),
+                socialsInput.current?.value.trim().split("\n"),
               );
             }}
-          />
-
-          <SubHeader>
-            View Profile
-          </SubHeader>
-
-          <InterfaceLink
-            title={"Go To Public Profile"}
-            location={`/artists/${existingUsername.current}`}
-            nextLink
-          />
-
-          <SubHeader>
-            View Your Works
-          </SubHeader>
-
-          <InterfaceLink
-            title={"Go To Gallery with Filter"}
-            location={`/?artist=${existingUsername.current}`}
-            nextLink
           />
         </form>
       </>
     );
   } else if (isLoading) {
-    view = (
-      <>
-        <Header>
-          Loading
-        </Header>
-        <Paragraph>
-          Please wait...
-        </Paragraph>
-      </>
-    );
+    view = <></>;
   }
 
   return (

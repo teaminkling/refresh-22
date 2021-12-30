@@ -22,8 +22,14 @@ const About: NextPage = () => {
         <meta name="description" content="To be rewritten." />
       </Head>
 
+      <img
+        src={"/art/about.png"}
+        alt={"Refresh!"}
+        className={"pt-16 w-80 object-cover m-auto pb-16 md:m-0"}
+      />
+
       <Header>
-        About <span className={"hidden sm:inline-block"}>the Refresh</span>
+        About <span className={"hidden lg:inline-block"}>the Refresh</span>
       </Header>
 
       <Paragraph>

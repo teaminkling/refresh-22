@@ -70,14 +70,14 @@ const Item = (props: ItemProps) => {
 
   return (
     <div className={"flex-col 2xl:flex 2xl:flex-row"}>
-      <div className={"px-2 py-2 lg:px-3 lg:py-4 hover:opacity-95"}>
+      <div className={"px-2 py-2 md:px-3 md:py-4 hover:opacity-95"}>
         <Link href={`/works/${props.id}`}>
           <a>
             <img
               src={props.retinaPreview}
               srcSet={`${props.preview}, ${props.retinaPreview} 1.5x`}
               className={"align-bottom"}
-              style={{width: 1120}}
+              style={{width: 800}}
               alt={`"A gallery preview image with the title: ${props.title}`}
             />
           </a>
@@ -86,7 +86,10 @@ const Item = (props: ItemProps) => {
 
       {/* Smaller screen gallery caption and horizontal rule + pad. */}
 
-      <div className={"px-2 flex 2xl:hidden text-xs xl:text-sm"}>
+      <div
+        className={"px-2 flex 2xl:hidden text-xs 2xl:text-sm"}
+        style={{maxWidth: 800}}
+      >
         <div className={"flex-grow"}>
           <p><b>{title}</b></p>
         </div>

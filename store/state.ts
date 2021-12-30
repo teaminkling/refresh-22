@@ -76,6 +76,11 @@ export interface ArtistState {
   artists: Record<string, DateWrapper<Artist>>;
 
   /**
+   * A map from a username to an ID to be regenerated on every reduction.
+   */
+  usernameToId: Record<string, string>;
+
+  /**
    * The last time the artist map was updated.
    */
   artistsLastRetrieved: string | null;

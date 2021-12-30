@@ -50,11 +50,15 @@ const Sidebar = (): JSX.Element => {
 
   const logo = (
     <>
-      <a href="#" className={"pr-24 lg:hidden"}>
-        <img src={"/logo/rect_logo.png"} alt={"The site's logo on the sidebar."} />
+      <a href="#" className={"pr-24 md:hidden"}>
+        <img
+          src={"/logo/rect_logo.png"}
+          alt={"The site's logo on the sidebar."}
+          className={"max-h-12"}
+        />
       </a>
 
-      <a href="#" className={"px-4 pt-4 pb-16 hidden lg:block"}>
+      <a href="#" className={"px-4 pt-4 pb-16 hidden md:block"}>
         <img
           src={"/logo/full_logo.png"}
           alt={"The site's logo on the sidebar."}
@@ -68,11 +72,11 @@ const Sidebar = (): JSX.Element => {
 
   const burgerHeader = (
     <div className={
-      "flex-shrink-0 px-4 py-4 flex flex-row items-center justify-between lg:hidden z-50"
+      "flex-shrink-0 px-4 py-4 flex flex-row items-center justify-between md:hidden z-50"
     }>
       {logo}
 
-      <button className={"w-32 text-2xl lg:hidden"} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <button className={"w-32 text-2xl md:hidden"} onClick={() => setIsMenuOpen(!isMenuOpen)}>
         {isMenuOpen ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}
       </button>
     </div>
@@ -112,7 +116,7 @@ const Sidebar = (): JSX.Element => {
   );
 
   return (
-    <div className={"lg:w-96 lg:h-screen bg-white overflow-scroll"}>
+    <div className={"md:w-80 md:h-screen bg-white overflow-scroll"}>
       {
         /*
          The parent defines the entire side of the screen. The immediate child defines an
@@ -127,20 +131,20 @@ const Sidebar = (): JSX.Element => {
       }
 
       <div className={
-        "lg:absolute lg:my-4 lg:mx-4 bottom-0 top-0 left-0 right-0 border-r border-black"
+        "md:absolute md:my-4 md:mx-4 bottom-0 top-0 left-0 right-0 border-r border-black"
       }>
         {burgerHeader}
 
         <nav
           className={
-            "lg:flex lg:flex-col lg:justify-between lg:block px-4 h-screen lg:h-full " + (
+            "md:flex md:flex-col md:justify-between md:block px-4 h-screen md:h-full " + (
               isMenuOpen ? "block" : "hidden"
             )
           }
           onClick={() => setIsMenuOpen(false)}
         >
           <div className={"flex-shrink-0 block"}>
-            <div className={"hidden lg:block py-4"}>
+            <div className={"hidden md:block py-4"}>
               {logo}
             </div>
 
@@ -158,7 +162,7 @@ const Sidebar = (): JSX.Element => {
             {isLoading ? loading : auth}
           </div>
 
-          <hr className={"my-5 lg:hidden border-black"} />
+          <hr className={"my-5 md:hidden border-black"} />
 
           <div className={"items-center"} suppressHydrationWarning={true}>
             <InterfaceLink title={getNatureOfNextEvent()} strong />
@@ -167,7 +171,7 @@ const Sidebar = (): JSX.Element => {
             />
           </div>
 
-          <hr className={"my-5 lg:hidden border-black"} />
+          <hr className={"my-5 md:hidden border-black"} />
 
           <div className={"flex-shrink-0"}>
             <div id={"refresh-socials"} className={"text-center sm:text-left"}>

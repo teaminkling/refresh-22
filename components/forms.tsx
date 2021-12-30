@@ -114,6 +114,7 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
       }
 
       <textarea
+        ref={props.passedRef}
         id={props.id}
         name={props.id}
         placeholder={props.placeholder}

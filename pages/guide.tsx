@@ -21,8 +21,14 @@ const Guide: NextPage = () => {
         <meta name="description" content="To be rewritten." />
       </Head>
 
+      <img
+        src={"/art/guide.png"}
+        alt={"An artist placing a completed work in the gallery."}
+        className={"pt-16 w-80 object-cover m-auto pb-16 md:m-0"}
+      />
+
       <Header>
-        Participant Guide
+        For Participants
       </Header>
 
       <Paragraph>

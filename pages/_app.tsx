@@ -6,7 +6,6 @@ import {Store} from "redux";
 import {persistStore} from "redux-persist";
 import {PersistGate} from "redux-persist/integration/react";
 import Sidebar from "../components/sidebar";
-import StaticPage, {Header, Paragraph} from "../components/typography";
 import {wrapper} from "../store/store";
 import "../styles/globals.css";
 
@@ -28,20 +27,15 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
       redirectUri={"http://localhost:3000"}
       audience={"https://refresh.fiveclawd.com/api/"}
     >
-      <div className={"lg:flex lg:flex-row"}>
+      <div className={"md:flex md:flex-row"}>
         {/* Create a sticky sidebar: */}
 
-        <aside className={"lg:h-screen sticky top-0"}>
+        <aside className={"md:h-screen sticky top-0"}>
           <Sidebar />
         </aside>
 
         <div className={"flex-col w-full"}>
-          <PersistGate loading={
-            <StaticPage>
-              <Header>Loading...</Header>
-              <Paragraph>Please wait...</Paragraph>
-            </StaticPage>
-          } persistor={persistStore(store)}>
+          <PersistGate loading={null} persistor={persistStore(store)}>
             <Component {...pageProps} />
           </PersistGate>
         </div>
