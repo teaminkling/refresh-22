@@ -30,13 +30,16 @@ const getNextDay = (day: number): Date => {
   // Now that the "now" variable is a browser-local timezone at this point. It must be converted
   // to an Australia/Melbourne time first.
 
-  const nowInMelbourne = moment().tz("Australia/Melbourne");
+  const now: moment.Moment = moment().tz("Australia/Melbourne");
 
   // Setting the locale to Melbourne sets the start of the week to Monday, not Sunday.
+  // Programmatically make up for this across browsers.
 
-  nowInMelbourne.startOf("isoWeek").add(day - 1, "days");
+  const startOfWeek: moment.Moment = now.startOf("isoWeek");
 
-  return nowInMelbourne.toDate();
+  startOfWeek.add(day - startOfWeek.days(), "days");
+
+  return now.toDate();
 };
 
 /**
@@ -49,20 +52,20 @@ const getNextDay = (day: number): Date => {
  * @returns {string} the date to count down to
  */
 export const getDateOfNextEvent = (): Date => {
-  const now: Date = new Date();
+  const now = moment().tz("Australia/Melbourne");
 
   let targetDay = SHOWCASE_DAY;
   let targetHours = SHOWCASE_HOUR;
 
   // This assumes that the showcase is always before the prompt release day.
 
-  if (now.getDay() === PROMPT_RELEASE_DAY) {
-    if (now.getHours() < PROMPT_RELEASE_HOUR) {
+  if (now.day() === PROMPT_RELEASE_DAY) {
+    if (now.hour() < PROMPT_RELEASE_HOUR) {
       targetDay = PROMPT_RELEASE_DAY;
       targetHours = PROMPT_RELEASE_HOUR;
     }
-  } else if (now.getDay() === SHOWCASE_DAY) {
-    if (now.getHours() >= SHOWCASE_HOUR) {
+  } else if (now.day() === SHOWCASE_DAY) {
+    if (now.hour() >= SHOWCASE_HOUR) {
       targetDay = PROMPT_RELEASE_DAY;
       targetHours = PROMPT_RELEASE_HOUR;
     }
@@ -79,19 +82,19 @@ export const getDateOfNextEvent = (): Date => {
  * @returns {string} the nature of the next event
  */
 export const getNatureOfNextEvent = (): string => {
-  const now: Date = new Date();
+  const now = moment().tz("Australia/Melbourne");
 
   let nature = "Showcase";
-  if (now.getDay() === 0) {
+  if (now.day() === PROMPT_RELEASE_DAY) {
     // It's Sunday.
 
-    if (now.getHours() < 12) {
+    if (now.hour() < PROMPT_RELEASE_HOUR) {
       nature = "New Prompt";
     }
-  } else if (now.getDay() === 6) {
+  } else if (now.day() === SHOWCASE_DAY) {
     // It's Saturday.
 
-    if (now.getHours() > 12) {
+    if (now.hour() >= SHOWCASE_HOUR) {
       nature = "New Prompt";
     }
   }
