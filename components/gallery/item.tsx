@@ -1,7 +1,7 @@
 import {faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import SidebarLink from "../sidebar-link";
+import InterfaceLink from "../interface-link";
 
 /**
  * The props on the {@link Item}.
@@ -118,7 +118,7 @@ const Item = (props: ItemProps) => {
             {description}
           </p>
           <p className={"pt-8 px-4 hidden 2xl:block"}>
-            <SidebarLink
+            <InterfaceLink
               location={`/works/${props.id}`}
               title={"See More"}
               icon={<FontAwesomeIcon icon={faAngleDoubleLeft} />}

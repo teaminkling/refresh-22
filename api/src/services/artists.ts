@@ -50,40 +50,42 @@ export const putArtist = async (
   // Only allow the owner of the artist object or a staff member perform mutations on the object.
 
   const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
-  if (!identifier || !isStaff || identifier !== input.discordId) {
+  if (!identifier || !isStaff && identifier !== input.discordId) {
     return createNotFoundResponse();
   }
 
-  // Retrieve the aggregate object.
+  // Retrieve the artist.
 
-  const artists: Record<string, Artist> = JSON.parse(
-    (await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
+  const rawBackendArtist: string | null = await kv.get(`${ARTISTS}/${input.discordId}`);
+  const backendArtist: Artist | undefined = (
+    rawBackendArtist ? JSON.parse(rawBackendArtist) : undefined
   );
-
-  const backendArtist: Artist = artists[input.discordId];
 
   // Determine if the username has been changed.
 
-  const isUsernameChanged: boolean = input.name !== backendArtist.name;
+  const isUsernameChanged: boolean = (
+    backendArtist ? input.name !== backendArtist.name : true
+  );
 
   // If the username has changed from last time and is unique, update it.
 
-  if (isUsernameChanged && artists[input.name]) {
+  if (isUsernameChanged && backendArtist) {
     return createBadRequestResponse("New username is taken.");
-  } else if (isUsernameChanged) {
-    backendArtist.name = input.name;
   }
 
-  // Update the socials for this user.
+  // Update the aggregate list. May result in race condition.
 
-  backendArtist.socials = input.socials;
-  artists[input.discordId] = backendArtist;
+  const aggregateArtists: Record<string, Artist> = JSON.parse(
+    await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`) || "{}"
+  );
 
-  await kv.put(`${ARTISTS}/${ACTIVE_YEAR}`, JSON.stringify(artists));
+  aggregateArtists[input.discordId] = input;
+
+  await kv.put(`${ARTISTS}/${ACTIVE_YEAR}`, JSON.stringify(aggregateArtists));
 
   // Also put it in a guaranteed consistent call.
 
-  await kv.put(`${ARTISTS}/${identifier}`, JSON.stringify(artists));
+  await kv.put(`${ARTISTS}/${identifier}`, JSON.stringify(input));
 
   return createJsonResponse();
 };

@@ -54,7 +54,7 @@ interface NavItemProps {
  * @returns {JSX.Element} the element
  * @constructor
  */
-const SidebarLink = (props: NavItemProps) => {
+const InterfaceLink = (props: NavItemProps) => {
   const hoverAndActiveClasses = props.location ? (
     " hover:bg-gray-100 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
   ) : "";
@@ -101,4 +101,4 @@ const SidebarLink = (props: NavItemProps) => {
   }
 };
 
-export default SidebarLink;
+export default InterfaceLink;

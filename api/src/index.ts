@@ -39,6 +39,8 @@ const handleRequest = async (
     case ("get/works"):
       return getWorks(params, kv, authKv, identifier);
     case ("get/work"):
+      // Note the slight spelling difference: "s".
+
       return getWork(params, request, kv);
     case ("put/weeks"):
       return putWeeks(request, kv, authKv, identifier);

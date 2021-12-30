@@ -11,7 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactNode, useState} from "react";
 import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
 import {getDateOfNextEvent, getNatureOfNextEvent} from "../utils/time";
-import SidebarLink from "./sidebar-link";
+import InterfaceLink from "./interface-link";
 import SquareLink from "./square-link";
 
 /**
@@ -30,7 +30,7 @@ const countdownRenderer: CountdownRendererFn = (
   const paddedSeconds = String(seconds).padStart(2, "0");
 
   return (
-    <SidebarLink
+    <InterfaceLink
       title={`${days} ${dayWording} ${paddedHours}:${paddedMinutes}:${paddedSeconds}`}
       icon={<FontAwesomeIcon icon={faClock} />}
     />
@@ -84,11 +84,11 @@ const Sidebar = (): JSX.Element => {
     user, isLoading, isAuthenticated, loginWithRedirect, logout
   }: Auth0ContextInterface = useAuth0();
 
-  const loading = <SidebarLink title={"Loading..."} />;
+  const loading = <InterfaceLink title={"Loading..."} />;
   const auth = isAuthenticated ? (
     <>
-      <SidebarLink location={"#"} clickBack={logout} title={"Logout"} strong />
-      <SidebarLink
+      <InterfaceLink location={"#"} clickBack={logout} title={"Logout"} strong />
+      <InterfaceLink
         location={"/me"}
         title={user?.name || "Error"}
         icon={<FontAwesomeIcon icon={faUser} />}
@@ -97,11 +97,11 @@ const Sidebar = (): JSX.Element => {
 
       <div className={"my-5"} />
 
-      <SidebarLink location={"#"} title={"Submit"} />
+      <InterfaceLink location={"#"} title={"Submit"} />
     </>
   ) : (
     <>
-      <SidebarLink
+      <InterfaceLink
         location={"#"}
         clickBack={() => loginWithRedirect({connection: "discord"})}
         title={"Login"}
@@ -144,14 +144,14 @@ const Sidebar = (): JSX.Element => {
               {logo}
             </div>
 
-            <SidebarLink location={"/"} title={"Home"} nextLink />
-            <SidebarLink location={"/about/"} title={"About"} nextLink />
-            <SidebarLink location={"/guide/"} title={"Guide"} nextLink />
+            <InterfaceLink location={"/"} title={"Home"} nextLink />
+            <InterfaceLink location={"/about/"} title={"About"} nextLink />
+            <InterfaceLink location={"/guide/"} title={"Guide"} nextLink />
 
             <div className={"my-5"} />
 
-            <SidebarLink location={"/weeks/"} title={"Weeks"} nextLink />
-            <SidebarLink location={"/artists/"} title={"Artists"} nextLink />
+            <InterfaceLink location={"/weeks/"} title={"Weeks"} nextLink />
+            <InterfaceLink location={"/artists/"} title={"Artists"} nextLink />
 
             <div className={"my-5"} />
 
@@ -161,7 +161,7 @@ const Sidebar = (): JSX.Element => {
           <hr className={"my-5 lg:hidden border-black"} />
 
           <div className={"items-center"} suppressHydrationWarning={true}>
-            <SidebarLink title={getNatureOfNextEvent()} strong />
+            <InterfaceLink title={getNatureOfNextEvent()} strong />
             <Countdown
               date={getDateOfNextEvent()} renderer={countdownRenderer}
             />
@@ -187,8 +187,8 @@ const Sidebar = (): JSX.Element => {
 
             <div className={"my-5"} />
 
-            <SidebarLink location={"/terms"} title={"Terms"} nextLink />
-            <SidebarLink location={"/privacy"} title={"Privacy"} nextLink />
+            <InterfaceLink location={"/terms"} title={"Terms"} nextLink />
+            <InterfaceLink location={"/privacy"} title={"Privacy"} nextLink />
           </div>
         </nav>
       </div>
