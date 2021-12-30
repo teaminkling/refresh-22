@@ -8,10 +8,34 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faDiscord, faTwitch} from "@fortawesome/free-brands-svg-icons";
 import {faBars, faClock, faLink, faTimes, faUser} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useState} from "react";
-import {getMeta} from "../utils/connectors";
+import {ReactNode, useState} from "react";
+import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
+import {getDateOfNextEvent, getNatureOfNextEvent} from "../utils/time";
 import SidebarLink from "./sidebar-link";
 import SquareLink from "./square-link";
+
+/**
+ * A renderer for a {@link Countdown}.
+ *
+ * @param {CountdownRenderProps} the props
+ * @returns {string} the rendered countdown
+ */
+const countdownRenderer: CountdownRendererFn = (
+  {days, hours, minutes, seconds}: CountdownRenderProps
+): ReactNode => {
+  const dayWording = days === 1 ? "day" : "days";
+
+  const paddedHours = String(hours).padStart(2, "0");
+  const paddedMinutes = String(minutes).padStart(2, "0");
+  const paddedSeconds = String(seconds).padStart(2, "0");
+
+  return (
+    <SidebarLink
+      title={`${days} ${dayWording} ${paddedHours}:${paddedMinutes}:${paddedSeconds}`}
+      icon={<FontAwesomeIcon icon={faClock} />}
+    />
+  );
+};
 
 /**
  * The sidebar which controls all content on the right side of the screen.
@@ -136,9 +160,11 @@ const Sidebar = (): JSX.Element => {
 
           <hr className={"my-5 lg:hidden border-black"} />
 
-          <div className={"items-center"}>
-            <SidebarLink title={"Countdown"} strong />
-            <SidebarLink title={"99 days 23:59:59"} icon={<FontAwesomeIcon icon={faClock} />} />
+          <div className={"items-center"} suppressHydrationWarning={true}>
+            <SidebarLink title={getNatureOfNextEvent()} strong />
+            <Countdown
+              date={getDateOfNextEvent()} renderer={countdownRenderer}
+            />
           </div>
 
           <hr className={"my-5 lg:hidden border-black"} />

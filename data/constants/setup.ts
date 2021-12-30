@@ -13,10 +13,28 @@ export const ACTIVE_YEAR = 2022;
 export const LAST_ACTIVE_WEEK = 16;
 
 /**
+ * The prompt release day as a number.
+ *
+ * "0" means "Sunday".
+ */
+export const PROMPT_RELEASE_DAY = 0;
+
+/**
  * The hour that a prompt is released.
- * @type {number}
  */
 export const PROMPT_RELEASE_HOUR = 12;
+
+/**
+ * The showcase day as a number.
+ *
+ * "6" means "Saturday".
+ */
+export const SHOWCASE_DAY = 6;
+
+/**
+ * The hour that a showcase happens.
+ */
+export const SHOWCASE_HOUR = 12;
 
 /**
  * The decimal integer colour number for the app's highlight.

@@ -93,6 +93,7 @@ const SidebarLink = (props: NavItemProps) => {
         onClick={clickBack}
         target={props.isExternal ? "_blank" : undefined}
         rel={props.isExternal ? "noreferrer" : undefined}
+        suppressHydrationWarning={true}
       >
         {props.icon}<span className={spacing} />{props.title}
       </a>
