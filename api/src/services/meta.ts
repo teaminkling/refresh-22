@@ -1,8 +1,8 @@
 import Meta from "../../../data/composite/Meta";
+import {ACTIVE_YEAR} from "../../../data/constants/setup";
 import Artist from "../../../data/core/Artist";
 import Week from "../../../data/core/Week";
 import {META} from "../constants/kv";
-import {ACTIVE_YEAR} from "../constants/setup";
 import {validateIsStaff} from "../utils/auth";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 

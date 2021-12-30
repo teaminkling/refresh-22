@@ -1,5 +1,6 @@
 import {Redis} from "ioredis";
 import Redlock from "redlock";
+import {ACTIVE_YEAR, LAST_ACTIVE_WEEK} from "../../../data/constants/setup";
 import Work from "../../../data/core/Work";
 import {
   WORKS_WITH_ARTIST_INDEX,
@@ -7,7 +8,6 @@ import {
   WORKS_WITH_WEEK_INDEX,
   WORKS_WITHOUT_INDEX
 } from "../constants/kv";
-import {ACTIVE_YEAR, LAST_ACTIVE_WEEK} from "../constants/setup";
 import {validateIsStaff} from "../utils/auth";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";

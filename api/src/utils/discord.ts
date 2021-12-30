@@ -1,6 +1,6 @@
 import Work from "../../../data/core/Work";
 import {AUTH0_MANAGEMENT_API_URL} from "../constants/auth";
-import {DISCORD_WEBHOOK} from "../constants/kv";
+import {DISCORD_SUBMISSIONS_WEBHOOK} from "../constants/kv";
 
 /**
  * Utils about Discord API requests.
@@ -13,7 +13,7 @@ export const postOrEditDiscordPost = async (
 ): Promise<string | null> => {
   // Retrieve webhook.
 
-  const discordWebhook: string | null = await authKv.get(DISCORD_WEBHOOK);
+  const discordWebhook: string | null = await authKv.get(DISCORD_SUBMISSIONS_WEBHOOK);
   if (!discordWebhook) {
     throw new Error("No Discord webhook on backend. Can't send a message!");
   }
