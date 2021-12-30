@@ -27,19 +27,19 @@ const About: NextPage = () => {
       </Header>
 
       <Paragraph>
-        Following the success of the 2021 Design Refresh, the sequel - the Design Refresh - is a
-        community-centered weekly creative art challenge.
+        Following the success of the 2021 Design Refresh, the sequel - the (2022) Design Refresh -
+        is a community-centered weekly creative art challenge.
       </Paragraph>
 
       <Paragraph>
-        It runs from the <b>1st January 2022</b> to ??? and <b>accepts submissions from all
-        creative media</b>!
+        It runs from the <b>2nd January 2022</b> for <b>16 weeks</b> and accepts submissions from
+        all creative media!
       </Paragraph>
 
       <Paragraph>
         Many creators work to create submissions according to a theme every week. At the end of
-        each week, <b>a showcase by CindryTuna (AKA FiveClawD)</b> will broadcast live on
-        Twitch for the community to enjoy.
+        each week at <b>12pm on Saturday Australia/Melbourne time</b>, a showcase by CindryTuna
+        (AKA FiveClawD) will broadcast live on Twitch for the community to enjoy.
       </Paragraph>
 
       <Paragraph>

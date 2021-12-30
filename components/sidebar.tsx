@@ -6,15 +6,7 @@
  */
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faDiscord, faTwitch} from "@fortawesome/free-brands-svg-icons";
-import {
-  faBars,
-  faBug,
-  faClock,
-  faCode,
-  faLink,
-  faTimes,
-  faUser
-} from "@fortawesome/free-solid-svg-icons";
+import {faBars, faClock, faLink, faTimes, faUser} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useState} from "react";
 import {getMeta} from "../utils/connectors";
@@ -39,7 +31,11 @@ const Sidebar = (): JSX.Element => {
       </a>
 
       <a href="#" className={"px-4 pt-4 pb-16 hidden lg:block"}>
-        <img src={"/logo/full_logo.png"} alt={"The site's logo on the sidebar."} />
+        <img
+          src={"/logo/full_logo.png"}
+          alt={"The site's logo on the sidebar."}
+          className={"w-1/2"}
+        />
       </a>
     </>
   );
@@ -48,7 +44,7 @@ const Sidebar = (): JSX.Element => {
 
   const burgerHeader = (
     <div className={
-      "flex-shrink-0 px-4 py-4 flex flex-row items-center justify-between lg:hidden z-10"
+      "flex-shrink-0 px-4 py-4 flex flex-row items-center justify-between lg:hidden z-50"
     }>
       {logo}
 
@@ -61,7 +57,7 @@ const Sidebar = (): JSX.Element => {
   // Handle authentication views.
 
   const {
-    user, isLoading, isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently
+    user, isLoading, isAuthenticated, loginWithRedirect, logout
   }: Auth0ContextInterface = useAuth0();
 
   const loading = <SidebarLink title={"Loading..."} />;
@@ -69,16 +65,11 @@ const Sidebar = (): JSX.Element => {
     <>
       <SidebarLink location={"#"} clickBack={logout} title={"Logout"} strong />
       <SidebarLink
-        location={`/artist/${user?.name}`}
+        location={`/artists/${user?.name}`}
         title={user?.name || "ERROR"}
         icon={<FontAwesomeIcon icon={faUser} />}
         nextLink
       />
-
-      <a
-        href={"#"}
-        onClick={() => getAccessTokenSilently().then(token => getMeta(token))}
-      >Fetch</a>
 
       <div className={"my-5"} />
 
@@ -165,14 +156,6 @@ const Sidebar = (): JSX.Element => {
               <SquareLink
                 location={"https://discord.gg/NuUB469UXM"}
                 icon={<FontAwesomeIcon icon={faDiscord} />}
-              />
-              <SquareLink
-                location={"https://github.com/teaminkling/refresh-22"}
-                icon={<FontAwesomeIcon icon={faCode} />}
-              />
-              <SquareLink
-                location={"https://github.com/teaminkling/refresh-22/issues/new"}
-                icon={<FontAwesomeIcon icon={faBug} />}
               />
             </div>
 
