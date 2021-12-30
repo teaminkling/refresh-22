@@ -2,14 +2,14 @@
  * Define HTTP entry points for this API worker.
  */
 
-import IORedis from "ioredis";
 import Redis from "ioredis";
 import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} from "jose";
 import {GetKeyFunction} from "jose/dist/types/types";
 import Redlock from "redlock";
 import {CORS_HEADERS} from "./constants/http";
 import {REDIS_URI} from "./constants/kv";
-import {getMeta, putArtist, putWeeks} from "./services/meta";
+import {getArtists, putArtist} from "./services/artists";
+import {getWeeks, putWeeks} from "./services/weeks";
 import {getWork, getWorks, postUpload, putWork} from "./services/works";
 import {createNotFoundResponse} from "./utils/http";
 
@@ -34,41 +34,34 @@ const handleRequest = async (
   authKv: KVNamespace,
   identifier: string | null,
 ): Promise<Response> => {
-  if (method === "get") {
-    if (routine === "meta") {
-      return getMeta(kv, authKv, identifier);
-    } else if (routine === "works") {
+  const redisUri: string | null = await authKv.get(REDIS_URI);
+  if (!redisUri) {
+    throw new Error("No Redis URI has been set up.");
+  }
+
+  const redisClient = new Redis(redisUri);
+
+  // The Redis client uses Redlock to obtain distributed locks.
+
+  const redlock: Redlock = new Redlock([redisClient]);
+
+  switch (`${method.toLowerCase()}/${routine.toLowerCase()}`) {
+    case ("get/weeks"):
+      return getWeeks(kv, authKv, identifier);
+    case ("get/artists"):
+      return getArtists(kv);
+    case ("get/works"):
       return getWorks(params, kv, authKv, identifier);
-    } else if (routine === "work") {
+    case ("get/work"):
       return getWork(params, request, kv);
-    }
-  } else if (method === "put") {
-    if (routine === "weeks") {
+    case ("put/weeks"):
       return putWeeks(request, kv, authKv, identifier);
-    } else if (routine === "artist") {
-      return putArtist(request, kv, authKv, identifier);
-    } else if (routine === "work") {
-      // A Redis client is needed since this endpoint is the only one that requires protection
-      // from race conditions. The information from Redis is immediately read and copied back to
-      // Cloudflare KV.
-
-      const redisUri: string | null = await authKv.get(REDIS_URI);
-      if (!redisUri) {
-        throw new Error("No Redis URI has been set up.");
-      }
-
-      const redisClient: IORedis.Redis = new Redis(redisUri);
-
-      // The Redis client uses Redlock to obtain distributed locks.
-
-      const redlock: Redlock = new Redlock([redisClient]);
-
+    case ("put/artist"):
+      return putArtist(request, redisClient, redlock, kv, authKv, identifier);
+    case ("put/work"):
       return putWork(request, redisClient, redlock, kv, authKv, identifier);
-    }
-  } else if (method === "post") {
-    if (routine === "upload") {
+    case ("post/upload"):
       return postUpload(params, request, kv);
-    }
   }
 
   return createNotFoundResponse();

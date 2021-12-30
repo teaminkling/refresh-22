@@ -34,9 +34,18 @@ export const WORKS_WITH_ID_INDEX = "works/by-id";
 export const WORKS_WITHOUT_INDEX = "works/all";
 
 /**
- * A key for the meta-information map. See the `Meta` type for more information.
+ * A key for the weeks map.
+ *
+ * E.g., `weeks/2022` returns the info for 2022.
  */
-export const META = "meta";
+export const WEEKS = "weeks";
+
+/**
+ * A key for the artists map.
+ *
+ * E.g., `artists/2022` returns the artists in 2022.
+ */
+export const ARTISTS = "artists";
 
 // AUTH KV.
 

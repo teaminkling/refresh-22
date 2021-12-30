@@ -9,21 +9,19 @@ export default interface Artist {
   discordId: string;
 
   /**
-   * The image URL for the user retrieved from the Auth0 integration.
-   */
-  discordImageUrl: string;
-
-  /**
    * The name of the artist as a trimmed UTF-8 string.
+   *
+   * Can be edited by the user at any time (within the rate limit, of course). It won't appear
+   * for all users until the frontend syncs with the backend.
    */
   name: string;
 
   /**
-   * The works of this artist by ID.
+   * The URL of the profile image.
    *
-   * Further lookup is required for more details.
+   * Should exclusively be fetched from Discord.
    */
-  workIds: string[];
+  thumbnailUrl: string;
 
   /**
    * All of the socials for the artist in a deterministic order.
