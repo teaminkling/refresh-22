@@ -217,6 +217,9 @@ export const putWork = async (
   // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
 
   const response = await updateWorkIndices(redisClient, redlock, input, identifier, authKv);
+  if (!input.thumbnailUrl) {
+    // TODO
+  }
 
   // Update the KV store with what we placed in Redis.
 
