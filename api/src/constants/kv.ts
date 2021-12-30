@@ -36,6 +36,9 @@ export const WORKS_WITHOUT_INDEX = "works/all";
 /**
  * A key for the weeks map.
  *
+ * Unlike artists, this is always retrieved as an aggregate as it must always be consistent with
+ * one author and can be easily consolidated.
+ *
  * E.g., `weeks/2022` returns the info for 2022.
  */
 export const WEEKS = "weeks";
@@ -43,7 +46,7 @@ export const WEEKS = "weeks";
 /**
  * A key for the artists map.
  *
- * E.g., `artists/2022` returns the artists in 2022.
+ * E.g., `artists/2022` returns the artists in 2022. `artists/123...890` is for a single artist.
  */
 export const ARTISTS = "artists";
 
@@ -69,8 +72,3 @@ export const DISCORD_SUBMISSIONS_WEBHOOK = "discord-submissions-webhook";
  * This must not end with a slash when retrieved.
  */
 export const DISCORD_WEEKS_WEBHOOK = "discord-weeks-webhook";
-
-/**
- * The key for the Redis (Upstash) URI.
- */
-export const REDIS_URI = "redis-uri";

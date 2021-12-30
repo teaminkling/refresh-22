@@ -1,5 +1,3 @@
-import {Redis} from "ioredis";
-import Redlock from "redlock";
 import {ACTIVE_YEAR, LAST_ACTIVE_WEEK} from "../../../data/constants/setup";
 import Work from "../../../data/core/Work";
 import {
@@ -113,58 +111,55 @@ export const getWork = async (
 /**
  * Perform the work for the {@link putWork} function.
  *
- * @param {Redis} redisClient the Redis client
- * @param {Redlock} redlock the Redis distributed lock client
- * @param {Work} work the work
- * @param {string} identifier the identifier of the calling user
+ * @param {KVNamespace} kv the main key-value store
  * @param {KVNamespace} authKv the auth key-value store
+ * @param {string} identifier the identifier of the calling user
+ * @param {Work} work the work
  * @returns {Promise<Response>} the response
  */
 const updateWorkIndices = async (
-  redisClient: Redis, redlock: Redlock, work: Work, identifier: string, authKv: KVNamespace
-): Promise<Response> => redlock.using(
-  ["adding_work"], 5000, async () => {
-    // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
+  kv: KVNamespace, authKv: KVNamespace, identifier: string, work: Work,
+): Promise<Response> => {
+  // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
 
-    const rawBackendWork: string | null = await redisClient.get(
-      `${WORKS_WITH_ID_INDEX}/${work.id}`
-    );
-    const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
+  const rawBackendWork: string | null = await kv.get(
+    `${WORKS_WITH_ID_INDEX}/${work.id}`
+  );
+  const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
 
-    // Verify poster is either the same as the one in the work or is a staff member.
+  // Verify poster is either the same as the one in the work or is a staff member.
 
-    const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
-    if (!isStaff || work.artistId !== identifier) {
-      return createNotFoundResponse();
-    }
-
-    // Determine the work ID.
-
-    let effectiveId: string = work.id;
-    if (!backendWork) {
-      // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
-      // client is valid, the ID will be some kind of random string.
-
-      const newId: string = await determineShortId(work.artistId, work.urls);
-
-      // This isn't very robust, but we don't ever expect anything to ever collide.
-
-      if (await redisClient.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
-        throw new Error("Collision error! This requires developer intervention.");
-      }
-
-      effectiveId = newId;
-    }
-
-    // Important: all our validations are for nothing if we don't make sure we re-set this ID.
-
-    work.id = effectiveId;
-
-    await placeWork(redisClient, work);
-
-    return createJsonResponse();
+  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  if (!isStaff || work.artistId !== identifier) {
+    return createNotFoundResponse();
   }
-);
+
+  // Determine the work ID.
+
+  let effectiveId: string = work.id;
+  if (!backendWork) {
+    // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
+    // client is valid, the ID will be some kind of random string.
+
+    const newId: string = await determineShortId(work.artistId, work.urls);
+
+    // This isn't very robust, but we don't ever expect anything to ever collide.
+
+    if (await kv.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
+      throw new Error("Collision error! This requires developer intervention.");
+    }
+
+    effectiveId = newId;
+  }
+
+  // Important: all our validations are for nothing if we don't make sure we re-set this ID.
+
+  work.id = effectiveId;
+
+  await placeWork(kv, work);
+
+  return createJsonResponse();
+};
 
 /**
  * Create or update a post in the database.
@@ -176,8 +171,6 @@ const updateWorkIndices = async (
  * edits per minute. We are not concerned about race conditions.
  *
  * @param {Request} request the request
- * @param {Redis} redisClient the Redis client
- * @param {Redlock} redlock the Redis distributed lock client
  * @param {KVNamespace} kv the main key-value store
  * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
@@ -185,8 +178,6 @@ const updateWorkIndices = async (
  */
 export const putWork = async (
   request: Request,
-  redisClient: Redis,
-  redlock: Redlock,
   kv: KVNamespace,
   authKv: KVNamespace,
   identifier: string | null,
@@ -214,18 +205,19 @@ export const putWork = async (
     );
   }
 
-  // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
+  // Generate the thumbnail for this post if it's not explicitly provided.
 
-  const response = await updateWorkIndices(redisClient, redlock, input, identifier, authKv);
   if (!input.thumbnailUrl) {
     // TODO
   }
 
-  // Update the KV store with what we placed in Redis.
+  // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
 
-  await placeWork(redisClient, input, kv);
+  const response = await updateWorkIndices(kv, authKv, identifier, input);
 
   // Edit the Discord post for this work (can fail without 500).
+
+  console.log("shut up, sonar");
 
   // TODO
 

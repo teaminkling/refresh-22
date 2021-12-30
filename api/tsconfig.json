@@ -31,6 +31,10 @@
     "sourceMap": true,
     "inlineSources": true
   },
+  "exclude": [
+    "node_modules",
+    "typings"
+  ],
   "include": [
     "src"
   ]

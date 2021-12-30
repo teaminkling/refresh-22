@@ -2,12 +2,9 @@
  * Define HTTP entry points for this API worker.
  */
 
-import Redis from "ioredis";
 import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} from "jose";
 import {GetKeyFunction} from "jose/dist/types/types";
-import Redlock from "redlock";
 import {CORS_HEADERS} from "./constants/http";
-import {REDIS_URI} from "./constants/kv";
 import {getArtists, putArtist} from "./services/artists";
 import {getWeeks, putWeeks} from "./services/weeks";
 import {getWork, getWorks, postUpload, putWork} from "./services/works";
@@ -34,17 +31,6 @@ const handleRequest = async (
   authKv: KVNamespace,
   identifier: string | null,
 ): Promise<Response> => {
-  const redisUri: string | null = await authKv.get(REDIS_URI);
-  if (!redisUri) {
-    throw new Error("No Redis URI has been set up.");
-  }
-
-  const redisClient = new Redis(redisUri);
-
-  // The Redis client uses Redlock to obtain distributed locks.
-
-  const redlock: Redlock = new Redlock([redisClient]);
-
   switch (`${method.toLowerCase()}/${routine.toLowerCase()}`) {
     case ("get/weeks"):
       return getWeeks(kv, authKv, identifier);
@@ -57,9 +43,9 @@ const handleRequest = async (
     case ("put/weeks"):
       return putWeeks(request, kv, authKv, identifier);
     case ("put/artist"):
-      return putArtist(request, redisClient, redlock, kv, authKv, identifier);
+      return putArtist(request, kv, authKv, identifier);
     case ("put/work"):
-      return putWork(request, redisClient, redlock, kv, authKv, identifier);
+      return putWork(request, kv, authKv, identifier);
     case ("post/upload"):
       return postUpload(params, request, kv);
   }
