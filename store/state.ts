@@ -5,6 +5,16 @@
 import Artist from "../data/core/Artist";
 import Week from "../data/core/Week";
 import Work from "../data/core/Work";
+import {Filter, Sort} from "./enums";
+
+/**
+ * The default root state interface.
+ *
+ * This is exclusively used to type the reducer combiner.
+ */
+export interface RootState {
+  artistsData: ArtistState;
+}
 
 /**
  * A wrapper that includes a timestamp.
@@ -28,9 +38,15 @@ interface DateWrapper<T> {
  * link to pages as long as the sort isn't random!
  */
 export interface GalleryState {
-  galleryLastFilter: string; // FIXME: enum
+  /**
+   * The filter to use to overwrite the URL query string.
+   */
+  galleryLastFilter: Filter;
 
-  galleryLastSort: string; // FIXME: enum
+  /**
+   * The sort to use to overwrite the URL query string.
+   */
+  galleryLastSort: Sort;
 }
 
 /**
@@ -53,13 +69,6 @@ export interface WeekState {
  */
 export interface ArtistState {
   /**
-   * Whether the backend is aware of the currently signed on user.
-   *
-   * If the user is not signed on, this is `false`.
-   */
-  accountExists: boolean;
-
-  /**
    * A map of artist IDs to the artist objects.
    *
    * This map is used to translate IDs into usernames.
@@ -69,7 +78,7 @@ export interface ArtistState {
   /**
    * The last time the artist map was updated.
    */
-  artistsLastRetrieved: Date;
+  artistsLastRetrieved: Date | null;
 }
 
 /**

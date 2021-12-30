@@ -4,63 +4,49 @@
  * This file will not need to be edited frequently, if at all.
  */
 
-import {useMemo} from "react";
-import {applyMiddleware, createStore, Store} from "redux";
+import {createWrapper} from "next-redux-wrapper";
+import {applyMiddleware, createStore, Reducer, Store} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
+import {persistReducer} from "redux-persist";
 import thunkMiddleware from "redux-thunk";
 import reducers from "./reducers";
-
-let store: Store | undefined;
+import storage from "./storage";
 
 /**
  * Initialize the Redux store given all of the reducers defined externally.
  *
- * @param initialState the initial state
- * @returns the Redux Store with Thunk middleware enabled
+ * @param {Reducer} reducer the reducer
+ * @returns {Store} the Redux Store with Thunk middleware enabled
  */
-const _createStore = (initialState: Record<string, unknown>): Store => createStore(
-  reducers, initialState, composeWithDevTools(applyMiddleware(thunkMiddleware)),
-);
+const _createStore = (reducer: Reducer): Store => {
+  let middleware;
+
+  if (process.env.NODE_ENV !== "production") {
+    middleware = composeWithDevTools(applyMiddleware(thunkMiddleware));
+  } else {
+    middleware = applyMiddleware(thunkMiddleware);
+  }
+
+  return createStore(reducer, middleware);
+};
 
 /**
  * Given a page with initial Redux state, on navigation, merge with current store state.
  *
- * @param preloadedState the preloaded state
  * @returns a {@link Store}
  */
-const _useStore = (preloadedState: Record<string, unknown>): Store => {
-  let _store: Store = store ?? _createStore(preloadedState);
+const useStore = (): Store => {
+  // There are two different types of reducer: a regular one (server) and one that persists to
+  // storage. Determine which is needed as this code will run on both backend and frontend.
 
-  // After navigating to a page with an initial Redux state, merge that state with the current
-  // state in the store, and create a new store.
-
-  if (preloadedState && store) {
-    _store = _createStore({...store.getState(), ...preloadedState});
-
-    // Reset the current store while we are setting the new store.
-
-    store = undefined;
+  let reducer: Reducer = reducers;
+  if (typeof window !== "undefined") {
+    reducer = persistReducer({
+      key: "refresh-22", storage: storage, blacklist: [], timeout: 8,
+    }, reducers);
   }
 
-  // For SSG and SSR always create a new store.
-
-  if (typeof window === "undefined") {
-    return _store;
-  }
-
-  if (!store) {
-    store = _store;
-  }
-
-  return _store;
+  return _createStore(reducer);
 };
 
-/**
- * Use a store using a memoizer.
- *
- * @param initialState the initial state
- * @returns the {@link Store}
- */
-export const useStore = (initialState: Record<string, unknown>): Store => useMemo(
-  () => _useStore(initialState), [initialState]
-);
+export const wrapper = createWrapper(useStore);

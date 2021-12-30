@@ -1,8 +1,13 @@
 import {Auth0Provider} from "@auth0/auth0-react";
 import type {AppProps} from "next/app";
-import {Provider} from "react-redux";
+import {FC} from "react";
+import {useStore} from "react-redux";
+import {Store} from "redux";
+import {persistStore} from "redux-persist";
+import {PersistGate} from "redux-persist/integration/react";
 import Sidebar from "../components/sidebar";
-import {useStore} from "../store/store";
+import StaticPage, {Header, Paragraph} from "../components/typography";
+import {wrapper} from "../store/store";
 import "../styles/globals.css";
 
 /**
@@ -13,10 +18,8 @@ import "../styles/globals.css";
  * @returns {JSX.Element} the {@link JSX.Element}
  * @constructor
  */
-const App = ({Component, pageProps}: AppProps): JSX.Element => {
-  const store = useStore(pageProps.initialReduxState);
-
-  // TODO: move to .env files for this.
+const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
+  const store: Store = useStore();
 
   return (
     <Auth0Provider
@@ -25,21 +28,26 @@ const App = ({Component, pageProps}: AppProps): JSX.Element => {
       redirectUri={"http://localhost:3000"}
       audience={"https://refresh.fiveclawd.com/api/"}
     >
-      <Provider store={store}>
-        <div className={"lg:flex lg:flex-row"}>
-          {/* Create a sticky sidebar: */}
+      <div className={"lg:flex lg:flex-row"}>
+        {/* Create a sticky sidebar: */}
 
-          <aside className={"lg:h-screen sticky top-0"}>
-            <Sidebar />
-          </aside>
+        <aside className={"lg:h-screen sticky top-0"}>
+          <Sidebar />
+        </aside>
 
-          <div className={"flex-col w-full"}>
+        <div className={"flex-col w-full"}>
+          <PersistGate loading={
+            <StaticPage>
+              <Header>Loading...</Header>
+              <Paragraph>Please wait...</Paragraph>
+            </StaticPage>
+          } persistor={persistStore(store)}>
             <Component {...pageProps} />
-          </div>
+          </PersistGate>
         </div>
-      </Provider>
+      </div>
     </Auth0Provider>
   );
 };
 
-export default App;
+export default wrapper.withRedux(WrappedApp);

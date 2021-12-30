@@ -1,34 +1,45 @@
+import {AnyAction} from "redux";
+import {ThunkDispatch} from "redux-thunk";
+import Artist from "../data/core/Artist";
+import {addArtists} from "../store/actions";
+import {ArtistState, RootState} from "../store/state";
+
 /**
- * Utils for dealing with the API.
+ * Utils around connecting with the backend.
  */
 
-import Meta from "../data/composite/Meta";
-
 /**
- * The domain used for the API calls.
+ * Fetch the artists entirely if they haven't been fetched in a while.
  *
- * Will always fallback to production if the development environment variable is not set.
+ * @param {ThunkDispatch<RootState, never, AnyAction>} dispatch the dispatch
+ * @param {ArtistState} artistsData the artists data
+ * @param {boolean} force whether to force a backend refresh
  */
-const API_DOMAIN: string = (
-  (process.env.NODE_ENV === "development")
-    ? "http://localhost:8787/api" : "https://refresh.fiveclawd.com/api"
-);
+export const updateArtists = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  artistsData: ArtistState,
+  force?: boolean,
+): void => {
+  const timeSinceLastFetch: number | null = artistsData.artistsLastRetrieved ? (
+    new Date().valueOf() - artistsData.artistsLastRetrieved.valueOf()
+  ) : null;
 
-/**
- * Retrieve the meta-information from the backend.
- *
- * @param {string} token the access token
- * @returns {Promise<Meta>} the meta-information
- */
-export const getMeta = async (token: string): Promise<Meta> => {
-  const url = `${API_DOMAIN}/meta`;
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  console.log(timeSinceLastFetch);
 
-  console.log(response);
+  if (force || !timeSinceLastFetch || timeSinceLastFetch > 1000 * 60 * 60 * 24) {
+    console.log("fetching");
 
-  return response.json();
+    fetch(
+      "http://127.0.0.1:8787/api/artists",
+      {
+        headers: {"Content-Type": "application/json"},
+      }
+    ).then(
+      (response: Response) => response.json().then(
+        (data: Record<string, Artist>) => {
+          dispatch(addArtists(Object.values(data)));
+        }
+      )
+    );
+  }
 };

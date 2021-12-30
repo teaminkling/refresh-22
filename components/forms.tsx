@@ -60,7 +60,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
         className={
           "shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight"
         }
-        value={props.initialValue}
+        defaultValue={props.initialValue}
       />
     </>
   );
@@ -121,9 +121,8 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
         className={
           "shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight"
         }
-      >
-        {props.initialValue}
-      </textarea>
+        defaultValue={props.initialValue}
+      />
     </>
   );
 };

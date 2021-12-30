@@ -1,4 +1,5 @@
 import {useRouter} from "next/router";
+import StaticPage, {Header} from "../../components/typography";
 
 const Artist = () => {
   const router = useRouter();
@@ -7,7 +8,11 @@ const Artist = () => {
   // First, we need to check that the artist actually exists.
 
   return (
-    <p>Artist: {id}</p>
+    <StaticPage>
+      <Header>
+        {id}
+      </Header>
+    </StaticPage>
   );
 };
 
