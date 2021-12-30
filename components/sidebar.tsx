@@ -89,8 +89,8 @@ const Sidebar = (): JSX.Element => {
     <>
       <SidebarLink location={"#"} clickBack={logout} title={"Logout"} strong />
       <SidebarLink
-        location={`/artists/${user?.name}`}
-        title={user?.name || "ERROR"}
+        location={"/me"}
+        title={user?.name || "Error"}
         icon={<FontAwesomeIcon icon={faUser} />}
         nextLink
       />
