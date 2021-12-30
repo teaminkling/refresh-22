@@ -33,7 +33,7 @@ const artistsReducer: Reducer<ArtistState, AddArtistsAction> = (
           artist.discordId, {data: artist, timestamp: new Date()}
         ])
       ),
-      artistsLastRetrieved: new Date(),
+      artistsLastRetrieved: new Date().toISOString(),
     };
   }
 

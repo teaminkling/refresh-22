@@ -1,12 +1,12 @@
+/**
+ * Utils around connecting with the backend.
+ */
+
 import {AnyAction} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import Artist from "../data/core/Artist";
 import {addArtists} from "../store/actions";
 import {ArtistState, RootState} from "../store/state";
-
-/**
- * Utils around connecting with the backend.
- */
 
 /**
  * Fetch the artists entirely if they haven't been fetched in a while.
@@ -21,14 +21,10 @@ export const updateArtists = (
   force?: boolean,
 ): void => {
   const timeSinceLastFetch: number | null = artistsData.artistsLastRetrieved ? (
-    new Date().valueOf() - artistsData.artistsLastRetrieved.valueOf()
+    new Date().valueOf() - new Date(artistsData.artistsLastRetrieved).valueOf()
   ) : null;
 
-  console.log(timeSinceLastFetch);
-
   if (force || !timeSinceLastFetch || timeSinceLastFetch > 1000 * 60 * 60 * 24) {
-    console.log("fetching");
-
     fetch(
       "http://127.0.0.1:8787/api/artists",
       {

@@ -78,7 +78,7 @@ export interface ArtistState {
   /**
    * The last time the artist map was updated.
    */
-  artistsLastRetrieved: Date | null;
+  artistsLastRetrieved: string | null;
 }
 
 /**
