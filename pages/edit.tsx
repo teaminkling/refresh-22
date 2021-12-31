@@ -14,13 +14,13 @@ import StaticPage, {
 } from "../components/typography";
 import Artist from "../data/core/Artist";
 import {addArtists} from "../store/actions";
-import {ArtistState, RootState} from "../store/state";
+import {ArtistsState, RootState} from "../store/state";
 import {updateArtists} from "../utils/connectors";
 
 /**
  * Send a request to the backend and save it locally if it succeeds.
  *
- * @param {ArtistState} artistsData the original artist state as it is known in the client
+ * @param {ArtistsState} artistsData the original artist state as it is known in the client
  * @param {ThunkDispatch} dispatch the dispatch
  * @param {string} token the auth token
  * @param {string} discordId the discord ID
@@ -29,7 +29,7 @@ import {updateArtists} from "../utils/connectors";
  * @param {string[]} socials the socials
  */
 const sendArtistUpdateRequest = async (
-  artistsData: ArtistState,
+  artistsData: ArtistsState,
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   token: string,
   discordId: string,
@@ -67,13 +67,9 @@ const sendArtistUpdateRequest = async (
   );
 
   if (response.ok) {
-    artistsData.artists[discordId] = {data: data, timestamp: new Date()};
+    artistsData.artists[discordId] = data;
 
-    const artists: Artist[] = Object.values(artistsData.artists).map(
-      wrapped => wrapped.data
-    );
-
-    dispatch(addArtists(artists));
+    dispatch(addArtists(artistsData.artists));
 
     alert("Done! Please check back in 24 hours.");
   } else {
@@ -90,7 +86,7 @@ const sendArtistUpdateRequest = async (
  * @returns {JSX.Element} the element
  * @constructor
  */
-const Me = (): JSX.Element => {
+const Edit = (): JSX.Element => {
   const {
     user, isLoading, isAuthenticated, getAccessTokenSilently,
   }: Auth0ContextInterface = useAuth0();
@@ -108,7 +104,7 @@ const Me = (): JSX.Element => {
   // Handle the artist cache.
 
   const dispatch = useDispatch();
-  const artistsData: ArtistState = useSelector(
+  const artistsData: ArtistsState = useSelector(
     (state: RootState) => state.artistsData,
   );
 
@@ -133,8 +129,8 @@ const Me = (): JSX.Element => {
     const idParts: string[] = user?.sub?.split("|") || [];
     const id: string = idParts ? idParts[idParts.length - 1] : "Unknown";
 
-    existingUsername.current = artistsData.artists[id]?.data.name || user?.name || "Unknown";
-    existingSocials.current = artistsData.artists[id]?.data.socials || [];
+    existingUsername.current = artistsData.artists[id]?.name || user?.name || "Unknown";
+    existingSocials.current = artistsData.artists[id]?.socials || [];
 
     const thumbnailUrl: string = (
       user?.picture || `https://placem.at/things?w=512&h=512&random=${id}`
@@ -160,7 +156,7 @@ const Me = (): JSX.Element => {
 
         <InterfaceLink
           title={"Switch to Public Profile"}
-          location={`/artists/${existingUsername.current}`}
+          location={`/artists?name=${existingUsername.current}`}
           nextLink
         />
 
@@ -236,4 +232,4 @@ const Me = (): JSX.Element => {
   );
 };
 
-export default Me;
+export default Edit;

@@ -2,40 +2,75 @@
  * Utils around connecting with the backend.
  */
 
-import {AnyAction} from "redux";
+import {AnyAction, Dispatch} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import Artist from "../data/core/Artist";
-import {addArtists} from "../store/actions";
-import {ArtistState, RootState} from "../store/state";
+import Week from "../data/core/Week";
+import {addArtists, addWeeks} from "../store/actions";
+import {ArtistsState, RootState, WeeksState} from "../store/state";
 
 /**
- * Fetch the artists entirely if they haven't been fetched in a while.
+ * Perform a generic PUT request to the backend for aggregate types.
  *
+ * @param {string} endpoint the endpoint path with a slash at the start
  * @param {ThunkDispatch<RootState, never, AnyAction>} dispatch the dispatch
- * @param {ArtistState} artistsData the artists data
+ * @param {CallableFunction} action the action used with the dispatch
+ * @param {Record<string, string>} data the state
+ * @param {Date | null} lastRetrieved the last retrieval date
  * @param {boolean} force whether to force a backend refresh
  */
-export const updateArtists = (
+const updateGeneric = <T, R>(
+  endpoint: string,
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
-  artistsData: ArtistState,
+  action: (data: R) => (dispatch: Dispatch) => void,
+  data: T,
+  lastRetrieved: string | null,
   force?: boolean,
-): void => {
-  const timeSinceLastFetch: number | null = artistsData.artistsLastRetrieved ? (
-    new Date().valueOf() - new Date(artistsData.artistsLastRetrieved).valueOf()
+) => {
+  const timeSinceLastFetch: number | null = lastRetrieved ? (
+    new Date().valueOf() - new Date(lastRetrieved).valueOf()
   ) : null;
 
   if (force || !timeSinceLastFetch || timeSinceLastFetch > 1000 * 60 * 60 * 24) {
     fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/artists`,
+      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}${endpoint}`,
       {
         headers: {"Content-Type": "application/json"},
       }
     ).then(
       (response: Response) => response.json().then(
-        (data: Record<string, Artist>) => {
-          dispatch(addArtists(Object.values(data)));
-        }
+        (_data: R) => dispatch(action(_data))
       )
     );
   }
+};
+
+export const updateArtists = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  artistsData: ArtistsState,
+  force?: boolean,
+): void => {
+  return updateGeneric<ArtistsState, Record<string, Artist>>(
+    "/api/artists",
+    dispatch,
+    addArtists,
+    artistsData,
+    artistsData.artistsLastRetrieved,
+    force,
+  );
+};
+
+export const updateWeeks = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  weeksData: WeeksState,
+  force?: boolean,
+): void => {
+  return updateGeneric<WeeksState, Record<string, Week>>(
+    "/api/weeks",
+    dispatch,
+    addWeeks,
+    weeksData,
+    weeksData.weeksLastRetrieved,
+    force,
+  );
 };

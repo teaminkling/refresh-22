@@ -17,7 +17,7 @@ export const getArtists = async (kv: KVNamespace, origin?: string): Promise<Resp
     (await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
   );
 
-  return createJsonResponse(JSON.stringify(Object.values(artists)), origin);
+  return createJsonResponse(JSON.stringify(artists), origin);
 };
 
 /**

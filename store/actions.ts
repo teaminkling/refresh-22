@@ -40,7 +40,7 @@ const changeGallerySettingsSync = (sort: Sort, filter: Filter): ChangeGallerySet
  * @returns {CallableFunction} the thunk action creator
  */
 export const changeGallerySettings = (
-  sort: Sort, filter: Filter
+  sort: Sort, filter: Filter,
 ) => (dispatch: Dispatch): void => {
   dispatch(changeGallerySettingsSync(sort, filter));
 };
@@ -49,10 +49,10 @@ export const changeGallerySettings = (
  * (An) artist(s) is/are added to the frontend cache.
  */
 export interface AddArtistsAction extends Action {
-  artists: Artist[];
+  artists: Record<string, Artist>;
 }
 
-const addArtistsSync = (artists: Artist[]): AddArtistsAction => {
+const addArtistsSync = (artists: Record<string, Artist>): AddArtistsAction => {
   return {
     type: ADD_ARTISTS_TYPE,
     artists: artists,
@@ -62,10 +62,10 @@ const addArtistsSync = (artists: Artist[]): AddArtistsAction => {
 /**
  * Add artists to the cache.
  *
- * @param {Artist[]} artists the artists
+ * @param {Record<string, Artist>} artists the artists
  * @returns {CallableFunction} the thunk action creator
  */
-export const addArtists = (artists: Artist[]) => (dispatch: Dispatch): void => {
+export const addArtists = (artists: Record<string, Artist>) => (dispatch: Dispatch): void => {
   dispatch(addArtistsSync(artists));
 };
 
@@ -75,10 +75,10 @@ export const addArtists = (artists: Artist[]) => (dispatch: Dispatch): void => {
  * This is always called with all weeks even if only one is required.
  */
 export interface AddWeeksAction extends Action {
-  weeks: Week[];
+  weeks: Record<string, Week>;
 }
 
-const addAWeeksSync = (weeks: Week[]): AddWeeksAction => {
+const addAWeeksSync = (weeks: Record<string, Week>): AddWeeksAction => {
   return {
     type: ADD_WEEKS_TYPE,
     weeks: weeks,
@@ -88,10 +88,10 @@ const addAWeeksSync = (weeks: Week[]): AddWeeksAction => {
 /**
  * Add weeks to the cache.
  *
- * @param {Week[]} weeks the weeks
+ * @param {Record<string, Week>} weeks the weeks
  * @returns {CallableFunction} the thunk action creator
  */
-export const addWeeks = (weeks: Week[]) => (dispatch: Dispatch): void => {
+export const addWeeks = (weeks: Record<string, Week>) => (dispatch: Dispatch): void => {
   dispatch(addAWeeksSync(weeks));
 };
 
@@ -102,11 +102,11 @@ export const addWeeks = (weeks: Week[]) => (dispatch: Dispatch): void => {
  * depending on what is called.
  */
 export interface AddWorksAction extends Action {
-  works: Work[];
+  works: Record<string, Work>;
   source: WorkSource;
 }
 
-const addWorksSync = (works: Work[], source: WorkSource): AddWorksAction => {
+const addWorksSync = (works: Record<string, Work>, source: WorkSource): AddWorksAction => {
   return {
     type: ADD_WORKS_TYPE,
     works: works,
@@ -117,10 +117,12 @@ const addWorksSync = (works: Work[], source: WorkSource): AddWorksAction => {
 /**
  * Add artists to the cache.
  *
- * @param {Work[]} works the works
+ * @param {Record<string, Work>} works the works
  * @param {WorkSource} source the source of the works request
  * @returns {CallableFunction} the thunk action creator
  */
-export const addWorks = (works: Work[], source: WorkSource) => (dispatch: Dispatch): void => {
+export const addWorks = (
+  works: Record<string, Work>, source: WorkSource,
+) => (dispatch: Dispatch): void => {
   dispatch(addWorksSync(works, source));
 };

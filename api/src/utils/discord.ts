@@ -8,7 +8,6 @@ import {DISCORD_SUBMISSIONS_WEBHOOK} from "../constants/kv";
 export const postOrEditDiscordPost = async (
   authKv: KVNamespace,
   work: Work,
-  jwt: string,
 ): Promise<string | null> => {
   // Retrieve webhook.
 

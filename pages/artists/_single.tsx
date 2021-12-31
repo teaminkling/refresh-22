@@ -7,7 +7,7 @@ import {Dispatch} from "redux";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
 import Artist from "../../data/core/Artist";
-import {ArtistState, RootState} from "../../store/state";
+import {ArtistsState, RootState} from "../../store/state";
 import {updateArtists} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 
@@ -33,7 +33,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
   const _userParts: string[] = user?.sub?.split("|") || [];
   const idFromAuth0: string = _userParts.length > 0 ? _userParts[_userParts.length - 1] : "";
 
-  const artistsData: ArtistState = useSelector(
+  const artistsData: ArtistsState = useSelector(
     (state: RootState) => state.artistsData,
   );
 
@@ -81,7 +81,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
   } else {
     // User was found.
 
-    const artist: Artist = artistsData.artists[discordId].data;
+    const artist: Artist = artistsData.artists[discordId];
 
     const socialsElements: JSX.Element[] = [];
     artist.socials.forEach((socialUrl: string) => {
@@ -124,7 +124,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
           idFromAuth0 === artist.discordId ?
             <>
               <SubHeader>Edit Profile</SubHeader>
-              <InterfaceLink title={"Edit Profile"} location={"/me"} nextLink />
+              <InterfaceLink title={"Edit Profile"} location={"/edit"} nextLink />
             </> : null
         }
 

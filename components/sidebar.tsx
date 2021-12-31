@@ -93,7 +93,7 @@ const Sidebar = (): JSX.Element => {
     <>
       <InterfaceLink location={"#"} clickBack={logout} title={"Logout"} strong />
       <InterfaceLink
-        location={"/me"}
+        location={"/edit"}
         title={user?.name || "Error"}
         icon={<FontAwesomeIcon icon={faUser} />}
         nextLink

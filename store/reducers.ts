@@ -9,33 +9,22 @@
 
 import {combineReducers, Reducer} from "redux";
 import Artist from "../data/core/Artist";
-import {AddArtistsAction} from "./actions";
-import {ArtistState, RootState} from "./state";
-import {ADD_ARTISTS_TYPE} from "./types";
+import {AddArtistsAction, AddWeeksAction, AddWorksAction} from "./actions";
+import {WorkSource} from "./enums";
+import {ArtistsState, RootState, WeeksState, WorksState} from "./state";
+import {ADD_ARTISTS_TYPE, ADD_WEEKS_TYPE, ADD_WORKS_TYPE} from "./types";
 
-/**
- * A reducer the keeps track of the listener reference.
- *
- * @param {ArtistState} state the current state
- * @param {AddArtistsAction} action the action
- * @returns {ArtistState} the resultant (future) state
- */
-const artistsReducer: Reducer<ArtistState, AddArtistsAction> = (
-  state: ArtistState = {artists: {}, usernameToId: {}, artistsLastRetrieved: null},
-  action: AddArtistsAction = {type: ADD_ARTISTS_TYPE, artists: []},
-): ArtistState => {
+const artistsReducer: Reducer<ArtistsState, AddArtistsAction> = (
+  state: ArtistsState = {artists: {}, usernameToId: {}, artistsLastRetrieved: null},
+  action: AddArtistsAction = {type: ADD_ARTISTS_TYPE, artists: {}},
+): ArtistsState => {
   const type: string = action.type;
-
   if (type === ADD_ARTISTS_TYPE) {
     return {
-      artists: Object.fromEntries(
-        action.artists.map((artist: Artist) => [
-          artist.discordId, {data: artist, timestamp: new Date()}
-        ])
-      ),
+      artists: JSON.parse(JSON.stringify(action.artists)),
       artistsLastRetrieved: new Date().toISOString(),
       usernameToId: Object.fromEntries(
-        action.artists.map((artist: Artist) => [
+        Object.values(action.artists).map((artist: Artist) => [
           artist.name, artist.discordId
         ])
       ),
@@ -45,11 +34,37 @@ const artistsReducer: Reducer<ArtistState, AddArtistsAction> = (
   return state;
 };
 
+const weeksReducer: Reducer<WeeksState, AddWeeksAction> = (
+  state: WeeksState = {weeks: {}, weeksLastRetrieved: null},
+  action: AddWeeksAction = {type: ADD_WEEKS_TYPE, weeks: {}},
+): WeeksState => {
+  const type: string = action.type;
+  if (type === ADD_WEEKS_TYPE) {
+    return {
+      weeks: JSON.parse(JSON.stringify(action.weeks)),
+      weeksLastRetrieved: new Date().toISOString(),
+    };
+  }
+
+  return state;
+};
+
+const worksReducer: Reducer<WorksState, AddWorksAction> = (
+  state: WorksState = {
+    works: {}, worksLastRetrieved: null, artistsToRetrievalDate: {}, weeksToRetrievalDate: {}
+  },
+  action: AddWorksAction = {type: ADD_WORKS_TYPE, works: {}, source: WorkSource.DIRECT},
+): WorksState => {
+  return state;
+};
+
 // Define all of the reducers in the app and then combine them. It is up to contributors to keep
 // track of what the reducer names are as they map directly to the root state object.
 
 export default combineReducers<RootState>(
   {
     artistsData: artistsReducer,
+    weeksData: weeksReducer,
+    worksData: worksReducer,
   }
 );

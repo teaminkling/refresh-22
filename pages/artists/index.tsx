@@ -8,13 +8,11 @@ import SingleArtist from "./_single";
  * @constructor
  */
 const Artists = () => {
-  // Now that we have the artists, if a fetch was required:
-
   const router = useRouter();
   const query: ParsedUrlQuery = router.query;
 
   if (query.name) {
-    return <SingleArtist name={query.name} />;
+    return <SingleArtist name={query.name.toString()} />;
   }
 
   return <AggregateArtists />;

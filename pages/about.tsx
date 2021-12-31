@@ -1,13 +1,6 @@
 import type {NextPage} from "next";
 import Head from "next/head";
-import Link from "next/link";
-import StaticPage, {
-  Header,
-  ListItem,
-  Paragraph,
-  SubHeader,
-  UnorderedList
-} from "../components/typography";
+import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 /**
  * @returns {JSX.Element} the element
@@ -25,52 +18,65 @@ const About: NextPage = () => {
       <img
         src={"/art/about.png"}
         alt={"Refresh!"}
-        className={"pt-16 w-80 object-cover m-auto pb-16 md:m-0"}
+        className={"pt-16 w-60 object-cover m-auto pb-4 md:m-0"}
       />
 
-      <Header>
+      <h1 className={"text-5xl font-bold py-3"}>
         About <span className={"hidden lg:inline-block"}>the Refresh</span>
-      </Header>
+      </h1>
 
       <Paragraph>
-        Following the success of the 2021 Design Refresh, the sequel - the (2022) Design Refresh -
-        is a community-centered weekly creative art challenge.
+        The sequel to the 2021 Design Refresh is the (2022) Design Refresh!
       </Paragraph>
 
       <Paragraph>
-        It runs from the <b>2nd January 2022</b> for <b>16 weeks</b> and accepts submissions from
-        all creative media!
+        In short, it&apos;s a community-centered weekly creative art challenge. All are welcome!
       </Paragraph>
 
+      <UnorderedList>
+        <ListItem>
+          <b>Starts on:</b> 2nd January 2022
+        </ListItem>
+        <ListItem>
+          <b>Runs for:</b> 16 weeks
+        </ListItem>
+        <ListItem>
+          <b>Accepts:</b> 🎨 Digital/traditional art, 🎵 music, ✍ prose, and more!
+        </ListItem>
+      </UnorderedList>
+
       <Paragraph>
-        Many creators work to create submissions according to a theme every week. At the end of
-        each week at <b>12pm on Saturday Australia/Melbourne time</b>, a showcase by CindryTuna
-        (AKA FiveClawD) will broadcast live on Twitch for the community to enjoy.
+        Every weekend, <b>CindryTuna</b> will broadcast all of the submissions on Twitch!
       </Paragraph>
+
+      <UnorderedList>
+        <ListItem>
+          <b>AEDT</b>: Saturday 12 PM
+        </ListItem>
+        <ListItem>
+          <b>EST</b>: Friday 8 PM
+        </ListItem>
+        <ListItem>
+          <b>PST</b>: Friday 5 PM
+        </ListItem>
+        <ListItem>
+          <b>GMT</b>: Saturday 1 AM
+        </ListItem>
+        <ListItem>
+          <b>J/KST</b>: Saturday 10 AM
+        </ListItem>
+      </UnorderedList>
 
       <Paragraph>
         The hashtag for the Refresh this year is <b>#2022DesignRefresh</b>.
       </Paragraph>
 
       <SubHeader>
-        Our Team
+        Behind the Scenes
       </SubHeader>
 
       <Paragraph>
         This project was produced and sponsored by <b>Inkling Interactive</b>.
-      </Paragraph>
-
-      <UnorderedList>
-        <ListItem>
-          <b>UX Design</b>: <Link href={"/artists/cindrytuna"}>FiveClawD</Link>
-        </ListItem>
-        <ListItem>
-          <b>Engineering</b>: <Link href={"/artists/papapastry"}>papapastry</Link>
-        </ListItem>
-      </UnorderedList>
-
-      <Paragraph>
-        Thanks also to the various co-hosts on the weekly Friday showcases!
       </Paragraph>
     </StaticPage>
   );
