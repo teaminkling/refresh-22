@@ -1,6 +1,8 @@
 /**
  * A work.
  */
+import Artist from "./Artist";
+
 export default interface Work {
   /**
    * The internal ID.
@@ -23,6 +25,15 @@ export default interface Work {
    * The ID of the artist.
    */
   artistId: string;
+
+  /**
+   * The artist info when the work was submitted for the first time.
+   *
+   * This might not contain up-to-date information on the artist. It is exclusively used when
+   * the frontend can't figure out who the poster of a work is or the backend needs to create a
+   * user for the first time.
+   */
+  firstSeenArtistInfo?: Artist;
 
   /**
    * The title of the work.

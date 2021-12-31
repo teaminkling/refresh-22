@@ -30,4 +30,11 @@ export default interface Artist {
    * recognise accepted providers.
    */
   socials: string[];
+
+  /**
+   * The number of works the artist has produced.
+   *
+   * The frontend cannot override this value; only the backend can set it.
+   */
+  worksCount?: number;
 }
