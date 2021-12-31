@@ -4,52 +4,51 @@
 
 import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} from "jose";
 import {GetKeyFunction} from "jose/dist/types/types";
-import {CORS_HEADERS} from "./constants/http";
 import {getArtists, putArtist} from "./services/artists";
 import {getWeeks, putWeeks} from "./services/weeks";
 import {getWork, getWorks, postUpload, putWork} from "./services/works";
-import {createNotFoundResponse} from "./utils/http";
+import {createNotFoundResponse, generateCorsHeaders} from "./utils/http";
 
 /**
  * Handle an API request.
  *
+ * @param {KVNamespace} kv the main key-value store
  * @param {string} method the method name
  * @param {string} routine the routine name
  * @param {URLSearchParams} params the URL parameters
  * @param {Request} request the request
- * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
- * @param {string | null} identifier if provided, the recognised ID of the calling user
+ * @param {string | undefined} identifier if provided, the recognised ID of the calling user
+ * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} the response
  */
 const handleRequest = async (
+  kv: KVNamespace,
   method: string,
   routine: string,
   params: URLSearchParams,
   request: Request,
-  kv: KVNamespace,
-  authKv: KVNamespace,
-  identifier: string | null,
+  identifier?: string,
+  origin?: string,
 ): Promise<Response> => {
   switch (`${method.toLowerCase()}/${routine.toLowerCase()}`) {
     case ("get/weeks"):
-      return getWeeks(kv, authKv, identifier);
+      return getWeeks(kv, origin, identifier);
     case ("get/artists"):
-      return getArtists(kv);
+      return getArtists(kv, origin);
     case ("get/works"):
-      return getWorks(params, kv, authKv, identifier);
+      return getWorks(params, kv, origin, identifier);
     case ("get/work"):
       // Note the slight spelling difference: "s".
 
-      return getWork(params, request, kv);
+      return getWork(params, request, kv, origin);
     case ("put/weeks"):
-      return putWeeks(request, kv, authKv, identifier);
+      return putWeeks(request, kv, origin, identifier);
     case ("put/artist"):
-      return putArtist(request, kv, authKv, identifier);
+      return putArtist(request, kv, origin, identifier);
     case ("put/work"):
-      return putWork(request, kv, authKv, identifier);
+      return putWork(request, kv, origin, identifier);
     case ("post/upload"):
-      return postUpload(params, request, kv);
+      return postUpload(params, request, kv, origin);
   }
 
   return createNotFoundResponse();
@@ -61,7 +60,7 @@ const handleRequest = async (
  * @param {string | null} jwt the JWT in condensed format, if applicable
  * @returns {string | null} if found, the auth identifier
  */
-const handleJwt = async (jwt: string | null): Promise<string | null> => {
+const handleJwt = async (jwt: string | null): Promise<string | undefined> => {
   if (jwt) {
     // Now that the JWT is decrypted, continue verifying it.
 
@@ -81,24 +80,26 @@ const handleJwt = async (jwt: string | null): Promise<string | null> => {
     // The end result should be a bunch of numbers only.
 
     if (rawTokenParts && rawTokenLength) {
-      return rawTokenParts[rawTokenLength - 1] || null;
+      return rawTokenParts[rawTokenLength - 1] || undefined;
     }
   }
 
-  return null;
+  return undefined;
 };
 
 /**
  * The main Cloudflare Worker for this backend project.
  */
 const worker = {
-  async fetch(request: Request, env: { REFRESH_KV: KVNamespace; AUTH_KV: KVNamespace }) {
+  async fetch(request: Request, env: { REFRESH_KV: KVNamespace; ALLOWED_ORIGIN: string }) {
     const method: string = request.method.toLowerCase();
 
     // Handle preflight request without handling JWT since it's not necessary.
 
     if (method === "options") {
-      return new Response("{}", {headers: CORS_HEADERS});
+      return new Response(
+        "{}", {headers: generateCorsHeaders(env.ALLOWED_ORIGIN)}
+      );
     }
 
     // If there's a JWT, validate it.
@@ -107,7 +108,7 @@ const worker = {
       request.headers.get("Authorization")?.replace("Bearer ", "")?.trim()
     ) || null;
 
-    const identifier: string | null = await handleJwt(jwt);
+    const identifier: string | undefined = await handleJwt(jwt);
 
     // If it's a normal request, check the URL and handle normally.
 
@@ -116,8 +117,18 @@ const worker = {
       (part: string) => part && part !== "api"
     );
 
+    if (pathParts.length === 0) {
+      return createNotFoundResponse();
+    }
+
     return handleRequest(
-      method, pathParts[0], url.searchParams, request, env.REFRESH_KV, env.AUTH_KV, identifier,
+      env.REFRESH_KV,
+      method,
+      pathParts[0],
+      url.searchParams,
+      request,
+      identifier,
+      env.ALLOWED_ORIGIN,
     );
   }
 };

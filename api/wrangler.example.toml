@@ -19,3 +19,12 @@ main = "./index.js"
 [[build.upload.rules]]
 type = "ESModule"
 globs = ["**/*.js"]
+
+[vars]
+ALLOWED_ORIGIN = "http://localhost:3000"
+
+[env.staging.vars]
+ALLOWED_ORIGIN = "https://refresh.inklingtest.com"
+
+[env.production.vars]
+ALLOWED_ORIGIN = "https://refresh.fiveclawd.com"

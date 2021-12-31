@@ -13,11 +13,12 @@ import {createJsonResponse, createNotFoundResponse} from "../utils/http";
  * Note that this may not be sorted.
  *
  * @param {KVNamespace} kv the main key-value store
- * @param {string | null} identifier the identifier of the calling user
+ * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const getWeeks = async (
-  kv: KVNamespace, identifier: string | null,
+  kv: KVNamespace, origin?: string, identifier?: string,
 ): Promise<Response> => {
   const weeks: Record<string, Week> = JSON.parse(
     (await kv.get(`${WEEKS}/${ACTIVE_YEAR}`)) || "{}"
@@ -30,7 +31,7 @@ export const getWeeks = async (
     values = values.filter((week: Week) => week.isPublished);
   }
 
-  return createJsonResponse(JSON.stringify(values));
+  return createJsonResponse(JSON.stringify(values), origin);
 };
 
 /**
@@ -43,17 +44,18 @@ export const getWeeks = async (
  *
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
- * @param {string | null} identifier the identifier of the calling user
+ * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putWeeks = async (
-  request: Request, kv: KVNamespace, identifier: string | null,
+  request: Request, kv: KVNamespace, origin?: string, identifier?: string,
 ): Promise<Response> => {
   // Don't let anybody but a staff member call this endpoint.
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
-    return createNotFoundResponse();
+    return createNotFoundResponse(origin);
   }
 
   // Validate type and length and then escape the correct request variables. This is such that a
@@ -67,5 +69,5 @@ export const putWeeks = async (
 
   await kv.put(`${WEEKS}/${ACTIVE_YEAR}`, JSON.stringify(input));
 
-  return createJsonResponse();
+  return createJsonResponse("{}", origin);
 };

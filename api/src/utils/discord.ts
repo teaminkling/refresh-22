@@ -1,5 +1,4 @@
 import Work from "../../../data/core/Work";
-import {AUTH0_MANAGEMENT_API_URL} from "../constants/auth";
 import {DISCORD_SUBMISSIONS_WEBHOOK} from "../constants/kv";
 
 /**
@@ -20,9 +19,7 @@ export const postOrEditDiscordPost = async (
 
   // Retrieve artist name and icon.
 
-  const managementApiResponse = await fetch(
-    `${AUTH0_MANAGEMENT_API_URL}/api/v2/users/oauth2|discord|${work.artistId}`,
-  );
+  // FIXME
 
   const artistName = "";
   const artistIcon = "";

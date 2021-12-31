@@ -29,11 +29,12 @@ import {placeWork} from "../utils/kv";
  *
  * @param {URLSearchParams} params the search parameters
  * @param {KVNamespace} kv the main key-value store
- * @param {string | null} identifier the identifier of the calling user
+ * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const getWorks = async (
-  params: URLSearchParams, kv: KVNamespace, identifier: string | null,
+  params: URLSearchParams, kv: KVNamespace, origin?: string, identifier?: string,
 ): Promise<Response> => {
   // Escape search terms (remove slashes).
 
@@ -74,7 +75,7 @@ export const getWorks = async (
     results = results.filter((result: Work) => result.isApproved);
   }
 
-  return createJsonResponse(JSON.stringify({data: results}));
+  return createJsonResponse(JSON.stringify({data: results}), origin);
 };
 
 /**
@@ -85,14 +86,15 @@ export const getWorks = async (
  * @param {URLSearchParams} params the search parameters
  * @param {Body} _body the unused body
  * @param {KVNamespace} kv the key-value store
+ * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} the response
  */
 export const getWork = async (
-  params: URLSearchParams, _body: Body, kv: KVNamespace,
+  params: URLSearchParams, _body: Body, kv: KVNamespace, origin?: string
 ): Promise<Response> => {
   const id: string | null = sanitize(params.get("id"));
   if (!id) {
-    return createNotFoundResponse();
+    return createNotFoundResponse(origin);
   }
 
   const work: Work | undefined | null = JSON.parse(
@@ -100,35 +102,37 @@ export const getWork = async (
   );
 
   if (!work) {
-    return createNotFoundResponse();
+    return createNotFoundResponse(origin);
   }
 
-  return createJsonResponse(JSON.stringify({data: work}));
+  return createJsonResponse(JSON.stringify({data: work}), origin);
 };
 
 /**
  * Perform the work for the {@link putWork} function.
  *
  * @param {KVNamespace} kv the main key-value store
- * @param {string} identifier the identifier of the calling user
  * @param {Work} work the work
+ * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 const updateWorkIndices = async (
-  kv: KVNamespace, identifier: string, work: Work,
+  kv: KVNamespace, work: Work, origin?: string, identifier?: string,
 ): Promise<Response> => {
   // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
 
   const rawBackendWork: string | null = await kv.get(
     `${WORKS_WITH_ID_INDEX}/${work.id}`
   );
+
   const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
 
   // Verify poster is either the same as the one in the work or is a staff member.
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff || work.artistId !== identifier) {
-    return createNotFoundResponse();
+    return createNotFoundResponse(origin);
   }
 
   // Determine the work ID.
@@ -155,7 +159,7 @@ const updateWorkIndices = async (
 
   await placeWork(kv, work);
 
-  return createJsonResponse();
+  return createJsonResponse("{}", origin);
 };
 
 /**
@@ -169,16 +173,17 @@ const updateWorkIndices = async (
  *
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
- * @param {string | null} identifier the identifier of the calling user
+ * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putWork = async (
-  request: Request, kv: KVNamespace, identifier: string | null,
+  request: Request, kv: KVNamespace, origin?: string, identifier?: string,
 ): Promise<Response> => {
   // Ensure user is authenticated at all before doing any other CPU computation.
 
   if (!identifier) {
-    return createNotFoundResponse();
+    return createNotFoundResponse(origin,);
   }
 
   // Validate all data and ensure it is escaped for HTML.
@@ -194,7 +199,8 @@ export const putWork = async (
     (weekNumber: number) => weekNumber <= 0 || weekNumber > LAST_ACTIVE_WEEK)
   ) {
     return createBadRequestResponse(
-      "Week numbers must have at least one valid value, and all values must be valid."
+      "Week numbers must have at least one valid value, and all values must be valid.",
+      origin,
     );
   }
 
@@ -206,7 +212,7 @@ export const putWork = async (
 
   // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
 
-  const response = await updateWorkIndices(kv, identifier, input);
+  const response = await updateWorkIndices(kv, input, origin, identifier);
 
   // Edit the Discord post for this work (can fail without 500).
 
@@ -220,10 +226,10 @@ export const putWork = async (
 // TODO: Rate limit: 8 uploads a minute.
 
 export const postUpload = async (
-  _params: URLSearchParams, _body: Body, _kv: KVNamespace,
+  _params: URLSearchParams, _body: Body, _kv: KVNamespace, origin?: string
 ): Promise<Response> => {
 
   // TODO
 
-  return createJsonResponse();
+  return createJsonResponse(origin);
 };

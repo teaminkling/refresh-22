@@ -11,6 +11,8 @@ dist/
 coverage/
 /target/
 .env.local
+.env.uat
+.env.production
 
 ## JavaScript
 

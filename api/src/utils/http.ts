@@ -2,19 +2,30 @@
  * Utils related to HTTP.
  */
 
-import {CORS_HEADERS} from "../constants/http";
+/**
+ * @param {string} origin the origin, if it is known
+ * @returns {Headers} the CORS headers
+ */
+export const generateCorsHeaders = (origin?: string) => {
+  return new Headers({
+    "Access-Control-Allow-Origin": origin || "https://refresh.fiveclawd.com",
+    "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "*",
+  });
+};
 
 /**
  * Create a JSON response with the given body.
  *
  * @param {BodyInit | undefined} body the body
+ * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} the JSON response
  */
-export const createJsonResponse = async (body?: BodyInit): Promise<Response> => {
+export const createJsonResponse = async (body?: BodyInit, origin?: string): Promise<Response> => {
   const newHeaders = new Headers();
 
   newHeaders.append("Content-Type", "application/json");
-  for (const [key, value] of CORS_HEADERS.entries()) {
+  for (const [key, value] of generateCorsHeaders(origin).entries()) {
     newHeaders.append(key, value);
   }
 
@@ -29,13 +40,14 @@ export const createJsonResponse = async (body?: BodyInit): Promise<Response> => 
  * Sometimes this is returned instead of a different 400-class exception to make it harder to
  * perform a path traversal or brute force path enumeration attack.
  *
+ * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} a 404 response
  */
-export const createNotFoundResponse = async (): Promise<Response> => {
+export const createNotFoundResponse = async (origin?: string): Promise<Response> => {
   const newHeaders = new Headers();
 
   newHeaders.append("Content-Type", "application/json");
-  for (const [key, value] of CORS_HEADERS.entries()) {
+  for (const [key, value] of generateCorsHeaders(origin).entries()) {
     newHeaders.append(key, value);
   }
 
@@ -50,13 +62,16 @@ export const createNotFoundResponse = async (): Promise<Response> => {
  * Warning: do **not** add variables into the message! They should be generic deliberately.
  *
  * @param {string} message a trusted error message
+ * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} a 400 response with a message
  */
-export const createBadRequestResponse = async (message: string): Promise<Response> => {
+export const createBadRequestResponse = async (
+  message: string, origin?: string
+): Promise<Response> => {
   const newHeaders = new Headers();
 
   newHeaders.append("Content-Type", "application/json");
-  for (const [key, value] of CORS_HEADERS.entries()) {
+  for (const [key, value] of generateCorsHeaders(origin).entries()) {
     newHeaders.append(key, value);
   }
 

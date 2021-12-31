@@ -9,16 +9,15 @@ import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} fr
  * Note that this is not deterministically sorted.
  *
  * @param {KVNamespace} kv the main key-value store
+ * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} the response
  */
-export const getArtists = async (
-  kv: KVNamespace
-): Promise<Response> => {
+export const getArtists = async (kv: KVNamespace, origin?: string): Promise<Response> => {
   const artists: Record<string, Artist> = JSON.parse(
     (await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
   );
 
-  return createJsonResponse(JSON.stringify(Object.values(artists)));
+  return createJsonResponse(JSON.stringify(Object.values(artists)), origin);
 };
 
 /**
@@ -30,13 +29,12 @@ export const getArtists = async (
  *
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
- * @param {string | null} identifier the identifier of the calling user
+ * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putArtist = async (
-  request: Request,
-  kv: KVNamespace,
-  identifier: string | null,
+  request: Request, kv: KVNamespace, origin?: string, identifier?: string,
 ): Promise<Response> => {
   // Validate type and length and escape the correct request variables.
 
@@ -48,7 +46,7 @@ export const putArtist = async (
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!identifier || !isStaff && identifier !== input.discordId) {
-    return createNotFoundResponse();
+    return createNotFoundResponse(origin);
   }
 
   // Retrieve the artist.
@@ -67,7 +65,7 @@ export const putArtist = async (
   // If the username has changed from last time and is unique, update it.
 
   if (isUsernameChanged && backendArtist) {
-    return createBadRequestResponse("New username is taken.");
+    return createBadRequestResponse("New username is taken.", origin);
   }
 
   // Update the aggregate list. May result in race condition.
@@ -84,5 +82,5 @@ export const putArtist = async (
 
   await kv.put(`${ARTISTS}/${identifier}`, JSON.stringify(input));
 
-  return createJsonResponse();
+  return createJsonResponse("{}", origin);
 };
