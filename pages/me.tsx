@@ -47,8 +47,6 @@ const sendArtistUpdateRequest = async (
 
   const effectiveSocials = socials || [];
 
-  console.log(effectiveSocials);
-
   const data: Artist = {
     discordId: discordId,
     name: name,

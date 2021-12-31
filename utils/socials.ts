@@ -111,6 +111,6 @@ export const parseSocial = (url: string): ParsedSocial => {
   }
 
   return {
-    link: parsedUrl, icon: icon, text: text, color: "#000000",
+    link: parsedUrl.toString(), icon: icon, text: text, color: "#000000",
   };
 };
