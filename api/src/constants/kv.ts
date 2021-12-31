@@ -53,13 +53,6 @@ export const ARTISTS = "artists";
 // AUTH KV.
 
 /**
- * The key for the editor usernames.
- *
- * The format is simply: `{"editors": ["<snip>", "<snip>"]}`
- */
-export const EDITORS = "editors";
-
-/**
  * The key for the Discord webhook used to publish and edit submission messages.
  *
  * This must not end with a slash when retrieved.

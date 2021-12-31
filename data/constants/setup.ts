@@ -40,3 +40,15 @@ export const SHOWCASE_HOUR = 12;
  * The decimal integer colour number for the app's highlight.
  */
 export const APP_COLOR = 8158432;
+
+/**
+ * The editors.
+ *
+ * These are public-facing IDs and do not need to be private. Unless an attacker got control of
+ * the entire source code publishing and deployment controls, access control of API endpoints is
+ * safe from any users.
+ */
+export const EDITORS: string[] = [
+  "212546139029766144",
+  "453857853367910403",
+];

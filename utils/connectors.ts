@@ -26,7 +26,7 @@ export const updateArtists = (
 
   if (force || !timeSinceLastFetch || timeSinceLastFetch > 1000 * 60 * 60 * 24) {
     fetch(
-      "http://127.0.0.1:8787/api/artists",
+      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/artists`,
       {
         headers: {"Content-Type": "application/json"},
       }

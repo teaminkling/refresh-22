@@ -1,7 +1,6 @@
-import {ACTIVE_YEAR} from "../../../data/constants/setup";
+import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
 import Artist from "../../../data/core/Artist";
 import {ARTISTS} from "../constants/kv";
-import {validateIsStaff} from "../utils/auth";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 
 /**
@@ -31,14 +30,12 @@ export const getArtists = async (
  *
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putArtist = async (
   request: Request,
   kv: KVNamespace,
-  authKv: KVNamespace,
   identifier: string | null,
 ): Promise<Response> => {
   // Validate type and length and escape the correct request variables.
@@ -49,7 +46,7 @@ export const putArtist = async (
 
   // Only allow the owner of the artist object or a staff member perform mutations on the object.
 
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!identifier || !isStaff && identifier !== input.discordId) {
     return createNotFoundResponse();
   }

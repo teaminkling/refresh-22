@@ -1,4 +1,4 @@
-import {ACTIVE_YEAR, LAST_ACTIVE_WEEK} from "../../../data/constants/setup";
+import {ACTIVE_YEAR, EDITORS, LAST_ACTIVE_WEEK} from "../../../data/constants/setup";
 import Work from "../../../data/core/Work";
 import {
   WORKS_WITH_ARTIST_INDEX,
@@ -6,7 +6,6 @@ import {
   WORKS_WITH_WEEK_INDEX,
   WORKS_WITHOUT_INDEX
 } from "../constants/kv";
-import {validateIsStaff} from "../utils/auth";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
 import {placeWork} from "../utils/kv";
@@ -30,12 +29,11 @@ import {placeWork} from "../utils/kv";
  *
  * @param {URLSearchParams} params the search parameters
  * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const getWorks = async (
-  params: URLSearchParams, kv: KVNamespace, authKv: KVNamespace, identifier: string | null,
+  params: URLSearchParams, kv: KVNamespace, identifier: string | null,
 ): Promise<Response> => {
   // Escape search terms (remove slashes).
 
@@ -71,7 +69,7 @@ export const getWorks = async (
   // not a staff user, remove things from the output. No need to check for ownership: if the
   // requesting user called this, their posts should be in local storage already.
 
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
     results = results.filter((result: Work) => result.isApproved);
   }
@@ -112,13 +110,12 @@ export const getWork = async (
  * Perform the work for the {@link putWork} function.
  *
  * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
  * @param {string} identifier the identifier of the calling user
  * @param {Work} work the work
  * @returns {Promise<Response>} the response
  */
 const updateWorkIndices = async (
-  kv: KVNamespace, authKv: KVNamespace, identifier: string, work: Work,
+  kv: KVNamespace, identifier: string, work: Work,
 ): Promise<Response> => {
   // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
 
@@ -129,7 +126,7 @@ const updateWorkIndices = async (
 
   // Verify poster is either the same as the one in the work or is a staff member.
 
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff || work.artistId !== identifier) {
     return createNotFoundResponse();
   }
@@ -172,15 +169,11 @@ const updateWorkIndices = async (
  *
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putWork = async (
-  request: Request,
-  kv: KVNamespace,
-  authKv: KVNamespace,
-  identifier: string | null,
+  request: Request, kv: KVNamespace, identifier: string | null,
 ): Promise<Response> => {
   // Ensure user is authenticated at all before doing any other CPU computation.
 
@@ -213,7 +206,7 @@ export const putWork = async (
 
   // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
 
-  const response = await updateWorkIndices(kv, authKv, identifier, input);
+  const response = await updateWorkIndices(kv, identifier, input);
 
   // Edit the Discord post for this work (can fail without 500).
 

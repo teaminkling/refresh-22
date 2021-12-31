@@ -2,10 +2,9 @@
  * Internal and external handlers for week endpoints.
  */
 
-import {ACTIVE_YEAR} from "../../../data/constants/setup";
+import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
 import Week from "../../../data/core/Week";
 import {WEEKS} from "../constants/kv";
-import {validateIsStaff} from "../utils/auth";
 import {createJsonResponse, createNotFoundResponse} from "../utils/http";
 
 /**
@@ -14,12 +13,11 @@ import {createJsonResponse, createNotFoundResponse} from "../utils/http";
  * Note that this may not be sorted.
  *
  * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const getWeeks = async (
-  kv: KVNamespace, authKv: KVNamespace, identifier: string | null,
+  kv: KVNamespace, identifier: string | null,
 ): Promise<Response> => {
   const weeks: Record<string, Week> = JSON.parse(
     (await kv.get(`${WEEKS}/${ACTIVE_YEAR}`)) || "{}"
@@ -27,7 +25,7 @@ export const getWeeks = async (
 
   let values: Week[] = Object.values(weeks);
 
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
     values = values.filter((week: Week) => week.isPublished);
   }
@@ -45,16 +43,15 @@ export const getWeeks = async (
  *
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
- * @param {KVNamespace} authKv the auth key-value store
  * @param {string | null} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putWeeks = async (
-  request: Request, kv: KVNamespace, authKv: KVNamespace, identifier: string | null,
+  request: Request, kv: KVNamespace, identifier: string | null,
 ): Promise<Response> => {
   // Don't let anybody but a staff member call this endpoint.
 
-  const isStaff: boolean = identifier ? await validateIsStaff(identifier, authKv) : false;
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
     return createNotFoundResponse();
   }
