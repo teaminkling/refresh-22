@@ -58,18 +58,22 @@ const handleRequest = async (
  * Handle a JWT and return an auth identifier.
  *
  * @param {string | null} jwt the JWT in condensed format, if applicable
+ * @param {string} audience the audience to verify
+ * @param {string} jwksUrl the JWKS URL
  * @returns {string | null} if found, the auth identifier
  */
-const handleJwt = async (jwt: string | null): Promise<string | undefined> => {
+const handleJwt = async (
+  jwt: string | null, audience: string, jwksUrl: string
+): Promise<string | undefined> => {
   if (jwt) {
     // Now that the JWT is decrypted, continue verifying it.
 
     const jwks: GetKeyFunction<JWSHeaderParameters, FlattenedJWSInput> = createRemoteJWKSet(
-      new URL("https://refresh.au.auth0.com/.well-known/jwks.json")
+      new URL(`${jwksUrl}/.well-known/jwks.json`)
     );
 
     const {payload} = await jwtVerify(jwt, jwks, {
-      issuer: "https://refresh.au.auth0.com/", audience: "https://refresh.fiveclawd.com/api/"
+      issuer: jwksUrl, audience: audience
     });
 
     // E.g., oauth2|discord|<id>
@@ -91,7 +95,10 @@ const handleJwt = async (jwt: string | null): Promise<string | undefined> => {
  * The main Cloudflare Worker for this backend project.
  */
 const worker = {
-  async fetch(request: Request, env: { REFRESH_KV: KVNamespace; ALLOWED_ORIGIN: string }) {
+  async fetch(
+    request: Request,
+    env: { REFRESH_KV: KVNamespace; ALLOWED_ORIGIN: string; JWKS_URL: string; AUDIENCE: string },
+  ) {
     const method: string = request.method.toLowerCase();
 
     // Handle preflight request without handling JWT since it's not necessary.
@@ -108,7 +115,7 @@ const worker = {
       request.headers.get("Authorization")?.replace("Bearer ", "")?.trim()
     ) || null;
 
-    const identifier: string | undefined = await handleJwt(jwt);
+    const identifier: string | undefined = await handleJwt(jwt, env.AUDIENCE, env.JWKS_URL);
 
     // If it's a normal request, check the URL and handle normally.
 

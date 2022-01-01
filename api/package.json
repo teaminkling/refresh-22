@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./out/index.js",
   "scripts": {
-    "build": "tsc; esbuild dist/api/src/index.js --bundle --format=esm --minify --outfile=out/index.js"
+    "build": "tsc; esbuild dist/api/src/index.js --bundle --format=esm --outfile=out/index.js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.2.0",
