@@ -24,14 +24,22 @@ export const getWeeks = async (
     (await kv.get(`${WEEKS}/${ACTIVE_YEAR}`)) || "{}"
   );
 
-  let values: Week[] = Object.values(weeks);
+  let responseWeeks: Record<string, Week> = {};
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
-    values = values.filter((week: Week) => week.isPublished);
+    Object.keys(weeks).forEach((key: string) => {
+      const week: Week = weeks[key];
+
+      if (week.isPublished) {
+        responseWeeks[key] = week;
+      }
+    });
+  } else {
+    responseWeeks = weeks;
   }
 
-  return createJsonResponse(JSON.stringify(values), origin);
+  return createJsonResponse(JSON.stringify(responseWeeks), origin);
 };
 
 /**

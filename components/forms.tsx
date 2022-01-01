@@ -32,6 +32,11 @@ interface TextInputProps {
    * The text of the label.
    */
   label?: string;
+
+  /**
+   * A function to callback on blur.
+   */
+  blurCallback?: () => void;
 }
 
 /**
@@ -61,6 +66,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
           "shadow border w-full py-2 px-3 leading-tight my-2"
         }
         defaultValue={props.initialValue}
+        onBlur={props.blurCallback}
       />
     </>
   );
@@ -109,6 +115,11 @@ interface TextAreaProps {
    * If not 6, the number of rows.
    */
   rows?: number;
+
+  /**
+   * A function to callback on blur.
+   */
+  blurCallback?: () => void;
 }
 
 /**
@@ -137,6 +148,7 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
         className={"shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight"}
         defaultValue={props.initialValue}
         disabled={props.isDisabled || false}
+        onBlur={props.blurCallback}
       />
     </div>
   );

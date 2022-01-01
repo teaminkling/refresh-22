@@ -41,9 +41,9 @@ export interface GalleryState {
  */
 export interface WeeksState {
   /**
-   * A map of week number to week objects.
+   * A map of week number (as a string) to week objects.
    */
-  weeks: Record<number, Week>;
+  weeks: Record<string, Week>;
 
   /**
    * The last time the week map was updated.

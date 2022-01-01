@@ -1,9 +1,15 @@
-import {createRef, SyntheticEvent, useEffect} from "react";
+import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
+import {createRef, SyntheticEvent, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, SubHeader} from "../../components/typography";
 import {ACTIVE_YEAR} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
+import {RootState, WeeksState} from "../../store/state";
+import {getIsEditor} from "../../utils/auth";
+import {fetchWeeks, putWeeks} from "../../utils/connectors";
+import NotFound from "../404";
 
 interface WeekEditorProps {
   /**
@@ -12,9 +18,19 @@ interface WeekEditorProps {
   week: number;
 
   /**
-   * A passed callback that can set week state in the parent.
+   * The parent state of the ephemeral frontend.
    */
-  valueCallback?: (week: Week) => void;
+  parentStateWeeks: Record<number, Week>;
+
+  /**
+   * The parent state copy of the backend.
+   */
+  parentBackendStateWeeks: Record<number, Week>;
+
+  /**
+   * A shared passed callback that can set week state in the parent.
+   */
+  parentSetter: (weeks: Record<number, Week>) => void;
 }
 
 /**
@@ -29,14 +45,10 @@ const WeekEditor = (props: WeekEditorProps) => {
   const descriptionRef = createRef<HTMLTextAreaElement>();
   const isPublishedRef = createRef<HTMLInputElement>();
 
-  // TODO: Write so it accepts default values
-
   /**
-   * Export a week.
-   *
-   * @returns {Week} a week
+   * Export a week and save it in the parent state.
    */
-  const exportWeek = (): Week => {
+  const updateParentState = (): void => {
     if (!themeRef.current) {
       throw new Error("Theme ref doesn't point to anything.");
     }
@@ -49,14 +61,21 @@ const WeekEditor = (props: WeekEditorProps) => {
       throw new Error("Published ref doesn't point to anything.");
     }
 
-    return {
+    const week: Week = {
       year: ACTIVE_YEAR,
       week: props.week,
-      timestamp: new Date().toISOString(),
       theme: themeRef.current?.value,
       information: descriptionRef.current?.value,
       isPublished: isPublishedRef.current?.checked,
     };
+
+    const newWeeksMap: Record<number, Week> = JSON.parse(
+      JSON.stringify(props.parentStateWeeks)
+    );
+
+    newWeeksMap[props.week] = week;
+
+    props.parentSetter(newWeeksMap);
   };
 
   /**
@@ -92,11 +111,16 @@ const WeekEditor = (props: WeekEditorProps) => {
         passedRef={themeRef}
         id={`week-${props.week}-title`}
         label={`Week ${props.week} Theme`}
+        blurCallback={updateParentState}
+        initialValue={props.parentBackendStateWeeks[props.week]?.theme || ""}
       />
+
       <TextareaInput
         passedRef={descriptionRef}
         id={`week-${props.week}-description`}
         label={`Week ${props.week} Description`}
+        blurCallback={updateParentState}
+        initialValue={props.parentBackendStateWeeks[props.week]?.information || ""}
       />
 
       <div>
@@ -105,10 +129,13 @@ const WeekEditor = (props: WeekEditorProps) => {
           id={`week-${props.week}-isPublished`}
           type={"checkbox"}
           className={"mr-1 border-red-900"}
+          defaultChecked={props.parentBackendStateWeeks[props.week]?.isPublished}
           onClick={
-            (event: SyntheticEvent<HTMLInputElement, MouseEvent>) => highlightPublished(
-              event.currentTarget,
-            )
+            (event: SyntheticEvent<HTMLInputElement, MouseEvent>) => {
+              highlightPublished(event.currentTarget);
+
+              updateParentState();
+            }
           }
         /> Is Published
       </div>
@@ -121,25 +148,109 @@ const WeekEditor = (props: WeekEditorProps) => {
  * @constructor
  */
 const Edit = (): JSX.Element => {
-  const weeks: number[] = [];
+  const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+  const [weeks, setWeeks] = useState<Record<number, Week>>({});
 
-  for (let i = 0; i < 16; i++) {
-    weeks.push(i + 1);
+  const isEditor = getIsEditor(user);
+
+  // Handle the weeks cache.
+
+  const dispatch = useDispatch();
+  const weeksData: WeeksState = useSelector(
+    (state: RootState) => state.weeksData,
+  );
+
+  // Set up state.
+
+  useEffect(() => {
+    // Start by fetching the week. This is mandatory every time for an admin user.
+
+    if (user) {
+      getAccessTokenSilently().then(
+        (token: string) => fetchWeeks(dispatch, weeksData, token, isEditor)
+      );
+    } else {
+      fetchWeeks(dispatch, weeksData, undefined, isEditor);
+    }
+
+    // If things were fetched, set the default state. Otherwise, default to everything empty.
+
+    if (Object.values(weeksData.weeks).length > 0) {
+      setWeeks(weeksData.weeks);
+    } else {
+      const defaultState: Record<number, Week> = {};
+
+      for (let i = 1; i <= 16; i++) {
+        defaultState[i] = {
+          year: ACTIVE_YEAR,
+          week: i,
+          theme: "",
+          information: "",
+          isPublished: false,
+        };
+      }
+
+      setWeeks(defaultState);
+    }
+  }, []);
+
+  let response = <NotFound />;
+  if (isEditor) {
+    // Turn the weeks into an ordered list.
+
+    const weeksInOrder: Week[] = Object.values(weeks).sort(
+      (weekA: Week, weekB: Week) => {
+        if (weekA.week < weekB.week) {
+          return -1;
+        } else if (weekA.week > weekB.week) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
+
+    response = (
+      <StaticPage>
+        <Header>Editing Weeks</Header>
+
+        <InterfaceLink location={"/weeks"} title={"View Weeks"} nextLink />
+
+        {
+          weeksInOrder.map(
+            (week: Week) => {
+              return <WeekEditor
+                key={`week-${week.week}`}
+                week={week.week}
+                parentSetter={setWeeks}
+                parentStateWeeks={weeks}
+                parentBackendStateWeeks={weeksData.weeks}
+              />;
+            }
+          )
+        }
+
+        <InterfaceLink
+          location={"#"}
+          title={"Submit"}
+          clickBack={async () => {
+            putWeeks(dispatch, weeksData, await getAccessTokenSilently(), weeks).then(
+              () => alert("Good to go!"),
+            ).catch(
+              (error: Error) => {
+                alert(
+                  `Caught an error:\n\n\`\`\`txt\n${error}\n\`\`\`\n\nPlease report this to ` +
+                  "papapastry#888 on Discord!"
+                );
+              }
+            );
+          }}
+        />
+      </StaticPage>
+    );
   }
 
-  return (
-    <StaticPage>
-      <Header>Editing Weeks</Header>
-
-      <InterfaceLink location={"/weeks"} title={"View Weeks"} nextLink />
-
-      {
-        weeks.map(
-          (week: number) => <WeekEditor key={`week-${week}`} week={week} />
-        )
-      }
-    </StaticPage>
-  );
+  return response;
 };
 
 export default Edit;

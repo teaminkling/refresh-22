@@ -9,7 +9,7 @@ import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
 import Artist from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
-import {updateArtists} from "../../utils/connectors";
+import {fetchArtists} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 
 /**
@@ -42,7 +42,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
 
   const dispatch: Dispatch = useDispatch();
   useEffect(() => {
-    updateArtists(dispatch, artistsData);
+    fetchArtists(dispatch, artistsData);
   }, []);
 
   // Now that we know for sure that there are some artists, we try to fetch the one here.

@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import StaticPage, {Header} from "../../components/typography";
 import {ArtistsState, RootState} from "../../store/state";
-import {updateArtists} from "../../utils/connectors";
+import {fetchArtists} from "../../utils/connectors";
 
 /**
  * @returns {JSX.Element} the element
@@ -16,7 +16,7 @@ const AggregateArtists = () => {
   );
 
   useEffect(() => {
-    updateArtists(dispatch, artistsData);
+    fetchArtists(dispatch, artistsData);
   }, []);
 
   return (

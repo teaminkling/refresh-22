@@ -13,9 +13,8 @@ import StaticPage, {
   UnorderedList
 } from "../../components/typography";
 import Artist from "../../data/core/Artist";
-import {addArtists} from "../../store/actions";
 import {ArtistsState, RootState} from "../../store/state";
-import {updateArtists} from "../../utils/connectors";
+import {fetchArtists, putArtist} from "../../utils/connectors";
 
 /**
  * Send a request to the backend and save it locally if it succeeds.
@@ -45,39 +44,21 @@ const sendArtistUpdateRequest = async (
     return alert("Failed to fetch thumbnail. Please contact papapastry#8888 on Discord.");
   }
 
-  const effectiveSocials = socials || [];
-
   const data: Artist = {
     discordId: discordId,
     name: name,
     thumbnailUrl: thumbnailUrl,
-    socials: effectiveSocials,
+    socials: socials || [],
   };
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/artist`,
-    {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
-
-  if (response.ok) {
-    artistsData.artists[discordId] = data;
-
-    dispatch(addArtists(artistsData.artists));
-
-    alert("Done! Please check back in 24 hours.");
-  } else {
+  await putArtist(dispatch, artistsData, token, data).then(
+    () => alert("All good!")
+  ).catch((error: Error) => {
     alert(
-      `Something went wrong!\n\n${response.status}: ${response.statusText}\n\nPlease send the ` +
-      "above message to papapastry#8888 when reporting this fault."
+      `Caught an error:\n\n\`\`\`txt\n${error}\n\`\`\`\n\nPlease report this to papapastry#888 ` +
+      "on Discord!"
     );
-  }
+  });
 };
 
 /**
@@ -122,7 +103,7 @@ const Edit = (): JSX.Element => {
   );
 
   useEffect(() => {
-    updateArtists(dispatch, artistsData);
+    fetchArtists(dispatch, artistsData);
   });
 
   if (isAuthenticated) {

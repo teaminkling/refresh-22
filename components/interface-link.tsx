@@ -96,7 +96,7 @@ const InterfaceLink = (props: NavItemProps) => {
     return (
       // eslint-disable-next-line react/jsx-no-target-blank
       <a
-        href={props.location}
+        href={props.location === "#" ? "#action" : props.location}
         onClick={isLoading ? () => null : augmentedClickBack}
         suppressHydrationWarning
         className={(

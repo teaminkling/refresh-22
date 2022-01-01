@@ -13,11 +13,6 @@ export default interface Week {
   week: number;
 
   /**
-   * The actual timestamp to be parsed as a {@link Date}.
-   */
-  timestamp: string;
-
-  /**
    * The theme short-name.
    */
   theme: string;
