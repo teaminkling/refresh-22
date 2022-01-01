@@ -1,10 +1,10 @@
 import {faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import InterfaceLink from "../interface-link";
+import InterfaceLink from "./interface-link";
 
 /**
- * The props on the {@link Item}.
+ * The props on the {@link GalleryItem}.
  */
 interface ItemProps {
   /**
@@ -52,7 +52,7 @@ interface ItemProps {
  * @returns {JSX.Element} the element
  * @constructor
  */
-const Item = (props: ItemProps) => {
+const GalleryItem = (props: ItemProps) => {
   let title = props.title;
   if (title.length > 128) {
     title = title.substring(0, 128) + "...";
@@ -134,4 +134,4 @@ const Item = (props: ItemProps) => {
   );
 };
 
-export default Item;
+export default GalleryItem;

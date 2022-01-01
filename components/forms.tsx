@@ -11,7 +11,7 @@ interface TextInputProps {
   /**
    * The passed reference to the child input.
    */
-  passedRef: RefObject<HTMLInputElement>;
+  passedRef?: RefObject<HTMLInputElement>;
 
   /**
    * The ID and name of a text input.
@@ -58,7 +58,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
         placeholder={props.placeholder}
         type={"text"}
         className={
-          "shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight"
+          "shadow border w-full py-2 px-3 leading-tight my-2"
         }
         defaultValue={props.initialValue}
       />
@@ -73,7 +73,7 @@ interface TextAreaProps {
   /**
    * The passed reference to the child input.
    */
-  passedRef: RefObject<HTMLTextAreaElement>;
+  passedRef?: RefObject<HTMLTextAreaElement>;
 
   /**
    * The ID and name of a text input.

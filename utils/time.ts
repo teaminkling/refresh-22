@@ -39,6 +39,10 @@ const getNextDay = (day: number): Date => {
 
   startOfWeek.add(day - startOfWeek.days(), "days");
 
+  if (startOfWeek <= now) {
+    startOfWeek.add(7, "days");
+  }
+
   return now.toDate();
 };
 

@@ -84,7 +84,7 @@ const Sidebar = (): JSX.Element => {
     }>
       {logo}
 
-      <button className={"w-32 text-2xl md:hidden"} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <button className={"w-10 text-2xl md:hidden"} onClick={() => setIsMenuOpen(!isMenuOpen)}>
         {isMenuOpen ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}
       </button>
     </div>

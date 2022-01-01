@@ -1,6 +1,6 @@
 import type {NextPage} from "next";
 import Head from "next/head";
-import Item from "../components/gallery/item";
+import Item from "../components/gallery-item";
 
 /**
  * The home page/gallery.
