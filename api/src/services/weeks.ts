@@ -5,6 +5,7 @@
 import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
 import Week from "../../../data/core/Week";
 import {WEEKS} from "../constants/kv";
+import {postOrEditDiscordWeek} from "../utils/discord";
 import {createJsonResponse, createNotFoundResponse} from "../utils/http";
 
 /**
@@ -50,6 +51,7 @@ export const getWeeks = async (
  * This is an idempotent call and is not rate limited as it is authenticated to staff users
  * only. We are not concerned about race conditions.
  *
+ * @param {string} webhookUrl the webhook URL for weeks
  * @param {Request} request the request
  * @param {KVNamespace} kv the main key-value store
  * @param {string | undefined} origin the allowed origin for the CORS headers
@@ -57,7 +59,7 @@ export const getWeeks = async (
  * @returns {Promise<Response>} the response
  */
 export const putWeeks = async (
-  request: Request, kv: KVNamespace, origin?: string, identifier?: string,
+  webhookUrl: string, request: Request, kv: KVNamespace, origin?: string, identifier?: string,
 ): Promise<Response> => {
   // Don't let anybody but a staff member call this endpoint.
 
@@ -72,6 +74,17 @@ export const putWeeks = async (
   // TODO
 
   const input: Record<number, Week> = await request.json();
+
+  // Make the post first to save a write.
+
+  for (const week of Object.values(input).filter((_week: Week) => _week.isPublished)) {
+    const discordMessageId: string | null = await postOrEditDiscordWeek(week, webhookUrl);
+    if (discordMessageId) {
+      week.discordId = discordMessageId;
+
+      input[week.week] = week;
+    }
+  }
 
   // Update the weeks directly.
 

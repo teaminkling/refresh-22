@@ -49,19 +49,3 @@ export const WEEKS = "weeks";
  * E.g., `artists/2022` returns the artists in 2022. `artists/123...890` is for a single artist.
  */
 export const ARTISTS = "artists";
-
-// AUTH KV.
-
-/**
- * The key for the Discord webhook used to publish and edit submission messages.
- *
- * This must not end with a slash when retrieved.
- */
-export const DISCORD_SUBMISSIONS_WEBHOOK = "discord-submissions-webhook";
-
-/**
- * The key for the Discord webhook used to publish and edit week messages.
- *
- * This must not end with a slash when retrieved.
- */
-export const DISCORD_WEEKS_WEBHOOK = "discord-weeks-webhook";

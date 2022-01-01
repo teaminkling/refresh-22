@@ -186,6 +186,13 @@ export const putWork = async (
     return createNotFoundResponse(origin,);
   }
 
+  // TODO: Remove temporary measure that prevents use of this endpoint.
+
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
+  if (!identifier || !isStaff) {
+    return createNotFoundResponse(origin);
+  }
+
   // Validate all data and ensure it is escaped for HTML.
 
   // TODO

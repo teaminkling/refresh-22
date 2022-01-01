@@ -67,6 +67,7 @@ const WeekEditor = (props: WeekEditorProps) => {
       theme: themeRef.current?.value,
       information: descriptionRef.current?.value,
       isPublished: isPublishedRef.current?.checked,
+      discordId: props.parentBackendStateWeeks[props.week]?.discordId || "",
     };
 
     const newWeeksMap: Record<number, Week> = JSON.parse(
@@ -187,6 +188,7 @@ const Edit = (): JSX.Element => {
           theme: "",
           information: "",
           isPublished: false,
+          discordId: "",
         };
       }
 

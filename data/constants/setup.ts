@@ -49,6 +49,5 @@ export const APP_COLOR = 8158432;
  * safe from any users.
  */
 export const EDITORS: string[] = [
-  "212546139029766144",
-  "453857853367910403",
+  "212546139029766144", "453857853367910403",
 ];

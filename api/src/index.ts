@@ -12,6 +12,8 @@ import {createNotFoundResponse, generateCorsHeaders} from "./utils/http";
 /**
  * Handle an API request.
  *
+ * @param {string} weeksWebhook the Discord weeks webhook
+ * @param {string} _worksWebhook the Discord works webhook
  * @param {KVNamespace} kv the main key-value store
  * @param {string} method the method name
  * @param {string} routine the routine name
@@ -22,6 +24,8 @@ import {createNotFoundResponse, generateCorsHeaders} from "./utils/http";
  * @returns {Promise<Response>} the response
  */
 const handleRequest = async (
+  weeksWebhook: string,
+  _worksWebhook: string,
   kv: KVNamespace,
   method: string,
   routine: string,
@@ -42,7 +46,7 @@ const handleRequest = async (
 
       return getWork(params, request, kv, origin);
     case ("put/weeks"):
-      return putWeeks(request, kv, origin, identifier);
+      return putWeeks(weeksWebhook, request, kv, origin, identifier);
     case ("put/artist"):
       return putArtist(request, kv, origin, identifier);
     case ("put/work"):
@@ -97,7 +101,14 @@ const handleJwt = async (
 const worker = {
   async fetch(
     request: Request,
-    env: { REFRESH_KV: KVNamespace; ALLOWED_ORIGIN: string; JWKS_URL: string; AUDIENCE: string },
+    env: {
+      REFRESH_KV: KVNamespace;
+      ALLOWED_ORIGIN: string;
+      JWKS_URL: string;
+      AUDIENCE: string;
+      WEEKS_DISCORD_URL: string;
+      WORKS_DISCORD_URL: string;
+    },
   ) {
     const method: string = request.method.toLowerCase();
 
@@ -129,6 +140,8 @@ const worker = {
     }
 
     return handleRequest(
+      env.WEEKS_DISCORD_URL,
+      env.WORKS_DISCORD_URL,
       env.REFRESH_KV,
       method,
       pathParts[0],

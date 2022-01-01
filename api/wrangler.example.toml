@@ -24,13 +24,19 @@ globs = ["**/*.js"]
 ALLOWED_ORIGIN = "http://localhost:3000"
 AUDIENCE = "http://localhost:8787/api/"
 JWKS_URL = "https://refresh-dev.au.auth0.com"
+WEEKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
+WORKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
 
 [env.staging.vars]
 ALLOWED_ORIGIN = "https://refresh.inklingtest.com"
 AUDIENCE = "https://refresh.inklingtest.com/api/"
 JWKS_URL = "https://refresh-uat.au.auth0.com"
+WEEKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
+WORKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
 
 [env.production.vars]
 ALLOWED_ORIGIN = "https://refresh.fiveclawd.com"
 AUDIENCE = "https://refresh.fiveclawd.com/api/"
 JWKS_URL = "https://refresh.au.auth0.com"
+WEEKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
+WORKS_DISCORD_URL = "https://discord.com/api/webhooks/..."

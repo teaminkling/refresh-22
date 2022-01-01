@@ -26,4 +26,9 @@ export default interface Week {
    * Whether or not this week can be used to submit.
    */
   isPublished: boolean;
+
+  /**
+   * If present, the Discord post ID for this week's prompt.
+   */
+  discordId?: string;
 }

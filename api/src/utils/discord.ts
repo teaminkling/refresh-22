@@ -1,21 +1,68 @@
+import {EDITORS} from "../../../data/constants/setup";
+import Week from "../../../data/core/Week";
 import Work from "../../../data/core/Work";
-import {DISCORD_SUBMISSIONS_WEBHOOK} from "../constants/kv";
 
 /**
  * Utils about Discord API requests.
  */
 
-export const postOrEditDiscordPost = async (
-  authKv: KVNamespace,
-  work: Work,
+/**
+ * Post or edit a Discord message related to the week's theme.
+ *
+ * @param {Week} week the week
+ * @param {string} webhookUrl the webhook URL
+ * @returns {Promise<string | null>} if present, the Discord ID when creating a post
+ */
+export const postOrEditDiscordWeek = async (
+  week: Week, webhookUrl: string,
 ): Promise<string | null> => {
-  // Retrieve webhook.
 
-  const discordWebhook: string | null = await authKv.get(DISCORD_SUBMISSIONS_WEBHOOK);
-  if (!discordWebhook) {
-    throw new Error("No Discord webhook on backend. Can't send a message!");
+  const content: Record<string, unknown> = {
+    "content": (
+      `**Week ${week.week}: ${week.theme}**\n\n${week.information}\n\n`
+      + "View the weeks: [here](https://refresh.fiveclawd.com/weeks)."
+    ),
+    "username": "cindry via Design Refresh",
+    "allowed_mentions": {
+      "users": EDITORS,
+    }
+  };
+
+  // noinspection DuplicatedCode
+  let url: string;
+  let method: string;
+
+  if (week.discordId) {
+    url = `${webhookUrl}/messages/${week.discordId}`;
+    method = "PATCH";
+  } else {
+    url = `${webhookUrl}?wait=true`;
+    method = "post";
   }
 
+  const response: Response = await fetch(url, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(content),
+  });
+
+  // Send a message if the discord ID is not provided. Can fail. First post write will run twice.
+
+  let discordId: string | null = null;
+  try {
+    discordId = (await response.json<Record<string, string>>())["id"];
+  } catch {
+    console.error("Discord ID was not saved for week number: %s", week.week);
+  }
+
+  return discordId;
+};
+
+export const postOrEditDiscordWork = async (
+  work: Work, webhookUrl: string,
+): Promise<string | null> => {
   // Retrieve artist name and icon.
 
   // FIXME
@@ -68,10 +115,10 @@ export const postOrEditDiscordPost = async (
   let method: string;
 
   if (work.discordId) {
-    url = `${discordWebhook}/messages/${work.discordId}`;
+    url = `${webhookUrl}/messages/${work.discordId}`;
     method = "patch";
   } else {
-    url = `${discordWebhook}?wait=true`;
+    url = `${webhookUrl}?wait=true`;
     method = "post";
   }
 
