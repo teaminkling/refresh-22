@@ -1,6 +1,7 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useRouter} from "next/router";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
@@ -45,6 +46,15 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
   }, []);
 
   // Now that we know for sure that there are some artists, we try to fetch the one here.
+
+  const router = useRouter();
+
+  if (nameFromParam === "me") {
+    router.push({
+      pathname: "/artists",
+      query: {name: encodeURI(artistsData.artists[idFromAuth0]?.name || "unknown")}
+    }).then();
+  }
 
   const discordId: string | undefined = artistsData.usernameToId[nameFromParam];
 
@@ -123,14 +133,9 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
         {
           idFromAuth0 === artist.discordId ?
             <>
-              <SubHeader>Edit Profile</SubHeader>
-              <InterfaceLink title={"Edit Profile"} location={"/edit"} nextLink />
+              <InterfaceLink title={"Edit Profile"} location={"/artists/edit"} nextLink />
             </> : null
         }
-
-        <SubHeader>
-          View Works
-        </SubHeader>
 
         <InterfaceLink
           title={"View Filtered Gallery"}
@@ -138,9 +143,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
           nextLink
         />
 
-        <SubHeader>
-          Social Media
-        </SubHeader>
+        <SubHeader>Social Media</SubHeader>
 
         {artist.socials.length > 0 ?
           <>

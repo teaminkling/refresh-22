@@ -3,19 +3,19 @@ import {useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AnyAction} from "redux";
 import {ThunkDispatch} from "redux-thunk";
-import {TextareaInput, TextInput} from "../components/forms";
-import InterfaceLink from "../components/interface-link";
+import {TextareaInput, TextInput} from "../../components/forms";
+import InterfaceLink from "../../components/interface-link";
 import StaticPage, {
   Header,
   ListItem,
   Paragraph,
   SubHeader,
   UnorderedList
-} from "../components/typography";
-import Artist from "../data/core/Artist";
-import {addArtists} from "../store/actions";
-import {ArtistsState, RootState} from "../store/state";
-import {updateArtists} from "../utils/connectors";
+} from "../../components/typography";
+import Artist from "../../data/core/Artist";
+import {addArtists} from "../../store/actions";
+import {ArtistsState, RootState} from "../../store/state";
+import {updateArtists} from "../../utils/connectors";
 
 /**
  * Send a request to the backend and save it locally if it succeeds.
@@ -150,19 +150,11 @@ const Edit = (): JSX.Element => {
           <b>Discord ID:</b> {id}
         </Paragraph>
 
-        <SubHeader>
-          View Profile
-        </SubHeader>
-
         <InterfaceLink
           title={"Switch to Public Profile"}
           location={`/artists?name=${existingUsername.current}`}
           nextLink
         />
-
-        <SubHeader>
-          View Your Works
-        </SubHeader>
 
         <InterfaceLink
           title={"View Filtered Gallery"}
