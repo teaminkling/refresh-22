@@ -46,7 +46,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
     <>
       {
         props.label ?
-          <label className={"block text-gray-700 text-sm font-bold mb-2"} htmlFor={props.id}>
+          <label className={"block text-gray-700 text-sm font-bold my-2"} htmlFor={props.id}>
             {props.label}
           </label> : <></>
       }
@@ -105,10 +105,10 @@ interface TextAreaProps {
  */
 export const TextareaInput = (props: TextAreaProps): JSX.Element => {
   return (
-    <>
+    <div className={props.isInitiallyHidden ? "hidden" : ""}>
       {
         props.label ?
-          <label className={"block text-gray-700 text-sm font-bold mb-2"} htmlFor={props.id}>
+          <label className={"block text-gray-700 text-sm font-bold my-2"} htmlFor={props.id}>
             {props.label}
           </label> : <></>
       }
@@ -118,12 +118,11 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
         id={props.id}
         name={props.id}
         placeholder={props.placeholder}
-        rows={6}
-        className={
-          "shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight"
-        }
+        rows={props.rows || 8}
+        className={"shadow appearance-none border w-full py-2 px-3 text-gray-700 leading-tight"}
         defaultValue={props.initialValue}
+        disabled={props.isDisabled || false}
       />
-    </>
+    </div>
   );
 };
