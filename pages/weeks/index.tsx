@@ -9,6 +9,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
+import {RefreshHead} from "../../components/head";
 import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
@@ -141,7 +142,13 @@ const Weeks = () => {
     );
   }
 
-  return response;
+  return <>
+    <RefreshHead subTitle={"Weeks/Themes"} description={
+      "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
+      "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
+    } />
+    {response}
+  </>;
 };
 
 export default Weeks;

@@ -1,5 +1,5 @@
 import type {NextPage} from "next";
-import Head from "next/head";
+import {RefreshHead} from "../components/head";
 import StaticPage, {Header, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 /**
@@ -9,11 +9,10 @@ import StaticPage, {Header, Paragraph, SubHeader, UnorderedList} from "../compon
 const Terms: NextPage = () => {
   return (
     <StaticPage>
-      <Head>
-        <title>Design Refresh - Terms and Conditions</title>
-
-        <meta name="description" content="To be rewritten." />
-      </Head>
+      <RefreshHead subTitle={"Terms of Use"} description={
+        "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
+        "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
+      } />
 
       <Header>
         Terms <span className={"hidden sm:inline-block"}>of Use</span>

@@ -1,5 +1,5 @@
 import type {NextPage} from "next";
-import Head from "next/head";
+import {RefreshHead} from "../components/head";
 import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography";
 
 /**
@@ -9,11 +9,10 @@ import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography
 const Privacy: NextPage = () => {
   return (
     <StaticPage>
-      <Head>
-        <title>Design Refresh - Privacy Policy</title>
-
-        <meta name="description" content="To be rewritten." />
-      </Head>
+      <RefreshHead subTitle={"Privacy Policy"} description={
+        "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
+        "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
+      } />
 
       <Header>
         Privacy <span className={"hidden sm:inline-block"}>Policy</span>

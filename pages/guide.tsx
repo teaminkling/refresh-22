@@ -1,5 +1,5 @@
 import type {NextPage} from "next";
-import Head from "next/head";
+import {RefreshHead} from "../components/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 /**
@@ -9,11 +9,10 @@ import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../comp
 const Guide: NextPage = () => {
   return (
     <StaticPage>
-      <Head>
-        <title>Design Refresh - Participant Guide</title>
-
-        <meta name="description" content="To be rewritten." />
-      </Head>
+      <RefreshHead subTitle={"Participant Guide"} description={
+        "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
+        "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
+      } />
 
       <img
         src={"/art/guide.png"}
@@ -26,7 +25,15 @@ const Guide: NextPage = () => {
       </h1>
 
       <Paragraph>
-        The first thing you should do is <b>join the official Discord</b>!
+        The first thing you should do is&nbsp;
+        <a href={"https://discord.gg/NuUB469UXM"}
+           target={"_blank"}
+           rel={"noreferrer"}
+           style={{color: "#7C7CE0"}}
+           className={"hover:underline"}
+        >
+          join the official Discord
+        </a>!
       </Paragraph>
 
       <Paragraph>
