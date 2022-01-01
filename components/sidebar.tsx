@@ -124,7 +124,7 @@ const Sidebar = (): JSX.Element => {
   );
 
   return (
-    <div className={"md:w-80 md:h-screen bg-white overflow-scroll"}>
+    <div className={"md:w-80 md:h-screen bg-white"}>
       {
         /*
          The parent defines the entire side of the screen. The immediate child defines an
@@ -201,7 +201,7 @@ const Sidebar = (): JSX.Element => {
 
             <InterfaceLink location={"/terms"} title={"Terms"} nextLink />
             <InterfaceLink location={"/privacy"} title={"Privacy"} nextLink />
-            <div className={"m-auto text-center bg-yellow-200 rounded-3xl my-6 py-2 mx-6"}>
+            <div className={"m-auto text-center bg-yellow-200 rounded-3xl my-3 py-1.5 mx-4"}>
               <p>
                 Website is in Beta
                 <Link href={"/beta"}>

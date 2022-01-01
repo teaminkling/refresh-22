@@ -10,7 +10,7 @@ const BetaInfo = () => {
       <img
         src={"/art/404.png"}
         alt={"Refresh!"}
-        className={"pt-16 w-60 object-cover m-auto pb-4 md:m-0"}
+        className={"md:pt-10 w-60 object-cover m-auto pb-4 md:m-0"}
       />
 
       <h1 className={"text-5xl font-bold py-3"}>

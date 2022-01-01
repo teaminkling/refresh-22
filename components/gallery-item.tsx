@@ -69,7 +69,7 @@ const GalleryItem = (props: ItemProps) => {
   }
 
   return (
-    <div className={"flex-col 2xl:flex 2xl:flex-row"}>
+    <div className={"flex-col xl:flex xl:flex-row"}>
       <div className={"px-2 py-2 md:px-3 md:py-4 hover:opacity-95"}>
         <Link href={`/works/${props.id}`}>
           <a>
@@ -87,7 +87,7 @@ const GalleryItem = (props: ItemProps) => {
       {/* Smaller screen gallery caption and horizontal rule + pad. */}
 
       <div
-        className={"px-2 flex 2xl:hidden text-xs 2xl:text-sm"}
+        className={"px-2 flex xl:hidden text-xs xl:text-sm"}
         style={{maxWidth: 800}}
       >
         <div className={"flex-grow"}>
@@ -98,29 +98,29 @@ const GalleryItem = (props: ItemProps) => {
         </div>
       </div>
 
-      <div className={"px-2 py-2 xl:hidden"}>
+      <div className={"px-2 py-2 2xl:hidden"} style={{maxWidth: 824}}>
         <hr className={"border-t"} />
       </div>
 
       {/* Responsive caption on the right side for wider screens. */}
 
-      <div className={"py-4 w-96 hidden 2xl:flex"}>
+      <div className={"py-4 w-80 hidden xl:flex"} style={{hyphens: "auto"}} lang={"en"}>
         <span className={"self-end"}>
-          <p className={"px-4"}>
+          <p className={"px-4 text-sm"}>
             <b>{title}</b>
           </p>
-          <p className={"hidden 2xl:block px-4"}>
+          <p className={"hidden 2xl:block px-4 text-sm"}>
             <i>
               {medium}
             </i>
           </p>
-          <p className={"px-4"}>
+          <p className={"px-4  text-sm"}>
             by {props.artist}
           </p>
-          <p className={"pt-8 px-4 hidden 2xl:block"}>
+          <p className={"pt-8 px-4 hidden xl:block text-sm"}>
             {description}
           </p>
-          <p className={"pt-8 px-4 hidden 2xl:block"}>
+          <p className={"pt-8 px-4 hidden xl:block"}>
             <InterfaceLink
               location={`/works/${props.id}`}
               title={"See More"}

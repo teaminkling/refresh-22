@@ -69,7 +69,7 @@ const InterfaceLink = (props: NavItemProps) => {
     return (
       <Link href={props.location} passHref={false}>
         <a className={
-          "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
+          "block uppercase px-4 py-1 md:text-md focus:text-gray-900 "
           + boldedClasses
           + hoverAndActiveClasses
         }>
@@ -85,7 +85,7 @@ const InterfaceLink = (props: NavItemProps) => {
       // eslint-disable-next-line react/jsx-no-target-blank
       <a
         className={
-          "block uppercase px-4 py-1 md:text-lg focus:text-gray-900 "
+          "block uppercase px-4 py-1 md:text-md focus:text-gray-900 "
           + boldedClasses
           + hoverAndActiveClasses
         }
