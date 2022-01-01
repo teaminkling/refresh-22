@@ -53,6 +53,7 @@ const countdownRenderer: CountdownRendererFn = (
  */
 const Sidebar = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [logoHits, setLogoHits] = useState<number>(0);
 
   // The "bar" logo, only used in the sidebar.
 
@@ -66,11 +67,21 @@ const Sidebar = (): JSX.Element => {
         />
       </a>
 
-      <a href="#" className={"px-4 pt-4 pb-16 hidden md:block"}>
+      {/* Cheeky easter egg here if you keep pressing the logo. */}
+
+      <a
+        href="#"
+        onClick={() => {
+          setLogoHits(logoHits + 1);
+        }}
+        className={"px-4 pt-4 pb-16 hidden md:block"}
+      >
         <img
           src={"/logo/full_logo.png"}
           alt={"The site's logo on the sidebar."}
-          className={"w-1/2 rotate-forever"}
+          className={`w-1/2 ${
+            logoHits % 8 === 0 && logoHits ? "nyoom" : "rotate-forever"
+          }`}
         />
       </a>
     </>
