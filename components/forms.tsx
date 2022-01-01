@@ -94,6 +94,21 @@ interface TextAreaProps {
    * The text of the label.
    */
   label?: string;
+
+  /**
+   * Whether the textarea is originally hidden.
+   */
+  isInitiallyHidden?: boolean;
+
+  /**
+   * Whether the textarea is disabled.
+   */
+  isDisabled?: boolean;
+
+  /**
+   * If not 6, the number of rows.
+   */
+  rows?: number;
 }
 
 /**
