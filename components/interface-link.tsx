@@ -1,4 +1,7 @@
+import {faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import {useState} from "react";
 
 /**
  * Props for a navigation item.
@@ -13,7 +16,7 @@ interface NavItemProps {
    * Where the nav item goes.
    *
    * If this is not present, it's not a link. If it is simply intended to log in a user or
-   * perform some other kind of callback, it should be set to "#".
+   * perform some other kind of callback, it should be set to `#`.
    */
   location?: string;
 
@@ -37,14 +40,7 @@ interface NavItemProps {
    *
    * This only applies if the link is not a Next link.
    */
-  clickBack?: () => void;
-
-  /**
-   * Whether this link should open in a new tab.
-   *
-   * Defaults to "no".
-   */
-  isExternal?: boolean;
+  clickBack?: (arg?: unknown) => Promise<void>;
 }
 
 /**
@@ -55,15 +51,19 @@ interface NavItemProps {
  * @constructor
  */
 const InterfaceLink = (props: NavItemProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const hoverAndActiveClasses = props.location ? (
-    " hover:bg-gray-100 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-  ) : "";
+    " hover:bg-gray-100 focus:bg-gray-200 focus:outline-none focus:shadow-outline "
+  ) : " ";
 
   const boldedClasses = props.strong ? " font-bold" : "";
 
   // The spacing is different when there's an icon.
 
   const spacing = props.icon ? "px-1.5" : "";
+
+  // The link is either a Next link or not.
 
   if (props.nextLink && props.location) {
     return (
@@ -78,24 +78,37 @@ const InterfaceLink = (props: NavItemProps) => {
       </Link>
     );
   } else {
-    // Link is not a Next link.
+    // Link is not a Next link: decoration, JS link, or external link.
 
-    const clickBack: () => void = props.clickBack || (() => null);
+    const clickBack: () => Promise<void> = props.clickBack || (() => Promise.resolve());
+
+    // When clicking the link, it should only be clickable once. Augment the onclick such that
+    // clicking it once will disable the link until the request finishes where it will re-enable it.
+
+    const augmentedClickBack = () => {
+      setIsLoading(true);
+
+      clickBack().then(() => setIsLoading(false));
+    };
+
+    // The link is styled differently depending on loading status:
+
     return (
       // eslint-disable-next-line react/jsx-no-target-blank
       <a
-        className={
-          "block uppercase px-4 py-1 md:text-md focus:text-gray-900 "
-          + boldedClasses
-          + hoverAndActiveClasses
-        }
         href={props.location}
-        onClick={clickBack}
-        target={props.isExternal ? "_blank" : undefined}
-        rel={props.isExternal ? "noreferrer" : undefined}
-        suppressHydrationWarning={true}
+        onClick={isLoading ? () => null : augmentedClickBack}
+        suppressHydrationWarning
+        className={(
+          isLoading ? "cursor-not-allowed " : ""
+            + "block uppercase px-4 py-1 md:text-md focus:text-gray-900 "
+            + boldedClasses
+            + hoverAndActiveClasses
+        )}
       >
-        {props.icon}<span className={spacing} />{props.title}
+        {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className={"mr-3"} /> : props.icon}
+        <span className={spacing} />
+        {isLoading ? "Please Wait" : props.title}
       </a>
     );
   }

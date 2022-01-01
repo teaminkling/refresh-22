@@ -99,7 +99,12 @@ const Sidebar = (): JSX.Element => {
   const loading = <InterfaceLink title={"Loading..."} />;
   const auth = isAuthenticated ? (
     <>
-      <InterfaceLink location={"#"} clickBack={logout} title={"Logout"} strong />
+      <InterfaceLink
+        location={"#"}
+        clickBack={async () => logout()}
+        title={"Logout"}
+        strong
+      />
       <InterfaceLink
         location={"/artists?name=me"}
         title={user?.name || "Error"}

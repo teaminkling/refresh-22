@@ -199,10 +199,11 @@ const Edit = (): JSX.Element => {
             location={"#"}
             title={"Send"}
             clickBack={async () => {
-              await sendArtistUpdateRequest(
+              const token = await getAccessTokenSilently();
+              return sendArtistUpdateRequest(
                 artistsData,
                 dispatch,
-                await getAccessTokenSilently(),
+                token,
                 id,
                 nameInput.current?.value || existingUsername.current,
                 user?.picture,
