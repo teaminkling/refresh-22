@@ -6,8 +6,16 @@
  */
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faDiscord, faTwitch} from "@fortawesome/free-brands-svg-icons";
-import {faBars, faClock, faLink, faTimes, faUser} from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faClock,
+  faLink,
+  faQuestionCircle,
+  faTimes,
+  faUser
+} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import {ReactNode, useState} from "react";
 import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
 import {getDateOfNextEvent, getNatureOfNextEvent} from "../utils/time";
@@ -193,6 +201,16 @@ const Sidebar = (): JSX.Element => {
 
             <InterfaceLink location={"/terms"} title={"Terms"} nextLink />
             <InterfaceLink location={"/privacy"} title={"Privacy"} nextLink />
+            <div className={"m-auto text-center bg-yellow-200 rounded-3xl my-6 py-2 mx-6"}>
+              <p>
+                Website is in Beta
+                <Link href={"/beta"}>
+                  <a className={"pl-2"}>
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                  </a>
+                </Link>
+              </p>
+            </div>
           </div>
         </nav>
       </div>
