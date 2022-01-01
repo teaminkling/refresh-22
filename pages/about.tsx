@@ -78,6 +78,21 @@ const About: NextPage = () => {
       <Paragraph>
         This project was produced and sponsored by <b>Inkling Interactive</b>.
       </Paragraph>
+
+      <img
+        src={"/additional/inkling-banner.png"}
+        alt={"The sponsor's banner."}
+        className={"w-96 p-8"}
+      />
+
+      <UnorderedList>
+        <ListItem>
+          <b>Design</b>: Cindy &quot;cindrytuna&quot; Xu (she/her)
+        </ListItem>
+        <ListItem>
+          <b>Engineering</b>: Thomas &quot;papapastry&quot; Wang (he/him)
+        </ListItem>
+      </UnorderedList>
     </StaticPage>
   );
 };

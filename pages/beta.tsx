@@ -6,7 +6,6 @@ import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../comp
 const BetaInfo = () => {
   return (
     <StaticPage>
-
       <img
         src={"/art/404.png"}
         alt={"Refresh!"}
@@ -39,6 +38,7 @@ const BetaInfo = () => {
       <UnorderedList>
         <ListItem><b>Ability to edit works after posting them.</b></ListItem>
         <ListItem><b>Ability to submit a single work to multiple weeks.</b></ListItem>
+        <ListItem>Optimise images so they don&apos;t use up too much bandwidth.</ListItem>
         <ListItem>A nicer drag-and-drop interface for editing socials.</ListItem>
         <ListItem>Same as above for editing work URLs.</ListItem>
         <ListItem>Ability to preview a thumbnail before posting a work.</ListItem>
@@ -52,7 +52,7 @@ const BetaInfo = () => {
       </Paragraph>
 
       <Paragraph>
-        If you have a suggestion, please contact <b>papapastry#8888</b> on Discord!
+        If you have a suggestion/need help, please contact <b>papapastry#8888</b> on Discord!
       </Paragraph>
     </StaticPage>
   );
