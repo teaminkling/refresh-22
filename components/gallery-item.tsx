@@ -78,7 +78,7 @@ const GalleryItem = (props: ItemProps) => {
               srcSet={`${props.preview}, ${props.retinaPreview} 1.5x`}
               className={"align-bottom"}
               style={{width: 800}}
-              alt={`"A gallery preview image with the title: ${props.title}`}
+              alt={`A gallery preview image with the title: ${props.title}`}
             />
           </a>
         </Link>
@@ -104,7 +104,7 @@ const GalleryItem = (props: ItemProps) => {
 
       {/* Responsive caption on the right side for wider screens. */}
 
-      <div className={"py-4 w-80 hidden xl:flex"} style={{hyphens: "auto"}} lang={"en"}>
+      <div className={"py-4 w-80 hidden xl:flex"} style={{hyphens: "auto"}}>
         <span className={"self-end"}>
           <p className={"px-4 text-sm"}>
             <b>{title}</b>

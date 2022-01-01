@@ -59,7 +59,7 @@ export const SubHeader = ({children}: PropsWithChildren<Record<string, unknown>>
  */
 export const Paragraph = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
-    <p className={"py-3"} style={{hyphens: "auto"}} lang={"en"}>
+    <p className={"py-3"}>
       {children}
     </p>
   );

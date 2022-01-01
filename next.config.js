@@ -1,7 +1,7 @@
 /** @type {import("next").NextConfig} */
 module.exports = {
   reactStrictMode: true,
-  async redirects() {
+  async rewrites() {
     return [
       {
         source: "/security.txt",
