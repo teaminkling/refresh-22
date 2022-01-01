@@ -151,7 +151,7 @@ const Edit = (): JSX.Element => {
         </Paragraph>
 
         <InterfaceLink
-          title={"Switch to Public Profile"}
+          title={"View Profile"}
           location={`/artists?name=${existingUsername.current}`}
           nextLink
         />

@@ -38,6 +38,7 @@ const BetaInfo = () => {
 
       <UnorderedList>
         <ListItem><b>Ability to edit works after posting them.</b></ListItem>
+        <ListItem><b>Ability to submit a single work to multiple weeks.</b></ListItem>
         <ListItem>A nicer drag-and-drop interface for editing socials.</ListItem>
         <ListItem>Same as above for editing work URLs.</ListItem>
         <ListItem>Ability to preview a thumbnail before posting a work.</ListItem>
