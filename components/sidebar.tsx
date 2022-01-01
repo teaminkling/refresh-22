@@ -62,7 +62,7 @@ const Sidebar = (): JSX.Element => {
         <img
           src={"/logo/full_logo.png"}
           alt={"The site's logo on the sidebar."}
-          className={"w-1/2"}
+          className={"w-1/2 rotate-forever"}
         />
       </a>
     </>
