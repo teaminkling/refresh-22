@@ -1,5 +1,10 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {faAngleDown, faAngleUp, faHandMiddleFinger} from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleDown,
+  faAngleUp,
+  faHandMiddleFinger,
+  faLockOpen
+} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -100,7 +105,13 @@ const Weeks = () => {
         <StaticPage>
           <Header>Viewing Weeks</Header>
 
-          <InterfaceLink location={"/weeks/edit"} title={"Edit Weeks"} nextLink />
+          <InterfaceLink
+            location={"/weeks/edit"}
+            title={"Edit Weeks"} nextLink
+            icon={
+              <FontAwesomeIcon icon={faLockOpen} />
+            }
+          />
 
           <SubHeader>
             Current Week
