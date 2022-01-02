@@ -26,7 +26,7 @@ import {
  * @param {number} day the day index
  * @returns {Date} the next day that matches the day index
  */
-const getNextDay = (day: number): Date => {
+const getNextDay = (day: number): moment.Moment => {
   // Now that the "now" variable is a browser-local timezone at this point. It must be converted
   // to an Australia/Melbourne time first.
 
@@ -38,12 +38,11 @@ const getNextDay = (day: number): Date => {
   const startOfWeek: moment.Moment = now.startOf("isoWeek");
 
   startOfWeek.add(day - startOfWeek.days(), "days");
-
   if (startOfWeek <= now) {
     startOfWeek.add(7, "days");
   }
 
-  return now.toDate();
+  return now;
 };
 
 /**
@@ -75,11 +74,11 @@ export const getDateOfNextEvent = (): Date => {
     }
   }
 
-  const nextDay: Date = getNextDay(targetDay);
+  const nextDay: moment.Moment = getNextDay(targetDay);
 
-  nextDay.setHours(targetHours);
+  nextDay.hours(targetHours);
 
-  return nextDay;
+  return nextDay.toDate();
 };
 
 /**
