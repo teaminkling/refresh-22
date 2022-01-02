@@ -117,7 +117,7 @@ const Sidebar = (): JSX.Element => {
         strong
       />
       <InterfaceLink
-        location={"/artists?name=me"}
+        location={"/artists/edit"}
         title={user?.name || "Error"}
         icon={<FontAwesomeIcon icon={faUser} />}
         nextLink
