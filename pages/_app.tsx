@@ -4,6 +4,7 @@
 
 import {Auth0Provider} from "@auth0/auth0-react";
 import type {AppProps} from "next/app";
+import Head from "next/head";
 import {FC} from "react";
 import {useStore} from "react-redux";
 import {Store} from "redux";
@@ -53,26 +54,36 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
   const store: Store = useStore();
 
   return (
-    <Auth0Provider
-      domain={NEXT_PUBLIC_AUTH0_DOMAIN}
-      clientId={NEXT_PUBLIC_AUTH0_CLIENT_ID}
-      redirectUri={NEXT_PUBLIC_AUTH0_REDIRECT_URI}
-      audience={NEXT_PUBLIC_AUTH0_AUDIENCE}
-    >
-      <div className={"md:flex md:flex-row"}>
-        {/* Create a sticky sidebar: */}
+    <>
+      <Head>
+        {/* eslint-disable-next-line @next/next/no-title-in-document-head */}
+        <title>
+          2022 Design Refresh
+        </title>
 
-        <aside className={"md:h-screen sticky top-0"}>
-          <Sidebar />
-        </aside>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <Auth0Provider
+        domain={NEXT_PUBLIC_AUTH0_DOMAIN}
+        clientId={NEXT_PUBLIC_AUTH0_CLIENT_ID}
+        redirectUri={NEXT_PUBLIC_AUTH0_REDIRECT_URI}
+        audience={NEXT_PUBLIC_AUTH0_AUDIENCE}
+      >
+        <div className={"md:flex md:flex-row"}>
+          {/* Create a sticky sidebar: */}
 
-        <div className={"flex-col w-full"}>
-          <PersistGate loading={null} persistor={persistStore(store)}>
-            <Component {...pageProps} />
-          </PersistGate>
+          <aside className={"md:h-screen sticky top-0"}>
+            <Sidebar />
+          </aside>
+
+          <div className={"flex-col w-full"}>
+            <PersistGate loading={null} persistor={persistStore(store)}>
+              <Component {...pageProps} />
+            </PersistGate>
+          </div>
         </div>
-      </div>
-    </Auth0Provider>
+      </Auth0Provider>
+    </>
   );
 };
 
