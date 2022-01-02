@@ -1,5 +1,4 @@
 import type {NextPage} from "next";
-import {RefreshHead} from "../components/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 /**
@@ -9,11 +8,6 @@ import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../comp
 const Guide: NextPage = () => {
   return (
     <StaticPage>
-      <RefreshHead subTitle={"Participant Guide"} description={
-        "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
-        "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
-      } />
-
       <img
         src={"/art/guide.png"}
         alt={"An artist placing a completed work in the gallery."}

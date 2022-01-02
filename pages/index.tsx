@@ -1,5 +1,4 @@
 import type {NextPage} from "next";
-import {RefreshHead} from "../components/head";
 import {Header, Paragraph} from "../components/typography";
 
 /**
@@ -46,10 +45,6 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <RefreshHead subTitle={"Gallery"} description={
-        "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
-        "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
-      } />
       {mainContent}
     </>
   );
