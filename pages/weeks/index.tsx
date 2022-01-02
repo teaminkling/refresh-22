@@ -105,13 +105,15 @@ const Weeks = () => {
         <StaticPage>
           <Header>Viewing Weeks</Header>
 
-          <InterfaceLink
-            location={"/weeks/edit"}
-            title={"Edit Weeks"} nextLink
-            icon={
-              <FontAwesomeIcon icon={faLockOpen} />
-            }
-          />
+          {
+            isEditor ? <InterfaceLink
+              location={"/weeks/edit"}
+              title={"Edit Weeks"} nextLink
+              icon={
+                <FontAwesomeIcon icon={faLockOpen} />
+              }
+            /> : <></>
+          }
 
           <SubHeader>
             Current Week

@@ -39,7 +39,7 @@ const countdownRenderer: CountdownRendererFn = (
 
   return (
     <InterfaceLink
-      title={`${days} ${dayWording} ${paddedHours}:${paddedMinutes}:${paddedSeconds}`}
+      title={`${days} ${dayWording} & ${paddedHours}:${paddedMinutes}:${paddedSeconds}`}
       icon={<FontAwesomeIcon icon={faClock} />}
     />
   );
