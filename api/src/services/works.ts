@@ -1,3 +1,4 @@
+import {ValidationError} from "joi";
 import {ACTIVE_YEAR, EDITORS, LAST_ACTIVE_WEEK} from "../../../data/constants/setup";
 import Work from "../../../data/core/Work";
 import {
@@ -206,7 +207,11 @@ export const putWork = async (
     (weekNumber: number) => weekNumber <= 0 || weekNumber > LAST_ACTIVE_WEEK)
   ) {
     return createBadRequestResponse(
-      "Week numbers must have at least one valid value, and all values must be valid.",
+      new ValidationError(
+        "Week numbers must have at least one valid value, and all values must be valid.",
+        null,
+        null,
+      ),
       origin,
     );
   }

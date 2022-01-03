@@ -2,6 +2,8 @@
  * Utils related to HTTP.
  */
 
+import {ValidationError} from "joi";
+
 /**
  * @param {string} origin the origin, if it is known
  * @returns {Headers} the CORS headers
@@ -61,12 +63,12 @@ export const createNotFoundResponse = async (origin?: string): Promise<Response>
  *
  * Warning: do **not** add variables into the message! They should be generic deliberately.
  *
- * @param {string} message a trusted error message
+ * @param {string} error an error response
  * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} a 400 response with a message
  */
 export const createBadRequestResponse = async (
-  message: string, origin?: string
+  error: ValidationError, origin?: string
 ): Promise<Response> => {
   const newHeaders = new Headers();
 
@@ -76,6 +78,6 @@ export const createBadRequestResponse = async (
   }
 
   return new Response(
-    `{"status": "${message}"}`, {status: 400, headers: newHeaders}
+    JSON.stringify(error), {status: 400, headers: newHeaders}
   );
 };

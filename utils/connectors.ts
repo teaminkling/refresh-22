@@ -112,10 +112,7 @@ export const putArtist = async (
 
     dispatch(addArtists(artistsData.artists));
   } else {
-    throw new Error(
-      "PUT failed to update an artist.\n\n" +
-      `- Code: [${response.status}].\n- Body: [${await response.text()}].`
-    );
+    throw new Error(await response.text());
   }
 };
 
@@ -142,9 +139,6 @@ export const putWeeks = async (
   if (response.ok) {
     dispatch(addWeeks(weeks));
   } else {
-    throw new Error(
-      "PUT failed to update aggregate weeks.\n\n" +
-      `- Code: [${response.status}].\n- Body: [${await response.text()}].`
-    );
+    throw new Error(await response.text());
   }
 };

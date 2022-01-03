@@ -73,15 +73,12 @@ export const putWeeks = async (
   // hijacked account can't be used to perform more disastrous effects on the backend.
 
   const input: Record<number, Week> = await request.json();
-
   const validation: ValidationResult = Joi.array().items(WEEK_SCHEMA).validate(
     Object.values(input),
   );
 
   if (validation.error) {
-    return createBadRequestResponse(JSON.stringify({
-      error: validation.error.details
-    }), origin);
+    return createBadRequestResponse(validation.error, origin);
   }
 
   // Make the post first to save a write.

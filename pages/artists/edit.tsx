@@ -1,8 +1,10 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {useEffect, useRef} from "react";
+import {ValidationError, ValidationResult} from "joi";
+import {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AnyAction} from "redux";
 import {ThunkDispatch} from "redux-thunk";
+import {ResponseMessages} from "../../components/errors";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {
@@ -12,7 +14,7 @@ import StaticPage, {
   SubHeader,
   UnorderedList
 } from "../../components/typography";
-import Artist from "../../data/core/Artist";
+import Artist, {ARTIST_SCHEMA} from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
 import {fetchArtists, putArtist} from "../../utils/connectors";
 
@@ -35,30 +37,50 @@ const sendArtistUpdateRequest = async (
   name?: string,
   thumbnailUrl?: string,
   socials?: string[],
-): Promise<void> => {
+): Promise<JSX.Element> => {
+  const errors: ValidationError[] = [];
+
   if (!name) {
-    return alert("You didn't provide a name!");
+    errors.push(new ValidationError("You didn't provide a name!", [], null));
   }
 
   if (!thumbnailUrl) {
-    return alert("Failed to fetch thumbnail. Please contact papapastry#8888 on Discord.");
+    errors.push(new ValidationError(
+      "Failed to fetch thumbnail. Please contact papapastry#8888 on Discord.",
+      [],
+      null,
+    ));
   }
 
-  const data: Artist = {
-    discordId: discordId,
-    name: name,
-    thumbnailUrl: thumbnailUrl,
-    socials: socials || [],
-  };
+  if (name && thumbnailUrl) {
+    // Perform frontend validation before even attempting a backend send.
 
-  await putArtist(dispatch, artistsData, token, data).then(
-    () => alert("All good!")
-  ).catch((error: Error) => {
-    alert(
-      `Caught an error:\n\n\`\`\`txt\n${error}\n\`\`\`\n\nPlease report this to papapastry#888 ` +
-      "on Discord!"
-    );
-  });
+    const data: Artist = {
+      discordId: discordId,
+      name: name,
+      thumbnailUrl: thumbnailUrl,
+      socials: socials || [],
+    };
+
+    const validation: ValidationResult = ARTIST_SCHEMA.validate(data);
+    if (validation.error) {
+      errors.push(validation.error);
+    } else {
+      await putArtist(dispatch, artistsData, token, data).then().catch((error: Error) => {
+        errors.push(JSON.parse(error.message));
+      });
+    }
+  }
+
+  return <ResponseMessages
+    errors={errors}
+    specialMessage={(
+      <p>
+        <b>Note:</b> each URL must start with <code>https://</code> to be valid.
+      </p>
+    )}
+    validityType={"social URL"}
+  />;
 };
 
 /**
@@ -101,6 +123,8 @@ const Edit = (): JSX.Element => {
       </Paragraph>
     </>
   );
+
+  const [messagesView, setMessagesView] = useState<JSX.Element>(<></>);
 
   useEffect(() => {
     fetchArtists(dispatch, artistsData);
@@ -180,15 +204,20 @@ const Edit = (): JSX.Element => {
             location={"#"}
             title={"Send"}
             clickBack={async () => {
+              setMessagesView(<></>);
+
               const token = await getAccessTokenSilently();
-              return sendArtistUpdateRequest(
-                artistsData,
-                dispatch,
-                token,
-                id,
-                nameInput.current?.value || existingUsername.current,
-                user?.picture,
-                socialsInput.current?.value.trim().split("\n"),
+
+              setMessagesView(
+                await sendArtistUpdateRequest(
+                  artistsData,
+                  dispatch,
+                  token,
+                  id,
+                  nameInput.current?.value || existingUsername.current,
+                  user?.picture,
+                  socialsInput.current?.value.trim().split("\n"),
+                )
               );
             }}
           />
@@ -202,6 +231,7 @@ const Edit = (): JSX.Element => {
   return (
     <StaticPage>
       {view}
+      {messagesView}
     </StaticPage>
   );
 };

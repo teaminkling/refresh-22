@@ -47,7 +47,10 @@ export const ARTIST_SCHEMA = Joi.object(
     discordId: Joi.string().alphanum().max(64).required(),
     name: Joi.string().min(3).max(128).required(),
     thumbnailUrl: Joi.string().uri().required(),
-    socials: Joi.array().items(Joi.string().uri()).required(),
+    socials: Joi.array().items(Joi.string().uri({
+      scheme: "https",
+      allowRelative: false
+    })).required(),
     worksCount: Joi.number().integer().optional(),
   },
 );

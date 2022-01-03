@@ -1,5 +1,6 @@
+import {ValidationError, ValidationResult} from "joi";
 import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
-import Artist from "../../../data/core/Artist";
+import Artist, {ARTIST_SCHEMA} from "../../../data/core/Artist";
 import {ARTISTS} from "../constants/kv";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 
@@ -38,9 +39,12 @@ export const putArtist = async (
 ): Promise<Response> => {
   // Validate type and length and escape the correct request variables.
 
-  // TODO
-
   const input: Artist = await request.json();
+  const validation: ValidationResult = ARTIST_SCHEMA.validate(input);
+
+  if (validation.error) {
+    return createBadRequestResponse(validation.error, origin);
+  }
 
   // Only allow the owner of the artist object or a staff member perform mutations on the object.
 
@@ -65,7 +69,9 @@ export const putArtist = async (
   // If the username has changed from last time and is unique, update it.
 
   if (isUsernameChanged && backendArtist) {
-    return createBadRequestResponse("New username is taken.", origin);
+    return createBadRequestResponse(
+      new ValidationError("New username is taken!", null, null), origin
+    );
   }
 
   // Update the aggregate list. May result in race condition.
