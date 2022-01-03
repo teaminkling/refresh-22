@@ -27,22 +27,15 @@ import {
  * @returns {Date} the next day that matches the day index
  */
 const getNextDay = (day: number): moment.Moment => {
-  // Now that the "now" variable is a browser-local timezone at this point. It must be converted
-  // to an Australia/Melbourne time first.
+  // No matter the timezone, the user only should care about the time/date in Melbourne.
 
   const now: moment.Moment = moment().tz("Australia/Melbourne");
 
-  // Setting the locale to Melbourne sets the start of the week to Monday, not Sunday.
-  // Programmatically make up for this across browsers.
-
-  const startOfWeek: moment.Moment = now.startOf("isoWeek");
-
-  startOfWeek.add(day - startOfWeek.days(), "days");
-  if (startOfWeek <= now) {
-    startOfWeek.add(7, "days");
+  if (now.isoWeekday() <= day) {
+    return now.isoWeekday(day);
   }
 
-  return now;
+  return now.add(1, "week").isoWeekday(day);
 };
 
 /**
@@ -77,6 +70,9 @@ export const getDateOfNextEvent = (): Date => {
   const nextDay: moment.Moment = getNextDay(targetDay);
 
   nextDay.hours(targetHours);
+  nextDay.minutes(0);
+  nextDay.seconds(0);
+  nextDay.milliseconds(0);
 
   return nextDay.toDate();
 };
