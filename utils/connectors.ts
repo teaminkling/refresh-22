@@ -125,6 +125,8 @@ export const putWeeks = async (
   token: string,
   weeks: Record<number, Week>,
 ) => {
+  // Start by removing weeks that have no content.
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/weeks`,
     {

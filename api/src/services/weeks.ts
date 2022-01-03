@@ -2,11 +2,12 @@
  * Internal and external handlers for week endpoints.
  */
 
+import Joi, {ValidationResult} from "joi";
 import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
-import Week from "../../../data/core/Week";
+import Week, {WEEK_SCHEMA} from "../../../data/core/Week";
 import {WEEKS} from "../constants/kv";
 import {postOrEditDiscordWeek} from "../utils/discord";
-import {createJsonResponse, createNotFoundResponse} from "../utils/http";
+import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 
 /**
  * Return the weeks information, redacting if the user signed in is not an authenticated user.
@@ -71,9 +72,17 @@ export const putWeeks = async (
   // Validate type and length and then escape the correct request variables. This is such that a
   // hijacked account can't be used to perform more disastrous effects on the backend.
 
-  // TODO
-
   const input: Record<number, Week> = await request.json();
+
+  const validation: ValidationResult = Joi.array().items(WEEK_SCHEMA).validate(
+    Object.values(input),
+  );
+
+  if (validation.error) {
+    return createBadRequestResponse(JSON.stringify({
+      error: validation.error.details
+    }), origin);
+  }
 
   // Make the post first to save a write.
 

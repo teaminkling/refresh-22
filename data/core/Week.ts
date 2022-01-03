@@ -42,9 +42,9 @@ export const WEEK_SCHEMA = Joi.object(
   {
     year: Joi.number().integer().min(2022).max(2077).required(),
     week: Joi.number().integer().min(1).max(LAST_ACTIVE_WEEK).required(),
-    theme: Joi.string().min(1).max(256).required(),
-    information: Joi.string().min(1).max(16384).required(),
+    theme: Joi.string().max(256).allow("").optional(),
+    information: Joi.string().max(16384).allow("").optional(),
     isPublished: Joi.boolean().required(),
-    discordId: Joi.string().alphanum().max(64).optional(),
+    discordId: Joi.string().alphanum().max(64).allow("").optional(),
   },
 );
