@@ -1,7 +1,9 @@
 /**
  * A work.
  */
-import Artist from "./Artist";
+import Joi from "joi";
+import {LAST_ACTIVE_WEEK} from "../constants/setup";
+import Artist, {ARTIST_SCHEMA} from "./Artist";
 
 export default interface Work {
   /**
@@ -90,3 +92,25 @@ export default interface Work {
    */
   discordId?: string;
 }
+
+// Note: I can't find specifications for the length of a snowflake, so we limit it to 64 chars.
+
+export const WORK_SCHEMA = Joi.object(
+  {
+    id: Joi.string().min(4).max(12).required(),
+    year: Joi.number().min(2022).max(2077).required(),
+    weekNumbers: Joi.array().items(
+      Joi.number().min(1).max(LAST_ACTIVE_WEEK),
+    ).min(1).max(6).required(),
+    artistId: Joi.string().alphanum().max(64).required(),
+    firstSeenArtistInfo: Joi.object(ARTIST_SCHEMA).optional(),
+    title: Joi.string().min(1).max(128).required(),
+    medium: Joi.string().max(128).optional(),
+    description: Joi.string().min(3).max(1920).required(),
+    prose: Joi.string().max(65536).optional(),
+    urls: Joi.array().items(Joi.string().uri()).min(1).required(),
+    thumbnailUrl: Joi.string().uri().optional(),
+    isApproved: Joi.boolean().required(),
+    discordId: Joi.string().alphanum().max(64).optional(),
+  },
+);
