@@ -2,6 +2,7 @@
  * Utils around connecting with the backend.
  */
 
+import moment from "moment-timezone";
 import {AnyAction, Dispatch} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import Artist from "../data/core/Artist";
@@ -11,6 +12,8 @@ import {ArtistsState, RootState, WeeksState} from "../store/state";
 
 /**
  * Perform a generic GET request to the backend for aggregate types.
+ *
+ * The request will re-process every 30 minutes or on the turn of every hour.
  *
  * @param {string} endpoint the endpoint path with a slash at the start
  * @param {ThunkDispatch<RootState, never, AnyAction>} dispatch the dispatch
@@ -29,11 +32,21 @@ const fetchGeneric = <T, R>(
   token?: string,
   force?: boolean,
 ) => {
-  const timeSinceLastFetch: number | null = lastRetrieved ? (
-    new Date().valueOf() - new Date(lastRetrieved).valueOf()
+  const now: moment.Moment = moment().tz("Australia/Melbourne");
+  const lastRetrievedMoment: moment.Moment | null = lastRetrieved ? moment(
+    lastRetrieved
+  ).tz("Australia/Melbourne") : null;
+
+  const timeSinceLastFetch: number | null = lastRetrievedMoment ? (
+    now.valueOf() - lastRetrievedMoment.valueOf()
   ) : null;
 
-  if (force || !timeSinceLastFetch || timeSinceLastFetch > 1000 * 60 * 60 * 24) {
+  if (
+    force
+    || !timeSinceLastFetch
+    || timeSinceLastFetch > 1000 * 60 * 30
+    || lastRetrievedMoment && (now.hour() > lastRetrievedMoment.hour())
+  ) {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
