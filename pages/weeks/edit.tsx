@@ -1,11 +1,13 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
+import Joi, {ValidationError, ValidationResult} from "joi";
 import {createRef, SyntheticEvent, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {ResponseMessages} from "../../components/errors";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, SubHeader} from "../../components/typography";
 import {ACTIVE_YEAR} from "../../data/constants/setup";
-import Week from "../../data/core/Week";
+import Week, {WEEK_SCHEMA} from "../../data/core/Week";
 import {RootState, WeeksState} from "../../store/state";
 import {getIsEditor} from "../../utils/auth";
 import {fetchWeeks, putWeeks} from "../../utils/connectors";
@@ -161,6 +163,10 @@ const Edit = (): JSX.Element => {
     (state: RootState) => state.weeksData,
   );
 
+  // Handle error/success messages.
+
+  const [messagesView, setMessagesView] = useState<JSX.Element>(<></>);
+
   // Set up state.
 
   useEffect(() => {
@@ -235,19 +241,42 @@ const Edit = (): JSX.Element => {
         <InterfaceLink
           location={"#"}
           title={"Submit"}
-          clickBack={async () => {
-            putWeeks(dispatch, weeksData, await getAccessTokenSilently(), weeks).then(
-              () => alert("Good to go!"),
-            ).catch(
-              (error: Error) => {
-                alert(
-                  `Caught an error:\n\n\`\`\`txt\n${error}\n\`\`\`\n\nPlease report this to ` +
-                  "papapastry#888 on Discord!"
+          clickBack={
+            async () => {
+              setMessagesView(<></>);
+
+              const errors: ValidationError[] = [];
+
+              const validation: ValidationResult = Joi.array().items(WEEK_SCHEMA).validate(
+                Object.values(weeks)
+              );
+
+              if (validation.error) {
+                errors.push(validation.error);
+              } else {
+                putWeeks(dispatch, weeksData, await getAccessTokenSilently(), weeks).then().catch(
+                  (error: Error) => {
+                    errors.push(JSON.parse(error.message));
+                  }
                 );
               }
-            );
-          }}
+
+              setMessagesView(
+                <ResponseMessages
+                  errors={errors}
+                  specialMessage={(
+                    <p>
+                      <b>Note:</b> Contact papapastry#8888 when this happens.
+                    </p>
+                  )}
+                  validityType={"value"}
+                />
+              );
+            }
+          }
         />
+
+        {messagesView}
       </StaticPage>
     );
   }
