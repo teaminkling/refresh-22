@@ -103,7 +103,7 @@ export const WORK_SCHEMA = Joi.object(
       Joi.number().min(1).max(LAST_ACTIVE_WEEK),
     ).min(1).max(6).required(),
     artistId: Joi.string().alphanum().max(64).required(),
-    firstSeenArtistInfo: Joi.object(ARTIST_SCHEMA).optional(),
+    firstSeenArtistInfo: ARTIST_SCHEMA.optional(),
     title: Joi.string().min(1).max(128).required(),
     medium: Joi.string().max(128).allow("").optional(),
     description: Joi.string().min(3).max(1920).required(),

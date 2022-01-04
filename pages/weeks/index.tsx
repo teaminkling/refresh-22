@@ -1,7 +1,7 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {
   faAngleDown,
-  faAngleUp,
+  faAngleRight,
   faHandMiddleFinger,
   faLockOpen
 } from "@fortawesome/free-solid-svg-icons";
@@ -129,8 +129,8 @@ const Weeks = () => {
             location={"#"}
             title={`${isWeeksExpanded ? "Hide" : "Show"} All Weeks`}
             icon={
-              isWeeksExpanded ? <FontAwesomeIcon icon={faAngleUp} />
-                : <FontAwesomeIcon icon={faAngleDown} />
+              isWeeksExpanded ? <FontAwesomeIcon icon={faAngleDown} />
+                : <FontAwesomeIcon icon={faAngleRight} />
             }
             clickBack={async () => setIsWeeksExpanded(!isWeeksExpanded)}
           />

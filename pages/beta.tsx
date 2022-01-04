@@ -36,17 +36,12 @@ const BetaInfo = () => {
       </Paragraph>
 
       <UnorderedList>
-        <ListItem><b>Ability to post .mp3, .pdf, and .gif files.</b></ListItem>
         <ListItem><b>Ability to sort and filter the gallery.</b></ListItem>
         <ListItem><b>Add a better single post view allowing zoom and pinch.</b></ListItem>
         <ListItem><b>Ability to edit works after posting them.</b></ListItem>
-        <ListItem><b>Ability to submit a single work to multiple weeks.</b></ListItem>
         <ListItem><b>Add a call to action with the theme on the front page.</b></ListItem>
         <ListItem>Optimise images so they don&apos;t use up too much bandwidth.</ListItem>
         <ListItem>A nicer drag-and-drop interface for editing socials.</ListItem>
-        <ListItem>Same as above for editing work URLs.</ListItem>
-        <ListItem>Ability to preview a thumbnail before posting a work.</ListItem>
-        <ListItem>Removal of the ugly alerts in favour of better notifications.</ListItem>
       </UnorderedList>
 
       <Paragraph>

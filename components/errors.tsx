@@ -48,7 +48,7 @@ export const ResponseMessages = (
             const attemptedValue: string | undefined = detail.context?.value;
 
             let message = <p>{detail.message}</p>;
-            if (attemptedValue) {
+            if (attemptedValue && attemptedValue.length > 0) {
               message = <p>
                 <b>{attemptedValue}</b> {validityMessage}!
               </p>;
@@ -78,9 +78,12 @@ export const ResponseMessages = (
           <FontAwesomeIcon icon={faFrownOpen} fixedWidth className={"ml-2"} /> There were errors!
         </b>
 
-        <div className={"pt-3"}>
-          {props.specialMessage || <></>}
-        </div>
+        {
+          props.specialMessage ? <div className={"pt-3"}>
+            {props.specialMessage}
+          </div> : <></>
+        }
+
       </>
     ) : <p className={"text-green-800"}>
       Success!

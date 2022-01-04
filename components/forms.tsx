@@ -2,7 +2,7 @@
  * Reusable form components.
  */
 
-import {RefObject} from "react";
+import {RefObject, SyntheticEvent} from "react";
 
 /**
  * Props for a styled text input box.
@@ -36,7 +36,12 @@ interface TextInputProps {
   /**
    * A function to callback on blur.
    */
-  blurCallback?: () => void;
+  blurCallback?: (event?: SyntheticEvent<HTMLInputElement, unknown>) => void;
+
+  /**
+   * Whether this item should visually show that it's required.
+   */
+  isRequired?: boolean;
 }
 
 /**
@@ -52,7 +57,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
       {
         props.label ?
           <label className={"block text-gray-700 text-sm font-bold my-2"} htmlFor={props.id}>
-            {props.label}
+            {props.label} {props.isRequired && <span className={"text-red-500"}>*</span>}
           </label> : <></>
       }
 
@@ -63,10 +68,11 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
         placeholder={props.placeholder}
         type={"text"}
         className={
-          "shadow border w-full py-2 px-3 leading-tight my-2"
+          "shadow border w-full py-2 px-3 leading-tight my-2 required:text-red-500"
         }
         defaultValue={props.initialValue}
         onBlur={props.blurCallback}
+        required={props.isRequired}
       />
     </>
   );
@@ -119,7 +125,12 @@ interface TextAreaProps {
   /**
    * A function to callback on blur.
    */
-  blurCallback?: () => void;
+  blurCallback?: (event?: SyntheticEvent<HTMLTextAreaElement, unknown>) => void;
+
+  /**
+   * Whether this textarea is required.
+   */
+  isRequired?: boolean;
 }
 
 /**
@@ -135,7 +146,7 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
       {
         props.label ?
           <label className={"block text-gray-700 text-sm font-bold my-2"} htmlFor={props.id}>
-            {props.label}
+            {props.label} {props.isRequired && <span className={"text-red-500"}>*</span>}
           </label> : <></>
       }
 
@@ -149,6 +160,7 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
         defaultValue={props.initialValue}
         disabled={props.isDisabled || false}
         onBlur={props.blurCallback}
+        required={props.isRequired}
       />
     </div>
   );
