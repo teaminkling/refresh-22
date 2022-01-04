@@ -7,6 +7,7 @@ import {
   WORKS_WITH_WEEK_INDEX,
   WORKS_WITHOUT_INDEX
 } from "../constants/kv";
+import Environment from "../types/environment";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
 import {placeWork} from "../utils/kv";
@@ -28,14 +29,13 @@ import {placeWork} from "../utils/kv";
  *
  * Params pattern: `?year=<year>&week=<week>&artistId=<artist>`
  *
+ * @param {Environment} env the workers environment
  * @param {URLSearchParams} params the search parameters
- * @param {KVNamespace} kv the main key-value store
- * @param {string | undefined} origin the allowed origin for the CORS headers
  * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const getWorks = async (
-  params: URLSearchParams, kv: KVNamespace, origin?: string, identifier?: string,
+  env: Environment, params: URLSearchParams, identifier?: string,
 ): Promise<Response> => {
   // Escape search terms (remove slashes).
 
@@ -49,19 +49,19 @@ export const getWorks = async (
   let results: Work[] = [];
   if (artistId) {
     const works_with_artist_index: Record<string, Work> = JSON.parse(
-      (await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${artistId}`)) || "[]",
+      (await env.REFRESH_KV.get(`${WORKS_WITH_ARTIST_INDEX}/${artistId}`)) || "[]",
     );
 
     Object.values(works_with_artist_index).forEach((work: Work) => results.push(work));
   } else if (week) {
     const works_with_week_index: Record<string, Work> = JSON.parse(
-      (await kv.get(`${WORKS_WITH_WEEK_INDEX}/${year}/${week}`)) || "[]",
+      (await env.REFRESH_KV.get(`${WORKS_WITH_WEEK_INDEX}/${year}/${week}`)) || "[]",
     );
 
     Object.values(works_with_week_index).forEach((work: Work) => results.push(work));
   } else {
     const works_without_index: Work[] = JSON.parse(
-      (await kv.get(`${WORKS_WITHOUT_INDEX}`)) || "[]"
+      (await env.REFRESH_KV.get(`${WORKS_WITHOUT_INDEX}`)) || "[]"
     );
 
     works_without_index.forEach((work: Work) => results.push(work));
@@ -76,7 +76,7 @@ export const getWorks = async (
     results = results.filter((result: Work) => result.isApproved);
   }
 
-  return createJsonResponse(JSON.stringify({data: results}), origin);
+  return createJsonResponse(JSON.stringify({data: results}), env.ALLOWED_ORIGIN);
 };
 
 /**
@@ -84,46 +84,43 @@ export const getWorks = async (
  *
  * There is no authentication check.
  *
+ * @param {Environment} env the workers environment
  * @param {URLSearchParams} params the search parameters
- * @param {Body} _body the unused body
- * @param {KVNamespace} kv the key-value store
- * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} the response
  */
 export const getWork = async (
-  params: URLSearchParams, _body: Body, kv: KVNamespace, origin?: string
+  env: Environment, params: URLSearchParams,
 ): Promise<Response> => {
   const id: string | null = sanitize(params.get("id"));
   if (!id) {
-    return createNotFoundResponse(origin);
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
   const work: Work | undefined | null = JSON.parse(
-    (await kv.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
+    (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
   );
 
   if (!work) {
-    return createNotFoundResponse(origin);
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
-  return createJsonResponse(JSON.stringify({data: work}), origin);
+  return createJsonResponse(JSON.stringify({data: work}), env.ALLOWED_ORIGIN);
 };
 
 /**
  * Perform the work for the {@link putWork} function.
  *
- * @param {KVNamespace} kv the main key-value store
+ * @param {Environment} env the workers environment
  * @param {Work} work the work
- * @param {string | undefined} origin the allowed origin for the CORS headers
  * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 const updateWorkIndices = async (
-  kv: KVNamespace, work: Work, origin?: string, identifier?: string,
+  env: Environment, work: Work, identifier?: string,
 ): Promise<Response> => {
   // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
 
-  const rawBackendWork: string | null = await kv.get(
+  const rawBackendWork: string | null = await env.REFRESH_KV.get(
     `${WORKS_WITH_ID_INDEX}/${work.id}`
   );
 
@@ -133,7 +130,7 @@ const updateWorkIndices = async (
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff || work.artistId !== identifier) {
-    return createNotFoundResponse(origin);
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
   // Determine the work ID.
@@ -147,7 +144,7 @@ const updateWorkIndices = async (
 
     // This isn't very robust, but we don't ever expect anything to ever collide.
 
-    if (await kv.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
+    if (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
       throw new Error("Collision error! This requires developer intervention.");
     }
 
@@ -158,9 +155,9 @@ const updateWorkIndices = async (
 
   work.id = effectiveId;
 
-  await placeWork(kv, work);
+  await placeWork(env.REFRESH_KV, work);
 
-  return createJsonResponse("{}", origin);
+  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
 };
 
 /**
@@ -172,26 +169,25 @@ const updateWorkIndices = async (
  * This is an idempotent endpoint whether or not a post already exists. It uses a rate limit of 2
  * edits per minute. We are not concerned about race conditions.
  *
+ * @param {Environment} env the workers environment
  * @param {Request} request the request
- * @param {KVNamespace} kv the main key-value store
- * @param {string | undefined} origin the allowed origin for the CORS headers
  * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putWork = async (
-  request: Request, kv: KVNamespace, origin?: string, identifier?: string,
+  env: Environment, request: Request, identifier?: string,
 ): Promise<Response> => {
   // Ensure user is authenticated at all before doing any other CPU computation.
 
   if (!identifier) {
-    return createNotFoundResponse(origin,);
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
   // TODO: Remove temporary measure that prevents use of this endpoint.
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!identifier || !isStaff) {
-    return createNotFoundResponse(origin);
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
   // Validate all data and ensure it is escaped for HTML.
@@ -212,7 +208,7 @@ export const putWork = async (
         null,
         null,
       ),
-      origin,
+      env.ALLOWED_ORIGIN,
     );
   }
 
@@ -224,7 +220,7 @@ export const putWork = async (
 
   // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
 
-  const response = await updateWorkIndices(kv, input, origin, identifier);
+  const response = await updateWorkIndices(env, input, identifier);
 
   // Edit the Discord post for this work (can fail without 500).
 
@@ -237,11 +233,13 @@ export const putWork = async (
 
 // TODO: Rate limit: 8 uploads a minute.
 
+// * @param {Environment} env the workers environment
+
 export const postUpload = async (
-  _params: URLSearchParams, _body: Body, _kv: KVNamespace, origin?: string
+  env: Environment, _body: Body,
 ): Promise<Response> => {
 
   // TODO
 
-  return createJsonResponse(origin);
+  return createJsonResponse(env.ALLOWED_ORIGIN);
 };

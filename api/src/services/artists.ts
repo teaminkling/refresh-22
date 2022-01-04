@@ -2,6 +2,7 @@ import {ValidationError, ValidationResult} from "joi";
 import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
 import Artist, {ARTIST_SCHEMA} from "../../../data/core/Artist";
 import {ARTISTS} from "../constants/kv";
+import Environment from "../types/environment";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 
 /**
@@ -9,16 +10,15 @@ import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} fr
  *
  * Note that this is not deterministically sorted.
  *
- * @param {KVNamespace} kv the main key-value store
- * @param {string | undefined} origin the allowed origin for the CORS headers
+ * @param {Environment} env the workers environment
  * @returns {Promise<Response>} the response
  */
-export const getArtists = async (kv: KVNamespace, origin?: string): Promise<Response> => {
+export const getArtists = async (env: Environment): Promise<Response> => {
   const artists: Record<string, Artist> = JSON.parse(
-    (await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
+    (await env.REFRESH_KV.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
   );
 
-  return createJsonResponse(JSON.stringify(artists), origin);
+  return createJsonResponse(JSON.stringify(artists), env.ALLOWED_ORIGIN);
 };
 
 /**
@@ -28,14 +28,13 @@ export const getArtists = async (kv: KVNamespace, origin?: string): Promise<Resp
  * they can certainly happen. The rate limit is set to 8 changes per 30 minutes, which is the
  * most aggressive rate limit in the codebase.
  *
+ * @param {Environment} env the workers environment
  * @param {Request} request the request
- * @param {KVNamespace} kv the main key-value store
- * @param {string | undefined} origin the allowed origin for the CORS headers
  * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
 export const putArtist = async (
-  request: Request, kv: KVNamespace, origin?: string, identifier?: string,
+  env: Environment, request: Request, identifier?: string,
 ): Promise<Response> => {
   // Validate type and length and escape the correct request variables.
 
@@ -43,19 +42,22 @@ export const putArtist = async (
   const validation: ValidationResult = ARTIST_SCHEMA.validate(input);
 
   if (validation.error) {
-    return createBadRequestResponse(validation.error, origin);
+    return createBadRequestResponse(validation.error, env.ALLOWED_ORIGIN);
   }
 
   // Only allow the owner of the artist object or a staff member perform mutations on the object.
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!identifier || !isStaff && identifier !== input.discordId) {
-    return createNotFoundResponse(origin);
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
   // Retrieve the artist.
 
-  const rawBackendArtist: string | null = await kv.get(`${ARTISTS}/${input.discordId}`);
+  const rawBackendArtist: string | null = await env.REFRESH_KV.get(
+    `${ARTISTS}/${input.discordId}`,
+  );
+
   const backendArtist: Artist | undefined = (
     rawBackendArtist ? JSON.parse(rawBackendArtist) : undefined
   );
@@ -70,23 +72,24 @@ export const putArtist = async (
 
   if (isUsernameChanged && backendArtist) {
     return createBadRequestResponse(
-      new ValidationError("New username is taken!", null, null), origin
+      new ValidationError("New username is taken!", null, null),
+      env.ALLOWED_ORIGIN,
     );
   }
 
   // Update the aggregate list. May result in race condition.
 
   const aggregateArtists: Record<string, Artist> = JSON.parse(
-    await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`) || "{}"
+    await env.REFRESH_KV.get(`${ARTISTS}/${ACTIVE_YEAR}`) || "{}"
   );
 
   aggregateArtists[input.discordId] = input;
 
-  await kv.put(`${ARTISTS}/${ACTIVE_YEAR}`, JSON.stringify(aggregateArtists));
+  await env.REFRESH_KV.put(`${ARTISTS}/${ACTIVE_YEAR}`, JSON.stringify(aggregateArtists));
 
   // Also put it in a guaranteed consistent call.
 
-  await kv.put(`${ARTISTS}/${identifier}`, JSON.stringify(input));
+  await env.REFRESH_KV.put(`${ARTISTS}/${identifier}`, JSON.stringify(input));
 
-  return createJsonResponse("{}", origin);
+  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
 };

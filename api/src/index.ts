@@ -7,52 +7,48 @@ import {GetKeyFunction} from "jose/dist/types/types";
 import {getArtists, putArtist} from "./services/artists";
 import {getWeeks, putWeeks} from "./services/weeks";
 import {getWork, getWorks, postUpload, putWork} from "./services/works";
+import Environment from "./types/environment";
 import {createNotFoundResponse, generateCorsHeaders} from "./utils/http";
+
 
 /**
  * Handle an API request.
  *
- * @param {string} weeksWebhook the Discord weeks webhook
- * @param {string} _worksWebhook the Discord works webhook
- * @param {KVNamespace} kv the main key-value store
+ * @param {Environment} env the workers environment
  * @param {string} method the method name
  * @param {string} routine the routine name
  * @param {URLSearchParams} params the URL parameters
  * @param {Request} request the request
  * @param {string | undefined} identifier if provided, the recognised ID of the calling user
- * @param {string | undefined} origin the allowed origin for the CORS headers
  * @returns {Promise<Response>} the response
  */
 const handleRequest = async (
-  weeksWebhook: string,
-  _worksWebhook: string,
-  kv: KVNamespace,
+  env: Environment,
   method: string,
   routine: string,
   params: URLSearchParams,
   request: Request,
   identifier?: string,
-  origin?: string,
 ): Promise<Response> => {
   switch (`${method.toLowerCase()}/${routine.toLowerCase()}`) {
     case ("get/weeks"):
-      return getWeeks(kv, origin, identifier);
+      return getWeeks(env, identifier);
     case ("get/artists"):
-      return getArtists(kv, origin);
+      return getArtists(env);
     case ("get/works"):
-      return getWorks(params, kv, origin, identifier);
+      return getWorks(env, params, identifier);
     case ("get/work"):
       // Note the slight spelling difference: "s".
 
-      return getWork(params, request, kv, origin);
+      return getWork(env, params);
     case ("put/weeks"):
-      return putWeeks(weeksWebhook, request, kv, origin, identifier);
+      return putWeeks(env, request, identifier);
     case ("put/artist"):
-      return putArtist(request, kv, origin, identifier);
+      return putArtist(env, request, identifier);
     case ("put/work"):
-      return putWork(request, kv, origin, identifier);
+      return putWork(env, request, identifier);
     case ("post/upload"):
-      return postUpload(params, request, kv, origin);
+      return postUpload(env, request);
   }
 
   return createNotFoundResponse();
@@ -99,17 +95,7 @@ const handleJwt = async (
  * The main Cloudflare Worker for this backend project.
  */
 const worker = {
-  async fetch(
-    request: Request,
-    env: {
-      REFRESH_KV: KVNamespace;
-      ALLOWED_ORIGIN: string;
-      JWKS_URL: string;
-      AUDIENCE: string;
-      WEEKS_DISCORD_URL: string;
-      WORKS_DISCORD_URL: string;
-    },
-  ) {
+  async fetch(request: Request, env: Environment) {
     const method: string = request.method.toLowerCase();
 
     // Handle preflight request without handling JWT since it's not necessary.
@@ -140,15 +126,12 @@ const worker = {
     }
 
     return handleRequest(
-      env.WEEKS_DISCORD_URL,
-      env.WORKS_DISCORD_URL,
-      env.REFRESH_KV,
+      env,
       method,
       pathParts[0],
       url.searchParams,
       request,
       identifier,
-      env.ALLOWED_ORIGIN,
     );
   }
 };
