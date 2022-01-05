@@ -94,14 +94,14 @@ export const postOrEditDiscordWork = async (
 
   // Determine content.
 
-  let contentText = `New work by <@${work.artistId}>!\n\n**Title:**${work.title}`;
+  let contentText = `New work by <@${work.artistId}>!\n\n**Title:** ${work.title}`;
 
   if (work.medium) {
-    contentText += `\n**Medium:**${work.medium}`;
+    contentText += `\n**Medium:** ${work.medium}`;
   }
 
   if (work.description) {
-    contentText += `\n**Description:**${work.description}`;
+    contentText += `\n**Description:**\n\n${work.description}`;
   }
 
   const content: Record<string, unknown> = {
