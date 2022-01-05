@@ -88,7 +88,13 @@ const InterfaceLink = (props: NavItemProps) => {
     const augmentedClickBack = () => {
       setIsLoading(true);
 
-      clickBack().then(() => setIsLoading(false));
+      clickBack().then(() => setIsLoading(false)).catch(
+        (error: Error) => {
+          setIsLoading(false);
+
+          throw error;
+        }
+      );
     };
 
     // The link is styled differently depending on loading status:
