@@ -74,11 +74,10 @@ const SubmissionForm = () => {
 
   useEffect(() => {
     fetchArtists(dispatch, artistsData);
-  });
 
-  useEffect(() => {
     if (user) {
-      // Even the editors can only post to existing weeks.
+      // Even the editors can only post to existing weeks. Still, if the user is staff, we might
+      // be able to update the weeks for other purposes.
 
       getAccessTokenSilently().then(
         (token: string) => fetchWeeks(dispatch, weeksData, token, false)
@@ -304,9 +303,12 @@ const SubmissionForm = () => {
           </SubHeader>
 
           <Paragraph>
-            Submitting the post puts it onto our review queue. You will immediately receive a URL to
-            your work (can take up to 60 seconds to appear on the internet) but it will not appear
-            in the gallery until it has been approved.
+            Your work will not appear in the gallery/list until it has been approved.
+          </Paragraph>
+
+          <Paragraph>
+            Still, if the upload is successful, you will receive a direct link to your work,
+            noting it might take up to a minute for it to work for everyone else.
           </Paragraph>
 
           <InterfaceLink
