@@ -1,10 +1,9 @@
 import {
   faBackspace,
+  faCompactDisc,
   faCrown,
   faGripLines,
-  faImage,
   faLink,
-  faMusic,
   faTimes,
   faVideo
 } from "@fortawesome/free-solid-svg-icons";
@@ -101,7 +100,7 @@ const InitialButtons = (props: FileItemProps) => {
         props.setMode ? props.setMode(FileItemMode.IMAGE_MODE) : null;
       }}
     >
-      <FontAwesomeIcon icon={faImage} fixedWidth /> Image
+      <FontAwesomeIcon icon={faCompactDisc} fixedWidth /> Image or Audio
     </button>
 
     <button
@@ -112,16 +111,6 @@ const InitialButtons = (props: FileItemProps) => {
       }}
     >
       <FontAwesomeIcon icon={faVideo} fixedWidth /> Video
-    </button>
-
-    <button
-      className={BUTTON_CLASSES}
-      type={"button"}
-      onClick={() => {
-        props.setMode ? props.setMode(FileItemMode.AUDIO_MODE) : null;
-      }}
-    >
-      <FontAwesomeIcon icon={faMusic} fixedWidth /> Audio
     </button>
 
     <button
@@ -342,7 +331,6 @@ const FileItem = (props: FileItemProps) => {
 
       break;
     case (FileItemMode.IMAGE_MODE):
-    case (FileItemMode.AUDIO_MODE):
       itemElement = <ImageAndAudioModeView {...props} setMode={setMode} />;
 
       break;
