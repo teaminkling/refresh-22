@@ -62,8 +62,10 @@ export const UPLOAD_EXPIRY = 5 * 60;
 
 /**
  * The bytes limit of any one uploaded file.
+ *
+ * This is 32 MiB.
  */
-export const MAXIMUM_CONTENT_LENGTH = 16 * 1024 * 1024;
+export const MAXIMUM_CONTENT_LENGTH = 32 * 1024 * 1024;
 
 /**
  * The maximum amount of files per post.
