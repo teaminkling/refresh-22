@@ -1,6 +1,9 @@
-import {EDITORS} from "../../../data/constants/setup";
+import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
+import Artist from "../../../data/core/Artist";
 import Week from "../../../data/core/Week";
 import Work from "../../../data/core/Work";
+import {ARTISTS} from "../constants/kv";
+import Environment from "../types/environment";
 
 /**
  * Utils about Discord API requests.
@@ -60,15 +63,34 @@ export const postOrEditDiscordWeek = async (
   return discordId;
 };
 
+/**
+ * Post or edit a Discord's submission post.
+ *
+ * @param {Environment} env the environment
+ * @param {Work} work the work itself
+ * @returns {Promise<string | null>} the ID for the work, if successful
+ */
 export const postOrEditDiscordWork = async (
-  work: Work, webhookUrl: string,
+  env: Environment, work: Work
 ): Promise<string | null> => {
-  // Retrieve artist name and icon.
+  // Retrieve artist name and icon. Default to backend-retrieved but otherwise use the
+  // information on the Work. The information on the Work will usually make up the Discord post
+  // as well, and if the user changes their name, that information won't propagate unless they
+  // deliberately edit their post first.
 
-  // FIXME
+  const artists: Record<string, Artist> = JSON.parse(
+    (await env.REFRESH_KV.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
+  );
 
-  const artistName = "";
-  const artistIcon = "";
+  const postingArtist: Artist | undefined | null = artists[work.artistId];
+
+  const artistName: string = (
+    postingArtist?.name || work.firstSeenArtistInfo?.name || "Unknown"
+  );
+
+  const artistIcon: string | undefined = (
+    postingArtist?.thumbnailUrl || work.firstSeenArtistInfo?.thumbnailUrl
+  );
 
   // Determine content.
 
@@ -91,7 +113,7 @@ export const postOrEditDiscordWork = async (
     "embeds": [
       {
         "type": "rich",
-        "url": `https://refresh.fiveclawd.com/work/${work.id}`,
+        "url": `https://refresh.fiveclawd.com/works?id=${work.id}`,
         "description": `A ${work.medium || " "}piece by <@${work.artistId}>!`,
         "image": {
           "url": work.thumbnailUrl,
@@ -100,7 +122,7 @@ export const postOrEditDiscordWork = async (
         "author": {
           "name": artistName,
           "icon_url": artistIcon,
-          "url": `https://refresh.fiveclawd.com/artists/${artistName}`,
+          "url": `https://refresh.fiveclawd.com/artists?name=${artistName}`,
         },
         "footer": {
           "text": work.weekNumbers.map(weekNumber => `Week ${weekNumber}`).join(", "),
@@ -115,10 +137,10 @@ export const postOrEditDiscordWork = async (
   let method: string;
 
   if (work.discordId) {
-    url = `${webhookUrl}/messages/${work.discordId}`;
+    url = `${env.WORKS_DISCORD_URL}/messages/${work.discordId}`;
     method = "patch";
   } else {
-    url = `${webhookUrl}?wait=true`;
+    url = `${env.WORKS_DISCORD_URL}?wait=true`;
     method = "post";
   }
 
