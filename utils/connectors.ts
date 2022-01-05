@@ -106,7 +106,7 @@ export const putArtist = async (
   token: string,
   artist: Artist,
 ): Promise<void> => {
-  const response = await fetch(
+  const response: Response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/artist`,
     {
       method: "put",
@@ -137,7 +137,7 @@ export const putWeeks = async (
 ) => {
   // Start by removing weeks that have no content.
 
-  const response = await fetch(
+  const response: Response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/weeks`,
     {
       method: "put",

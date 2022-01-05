@@ -39,8 +39,8 @@ export const putArtist = async (
   // Validate type and length and escape the correct request variables.
 
   const input: Artist = await request.json();
-  const validation: ValidationResult = ARTIST_SCHEMA.validate(input);
 
+  const validation: ValidationResult = ARTIST_SCHEMA.validate(input);
   if (validation.error) {
     return createBadRequestResponse(validation.error, env.ALLOWED_ORIGIN);
   }
