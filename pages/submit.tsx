@@ -110,7 +110,7 @@ const SubmissionForm = () => {
   const [medium, setMedium] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [prose, setProse] = useState<string>("");
-  const [thumbnailPointer, setThumbnailPointer] = useState<string>("");
+  const [thumbnailPointer, setThumbnailPointer] = useState<File | undefined>(undefined);
 
   // After we submit, there are messages we need to retrieve:
 
@@ -294,7 +294,11 @@ const SubmissionForm = () => {
               "shadow border mx-2 py-2 px-3 leading-tight my-2 inline-block hidden"
             }
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setThumbnailPointer(event.currentTarget.value);
+              const files: FileList | null = event.currentTarget.files;
+
+              if (files && files.length > 0) {
+                setThumbnailPointer(files[0]);
+              }
             }}
           />
 

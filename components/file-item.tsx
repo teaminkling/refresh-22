@@ -18,7 +18,6 @@ enum FileItemMode {
   DEFAULT_MODE,
   IMAGE_MODE,
   VIDEO_MODE,
-  AUDIO_MODE,
   URL_MODE,
 }
 
@@ -43,7 +42,7 @@ export interface FrontendFileItem {
    *
    * Not applicable if there's a URL instead.
    */
-  file?: string;
+  file?: File;
 }
 
 /**
@@ -221,7 +220,10 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
         const newState: FrontendFileItem[] = props.parentState.slice();
 
         newState[props.index].url = undefined;
-        newState[props.index].file = event.currentTarget.value;
+        newState[props.index].file = (
+          event.currentTarget.files && event.currentTarget.files.length > 0 ?
+            event.currentTarget.files[0] : undefined
+        );
 
         props.setParentState(newState);
       }}
