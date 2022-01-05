@@ -154,6 +154,8 @@ const InitialButtons = (props: FileItemProps) => {
 };
 
 const ImageAndAudioModeView = (props: FileItemProps) => {
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+
   return <>
     <button
       className={BUTTON_CLASSES}
@@ -170,7 +172,41 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
       <FontAwesomeIcon icon={faBackspace} fixedWidth /> Back
     </button>
     <span className={"inline-block pl-4 leading-8"}>
-      Supported: <code>.png, .jpg, .mp3, .gif</code>.
+      <div className={"relative inline-block"}>
+        <a
+          href={"#action"}
+          className={"border-b border-dashed border-black hidden md:block"}
+          onClick={() => setShowTooltip(!showTooltip)}
+        >
+          Read Me
+        </a>
+        {
+          showTooltip ?
+            <span
+              className={
+                "absolute text-center p-2 bg-gray-50 border shadow hidden md:block text-sm"
+              }
+              style={{
+                bottom: "120%",
+                width: "16em",
+                left: "50%",
+                marginLeft: "-8em"
+              }}
+            >
+              <p className={"mb-4"}>
+                PNG, JPG, GIF, and MP3 files are supported. The maximum file size is 32 MiB.
+              </p>
+              <p className={"mb-4"}>
+                If you are uploading an image, please upload one that is at least 720 pixels
+                tall <b>and</b> 1024 pixels wide.
+              </p>
+              <p>
+                If what you are uploading is much smaller, please consider uploading a larger
+                manual thumbnail, e.g., of your Photoshop window.
+              </p>
+            </span> : <></>
+        }
+      </div>
     </span>
     <input
       type={"file"}
