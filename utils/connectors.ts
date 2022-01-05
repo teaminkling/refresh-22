@@ -7,8 +7,10 @@ import {AnyAction, Dispatch} from "redux";
 import {ThunkDispatch} from "redux-thunk";
 import Artist from "../data/core/Artist";
 import Week from "../data/core/Week";
-import {addArtists, addWeeks} from "../store/actions";
-import {ArtistsState, RootState, WeeksState} from "../store/state";
+import Work from "../data/core/Work";
+import {addArtists, addWeeks, addWorks} from "../store/actions";
+import {WorkSource} from "../store/enums";
+import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
 
 /**
  * Perform a generic GET request to the backend for aggregate types.
@@ -154,4 +156,85 @@ export const putWeeks = async (
   } else {
     throw new Error(await response.text());
   }
+};
+
+export const putWork = async (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  worksData: WorksState,
+  token: string,
+  work: Work,
+): Promise<void> => {
+  const response: Response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/work`,
+    {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(work),
+    }
+  );
+
+  if (response.ok) {
+    // We don't need to worry about copying the objects because the reducers will do that for us.
+
+    worksData.works[work.id] = work;
+
+    dispatch(addWorks(worksData.works, WorkSource.DIRECT));
+  } else {
+    throw new Error(await response.text());
+  }
+};
+
+/**
+ * Upload a file and return the remote public URL.
+ *
+ * @param {string} token the access token
+ * @param {File} file the file to upload
+ * @returns {Promise<string>} the public URL
+ */
+export const uploadFile = async (
+  token: string, file: File,
+): Promise<string> => {
+  const presignedUrlResponse: Response = await fetch(
+    `${process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:8787"}/api/upload`,
+    {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        filename: file.name,
+        contentLength: file.size,
+      }),
+    }
+  );
+
+  if (presignedUrlResponse.ok) {
+    // Explode here on malformed/unexpected JSON from the endpoint.
+
+    const url: URL = new URL((await presignedUrlResponse.json())["data"]["url"]);
+
+    const bucketName: string = url.hostname.split(".")[0];
+
+    // Perform the upload.
+
+    await fetch(
+      url.toString(),
+      {
+        method: "put",
+        headers: {
+          "X-Amz-Content-Sha256": "UNSIGNED-PAYLOAD",
+          "Content-Length": file.size.toString(),
+        },
+        body: file,
+      }
+    );
+
+    return `https://cdn.refresh.fiveclawd.com/file/${bucketName}${url.pathname}`;
+  }
+
+  throw new Error(await presignedUrlResponse.text());
 };
