@@ -51,3 +51,21 @@ export const APP_COLOR = 8158432;
 export const EDITORS: string[] = [
   "212546139029766144", "453857853367910403",
 ];
+
+/**
+ * The number of seconds to allow unbound uploads using a single URL.
+ *
+ * At the slowest possible 160 KiB/s, the upload size per file is 48 MiB which is much larger
+ * than the 16 MiB limit each.
+ */
+export const UPLOAD_EXPIRY = 5 * 60;
+
+/**
+ * The bytes limit of any one uploaded file.
+ */
+export const MAXIMUM_CONTENT_LENGTH = 16 * 1024 * 1024;
+
+/**
+ * The maximum amount of files per post.
+ */
+export const MAXIMUM_FILES_PER_WORK = 8;

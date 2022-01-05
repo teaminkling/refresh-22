@@ -48,7 +48,7 @@ const handleRequest = async (
     case ("put/work"):
       return putWork(env, request, identifier);
     case ("post/upload"):
-      return postUpload(env, request);
+      return postUpload(env, request, identifier);
   }
 
   return createNotFoundResponse();

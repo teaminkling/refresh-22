@@ -1,7 +1,16 @@
+import {AwsClient} from "aws4fetch";
 import {ValidationError} from "joi";
-import {ACTIVE_YEAR, EDITORS, LAST_ACTIVE_WEEK} from "../../../data/constants/setup";
+import {
+  ACTIVE_YEAR,
+  EDITORS,
+  LAST_ACTIVE_WEEK,
+  MAXIMUM_CONTENT_LENGTH,
+  UPLOAD_EXPIRY
+} from "../../../data/constants/setup";
+import Artist from "../../../data/core/Artist";
 import Work from "../../../data/core/Work";
 import {
+  ARTISTS,
   WORKS_WITH_ARTIST_INDEX,
   WORKS_WITH_ID_INDEX,
   WORKS_WITH_WEEK_INDEX,
@@ -235,11 +244,89 @@ export const putWork = async (
 
 // * @param {Environment} env the workers environment
 
+/**
+ * Request and return a short-term pre-signed upload URL.
+ *
+ * Note that in order for the URL to work on the frontend, a PUT request must include the header
+ * `X-Amz-Content-Sha256` with a value of "UNSIGNED-PAYLOAD" indicating the upload would happen
+ * after the URL is retrieved rather than in this handler.
+ *
+ * The content length is also explicitly required and must exactly match what is sent to this
+ * endpoint or the request will fail.
+ *
+ * @param {Environment} env the workers environment
+ * @param {Request} request the request
+ * @param {string | undefined} identifier the identifier of the calling user
+ * @returns {Promise<Response>} a response with a pre-signed upload URL
+ */
 export const postUpload = async (
-  env: Environment, _body: Body,
+  env: Environment, request: Request, identifier: string | undefined,
 ): Promise<Response> => {
+  const artists: Record<string, Artist> = JSON.parse(
+    (await env.REFRESH_KV.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
+  );
 
-  // TODO
+  if (!identifier || !Object.keys(artists).includes(identifier)) {
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+  }
 
-  return createJsonResponse(env.ALLOWED_ORIGIN);
+  const requestData: { filename: string; contentLength: number } = await request.json();
+
+  const _filename = requestData.filename;
+  const _filenameParts = _filename.split(".");
+
+  if (_filenameParts.length < 2) {
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+  }
+
+  // Prevent legitimate users from uploading a file that is too large.
+
+  const contentLength = requestData.contentLength;
+  if (contentLength > MAXIMUM_CONTENT_LENGTH) {
+    return createBadRequestResponse(new ValidationError(
+      "File to be uploaded is too large.",
+      null,
+      [],
+    ), env.ALLOWED_ORIGIN);
+  }
+
+  const extension: string = _filenameParts[_filenameParts.length - 1];
+
+  // Set up the AWS/S3 integration (actually B2).
+
+  const aws: AwsClient = new AwsClient({
+    "accessKeyId": env.AWS_ACCESS_KEY_ID,
+    "secretAccessKey": env.AWS_SECRET_ACCESS_KEY,
+    "region": env.AWS_DEFAULT_REGION,
+  });
+
+  // Remember: thumbnails are created for every single upload.
+
+  const url = new URL(
+    `https://${env.AWS_S3_BUCKET}/ugc/${identifier}/${crypto.randomUUID()}.${extension}`,
+  );
+
+  url.searchParams.set("X-Amz-Expires", UPLOAD_EXPIRY.toString());
+
+  const signedRequest: Request = await aws.sign(
+    url, {
+      method: "PUT",
+      headers: {
+        "Content-Length": contentLength.toString(),
+      },
+      aws: {
+        service: "s3",
+        signQuery: true,
+        allHeaders: true,
+      },
+    }
+  );
+
+  return createJsonResponse(JSON.stringify(
+    {
+      data: {
+        url: signedRequest.url,
+      }
+    }
+  ), env.ALLOWED_ORIGIN);
 };

@@ -29,7 +29,8 @@
       "@cloudflare/workers-types"
     ],
     "sourceMap": true,
-    "inlineSources": true
+    "inlineSources": true,
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
