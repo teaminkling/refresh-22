@@ -233,7 +233,7 @@ export const uploadFile = async (
       }
     );
 
-    return `https://cdn.refresh.fiveclawd.com/file/${bucketName}${url.pathname}`;
+    return `https://refresh-cdn.fiveclawd.com/file/${bucketName}${url.pathname}`;
   }
 
   throw new Error(await presignedUrlResponse.text());
