@@ -17,8 +17,8 @@ import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography
 import {ACTIVE_YEAR} from "../data/constants/setup";
 import Week from "../data/core/Week";
 import Work, {WORK_SCHEMA} from "../data/core/Work";
-import {ArtistsState, RootState, WeeksState} from "../store/state";
-import {fetchArtists, fetchWeeks} from "../utils/connectors";
+import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
+import {fetchArtists, fetchWeeks, putWork, uploadFile} from "../utils/connectors";
 import NotFound from "./404";
 
 /**
@@ -72,20 +72,9 @@ const SubmissionForm = () => {
     (state: RootState) => state.weeksData,
   );
 
-  useEffect(() => {
-    fetchArtists(dispatch, artistsData);
-
-    if (user) {
-      // Even the editors can only post to existing weeks. Still, if the user is staff, we might
-      // be able to update the weeks for other purposes.
-
-      getAccessTokenSilently().then(
-        (token: string) => fetchWeeks(dispatch, weeksData, token, false)
-      );
-    } else {
-      fetchWeeks(dispatch, weeksData, undefined, false);
-    }
-  }, []);
+  const worksData: WorksState = useSelector(
+    (state: RootState) => state.worksData,
+  );
 
   // Some posts might just be prose. Very few of them, though, so this is collapsed by default.
 
@@ -116,6 +105,31 @@ const SubmissionForm = () => {
 
   const [messagesView, setMessagesView] = useState<JSX.Element>(<></>);
 
+  useEffect(() => {
+    fetchArtists(dispatch, artistsData);
+
+    if (user) {
+      // Even the editors can only post to existing weeks. Still, if the user is staff, we might
+      // be able to update the weeks for other purposes.
+
+      getAccessTokenSilently().then(
+        (token: string) => fetchWeeks(dispatch, weeksData, token, false)
+      );
+    } else {
+      fetchWeeks(dispatch, weeksData, undefined, false);
+    }
+
+    // If we know the weeks, we can fill in the default for the weeks input.
+
+    const defaultWeek: number = Math.max(
+      ...Object.values(weeksData.weeks).filter((week: Week) => week.isPublished).map(
+        (week: Week) => week.week
+      ).sort()
+    );
+
+    setWeekNumbers([defaultWeek]);
+  }, []);
+
   // Finally, define the complex form.
 
   let response;
@@ -131,13 +145,7 @@ const SubmissionForm = () => {
           <TextInput
             id={"weeks"}
             label={"Week(s)"}
-            initialValue={
-              Math.max(
-                ...Object.values(weeksData.weeks).filter((week: Week) => week.isPublished).map(
-                  (week: Week) => week.week
-                ).sort()
-              ).toString()
-            }
+            initialValue={weekNumbers.length > 0 ? weekNumbers[0].toString() : ""}
             blurCallback={(event: SyntheticEvent<HTMLInputElement, unknown> | undefined) => {
               setWeekNumbers(
                 event?.currentTarget.value.split(",").map(
