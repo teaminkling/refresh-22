@@ -12,4 +12,6 @@ export default interface Environment {
   AWS_SECRET_ACCESS_KEY: string;
   AWS_DEFAULT_REGION: string;
   AWS_S3_BUCKET: string;
+  TWIC_URL: string;
+  CDN_HOSTNAME: string;
 }

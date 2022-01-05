@@ -16,6 +16,7 @@ import {
   WORKS_WITHOUT_INDEX
 } from "../constants/kv";
 import Environment from "../types/environment";
+import {uploadThumbnails} from "../utils/connectors";
 import {postOrEditDiscordWork} from "../utils/discord";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
@@ -198,10 +199,30 @@ export const putWork = async (
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
-  // Generate the thumbnail for this post if it's not explicitly provided.
+  // Generate the thumbnail for the main post if it's not explicitly provided.
 
   if (!input.thumbnailUrl) {
-    // TODO
+    const contentUrl: URL = new URL(input.urls[0]);
+
+    if (
+      contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.hostname.includes(".mp3")
+    ) {
+      await uploadThumbnails(env, contentUrl, identifier);
+    } else if (contentUrl.hostname.includes(".mp3")) {
+      // This is a music file.
+
+      // TODO: Select a placeholder.
+    } else {
+      // This is a URL, we should get the meta preview image and crop it.
+
+      // TODO: Fetch the meta information via the Cloudflare native DOM mutation API.
+    }
+  }
+
+  // Generate the thumbnails for all other posts if there are more than one.
+
+  if (input.urls.length > 1) {
+    // do nothing for now
   }
 
   // Edit the Discord post for this work (can fail without 500).
@@ -270,8 +291,6 @@ export const postUpload = async (
     "region": env.AWS_DEFAULT_REGION,
   });
 
-  // Remember: thumbnails are created for every single upload.
-
   const url = new URL(
     `https://${env.AWS_S3_BUCKET}/ugc/${identifier}/${crypto.randomUUID()}.${extension}`,
   );
@@ -281,22 +300,16 @@ export const postUpload = async (
   const signedRequest: Request = await aws.sign(
     url, {
       method: "PUT",
-      headers: {
-        "Content-Length": contentLength.toString(),
-      },
+      headers: {"Content-Length": contentLength.toString()},
       aws: {
-        service: "s3",
-        signQuery: true,
-        allHeaders: true,
+        service: "s3", signQuery: true, allHeaders: true,
       },
     }
   );
 
   return createJsonResponse(JSON.stringify(
     {
-      data: {
-        url: signedRequest.url,
-      }
+      data: {url: signedRequest.url},
     }
   ), env.ALLOWED_ORIGIN);
 };
