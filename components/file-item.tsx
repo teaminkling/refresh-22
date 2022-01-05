@@ -222,6 +222,8 @@ const VideoModeView = (props: FileItemProps) => {
 };
 
 const UrlModeView = (props: FileItemProps) => {
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+
   return <>
     <>
       <button
@@ -234,7 +236,60 @@ const UrlModeView = (props: FileItemProps) => {
         <FontAwesomeIcon icon={faBackspace} fixedWidth /> Back
       </button>
       <span className={"inline-block pl-4 leading-8"}>
-        Please paste a URL starting with <code>https://</code> below:
+        <div className={"relative inline-block"}>
+          <a
+            href={"#action"}
+            className={"border-b border-dashed border-black hidden md:block"}
+            onClick={() => setShowTooltip(!showTooltip)}
+          >
+            Need help?
+          </a>
+          {
+            showTooltip ?
+              <span
+                className={
+                  "absolute text-center p-2 bg-gray-50 border shadow hidden md:block text-sm"
+                }
+                style={{
+                  bottom: "120%",
+                  width: "16em",
+                  left: "50%",
+                  marginLeft: "-8em"
+                }}>
+                Check out&nbsp;
+                <a
+                  href={"https://webtoons.com"}
+                  target={"_blank"}
+                  rel={"noreferrer"}
+                  style={{color: "#7C7CE0"}}
+                  className={"hover:underline"}
+                >
+                  Webtoon
+                </a>
+                &nbsp;for comics,&nbsp;
+                <a
+                  href={"https://itch.io"}
+                  target={"_blank"}
+                  rel={"noreferrer"}
+                  style={{color: "#7C7CE0"}}
+                  className={"hover:underline"}
+                >
+                  itch.io
+                </a>
+                &nbsp;for games, and&nbsp;
+                <a
+                  href={"https://drive.google.com"}
+                  target={"_blank"}
+                  rel={"noreferrer"}
+                  style={{color: "#7C7CE0"}}
+                  className={"hover:underline"}
+                >
+                  Google Drive
+                </a>
+                &nbsp;for PDFs and (most) other file types!
+              </span> : <></>
+          }
+        </div>
       </span>
       <input
         type={"url"}
