@@ -108,7 +108,11 @@ export const WORK_SCHEMA = Joi.object(
     medium: Joi.string().max(128).allow("").optional(),
     description: Joi.string().min(3).max(1920).required(),
     prose: Joi.string().max(65536).allow("").optional(),
-    urls: Joi.array().items(Joi.string().uri()).min(1).required(),
+    urls: Joi.array().items(Joi.string().regex(
+      /.*\.(png)|(jpg)|(jpeg)|(mp3)(gif)/,
+    ).uri({
+      allowRelative: false,
+    })).min(1).required(),
     thumbnailUrl: Joi.string().uri().allow("").optional(),
     isApproved: Joi.boolean().required(),
     discordId: Joi.string().alphanum().max(64).allow("").optional(),
