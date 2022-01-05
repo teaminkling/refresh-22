@@ -4,7 +4,7 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faAngleDown, faAngleRight, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {ValidationError, ValidationResult} from "joi";
+import Joi, {ValidationError, ValidationResult} from "joi";
 import {ChangeEvent, createRef, SyntheticEvent, useEffect, useState} from "react";
 import {DragDropContext, Droppable, DroppableProvided, DropResult} from "react-beautiful-dnd";
 import {useDispatch, useSelector} from "react-redux";
@@ -390,18 +390,36 @@ const SubmissionForm = () => {
                   // Again, we assume that these will be valid URLs. The backend will verify
                   // them otherwise.
 
-                  const urls = [];
-                  items.forEach((item: FrontendFileItem) => {
+                  const accessToken: string = await getAccessTokenSilently();
+
+                  const urls: string[] = [];
+                  for (const item of items) {
                     if (item.url) {
                       urls.push(item.url);
-                    } else {
-                      // Obtain an S3 URL for uploading.
+                    } else if (item.file) {
+                      const urlValidation = Joi.string().regex(
+                        /.*\.(png)|(jpg)|(jpeg)|(mp3)(gif)/
+                      ).validate(
+                        item.file.name
+                      );
 
-                      // Use that URL to upload and return the final URL of the uploaded file.
+                      if (urlValidation.error) {
+                        errors.push(urlValidation.error);
+                      }
 
-                      
+                      urls.push(await uploadFile(accessToken, item.file));
                     }
-                  });
+                  }
+
+                  // Next, we associate the URLs with the work then send it off to the backend.
+                  // If the thumbnail was explicitly provided, we give that in too.
+
+                  work.urls = urls;
+                  if (thumbnailPointer) {
+                    work.thumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
+                  }
+
+                  await putWork(dispatch, worksData, accessToken, work);
                 }
 
                 setMessagesView(<ResponseMessages errors={errors} />);
