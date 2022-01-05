@@ -88,17 +88,6 @@ const SubmissionForm = () => {
     }
   }, []);
 
-  // Files can be drag-and-dropped onto the small part of each draggable item when applicable.
-
-  // const {
-  //   acceptedFiles,
-  //   fileRejections,
-  //   getRootProps,
-  //   getInputProps
-  // } = useDropzone({
-  //   accept: "image/jpeg, image/png, "
-  // });
-
   // Some posts might just be prose. Very few of them, though, so this is collapsed by default.
 
   const proseRef = createRef<HTMLTextAreaElement>();
