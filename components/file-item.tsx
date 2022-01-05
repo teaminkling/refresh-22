@@ -134,31 +134,33 @@ const InitialButtons = (props: FileItemProps) => {
       <FontAwesomeIcon icon={faLink} fixedWidth /> URL & Other
     </button>
 
-    <button
-      className={
-        BUTTON_CLASSES + " bg-red-50 text-red-700 hover:bg-red-100"
-      }
-      type={"button"}
-      onClick={() => {
-        let newState: FrontendFileItem[];
+    {
+      props.parentState.length > 1 ? (
+        <button
+          className={
+            BUTTON_CLASSES + " bg-red-50 text-red-700 hover:bg-red-100"
+          }
+          type={"button"}
+          onClick={() => {
+            let newState: FrontendFileItem[];
 
-        // Delete the one that was just created.
+            // Delete the one that was just created.
 
-        if (props.parentState.length > 1) {
-          newState = props.parentState.slice().filter(
-            (item: FrontendFileItem) => item.id !== props.id
-          );
-        } else {
-          newState = [{id: props.id + 1}];
-        }
+            if (props.parentState.length > 1) {
+              newState = props.parentState.slice().filter(
+                (item: FrontendFileItem) => item.id !== props.id
+              );
+            } else {
+              newState = [{id: props.id + 1}];
+            }
 
-        props.setParentState(newState);
-      }}
-    >
-      <FontAwesomeIcon icon={faTimes} fixedWidth /> {
-      props.parentState.length === 1 ? "Clear" : "Delete"
+            props.setParentState(newState);
+          }}
+        >
+          <FontAwesomeIcon icon={faTimes} fixedWidth /> Delete
+        </button>
+      ) : <></>
     }
-    </button>
   </>;
 };
 
@@ -168,6 +170,11 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
       className={BUTTON_CLASSES}
       type={"button"}
       onClick={() => {
+        const newState: FrontendFileItem[] = props.parentState.slice();
+
+        newState[props.index].url = undefined;
+        newState[props.index].file = undefined;
+
         props.setMode ? props.setMode(FileItemMode.DEFAULT_MODE) : null;
       }}
     >
@@ -203,6 +210,11 @@ const VideoModeView = (props: FileItemProps) => {
       className={BUTTON_CLASSES}
       type={"button"}
       onClick={() => {
+        const newState: FrontendFileItem[] = props.parentState.slice();
+
+        newState[props.index].url = undefined;
+        newState[props.index].file = undefined;
+
         props.setMode ? props.setMode(FileItemMode.DEFAULT_MODE) : null;
       }}
     >
