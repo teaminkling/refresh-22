@@ -299,6 +299,22 @@ const SubmissionForm = () => {
             }}
           />
 
+          {
+            isThumbnailOpen ?
+              <div className={"pl-1"}>
+                <p className={"text-sm mt-2 mb-1"}>
+                  You probably don&apos;t need to set this, especially if your main item is an
+                  image. If you do, I <b>strongly</b> recommend using an image as close as possible
+                  to 2048 x 1440 as possible.
+                </p>
+
+                <p className={"text-sm mt-2 mb-1"}>
+                  Note that admins may change your thumbnail at any time while approving your post
+                  or edit.
+                </p>
+              </div> : <></>
+          }
+
           <input
             ref={thumbnailRef}
             type={"file"}
