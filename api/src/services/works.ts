@@ -1,14 +1,13 @@
 import {AwsClient} from "aws4fetch";
-import {ValidationError} from "joi";
+import {ValidationError, ValidationResult} from "joi";
 import {
   ACTIVE_YEAR,
   EDITORS,
-  LAST_ACTIVE_WEEK,
   MAXIMUM_CONTENT_LENGTH,
   UPLOAD_EXPIRY
 } from "../../../data/constants/setup";
 import Artist from "../../../data/core/Artist";
-import Work from "../../../data/core/Work";
+import Work, {WORK_SCHEMA} from "../../../data/core/Work";
 import {
   ARTISTS,
   WORKS_WITH_ARTIST_INDEX,
@@ -17,6 +16,7 @@ import {
   WORKS_WITHOUT_INDEX
 } from "../constants/kv";
 import Environment from "../types/environment";
+import {postOrEditDiscordWork} from "../utils/discord";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
 import {placeWork} from "../utils/kv";
@@ -121,12 +121,9 @@ export const getWork = async (
  *
  * @param {Environment} env the workers environment
  * @param {Work} work the work
- * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} the response
  */
-const updateWorkIndices = async (
-  env: Environment, work: Work, identifier?: string,
-): Promise<Response> => {
+const updateWorkIndices = async (env: Environment, work: Work): Promise<Response> => {
   // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
 
   const rawBackendWork: string | null = await env.REFRESH_KV.get(
@@ -134,13 +131,6 @@ const updateWorkIndices = async (
   );
 
   const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
-
-  // Verify poster is either the same as the one in the work or is a staff member.
-
-  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
-  if (!isStaff || work.artistId !== identifier) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
-  }
 
   // Determine the work ID.
 
@@ -192,33 +182,20 @@ export const putWork = async (
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
-  // TODO: Remove temporary measure that prevents use of this endpoint.
-
-  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
-  if (!identifier || !isStaff) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
-  }
-
   // Validate all data and ensure it is escaped for HTML.
-
-  // TODO
 
   const input: Work = await request.json();
 
-  // Before doing expensive work, ensure that there is at least one week and it appears within
-  // the range of acceptable weeks in the active year.
+  const validation: ValidationResult = WORK_SCHEMA.validate(input);
+  if (validation.error) {
+    return createBadRequestResponse(validation.error, env.ALLOWED_ORIGIN);
+  }
 
-  if (!input.weekNumbers || input.weekNumbers.map(
-    (weekNumber: number) => weekNumber <= 0 || weekNumber > LAST_ACTIVE_WEEK)
-  ) {
-    return createBadRequestResponse(
-      new ValidationError(
-        "Week numbers must have at least one valid value, and all values must be valid.",
-        null,
-        null,
-      ),
-      env.ALLOWED_ORIGIN,
-    );
+  // Verify poster is either the same as the one in the work or is a staff member.
+
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
+  if (!isStaff || input.artistId !== identifier) {
+    return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
   // Generate the thumbnail for this post if it's not explicitly provided.
@@ -227,22 +204,15 @@ export const putWork = async (
     // TODO
   }
 
-  // Acquire a distributed lock and perform work. Only one user can add a work at the same time.
-
-  const response = await updateWorkIndices(env, input, identifier);
-
   // Edit the Discord post for this work (can fail without 500).
 
-  console.log("shut up, sonar");
+  const discordId: string | null = await postOrEditDiscordWork(env, input);
+  if (discordId) {
+    input.discordId = discordId;
+  }
 
-  // TODO
-
-  return response;
+  return await updateWorkIndices(env, input);
 };
-
-// TODO: Rate limit: 8 uploads a minute.
-
-// * @param {Environment} env the workers environment
 
 /**
  * Request and return a short-term pre-signed upload URL.
