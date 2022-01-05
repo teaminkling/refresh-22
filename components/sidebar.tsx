@@ -125,7 +125,7 @@ const Sidebar = (): JSX.Element => {
 
       <div className={"my-5"} />
 
-      <InterfaceLink location={"/submit"} title={"Submit"} nextLink />
+      <InterfaceLink location={"/works/submit"} title={"Submit"} nextLink />
     </>
   ) : (
     <>

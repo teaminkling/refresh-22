@@ -9,17 +9,17 @@ import {ChangeEvent, createRef, SyntheticEvent, useEffect, useState} from "react
 import {DragDropContext, Droppable, DroppableProvided, DropResult} from "react-beautiful-dnd";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
-import {ResponseMessages} from "../components/errors";
-import FileItem, {FrontendFileItem} from "../components/file-item";
-import {TextareaInput, TextInput} from "../components/forms";
-import InterfaceLink from "../components/interface-link";
-import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography";
-import {ACTIVE_YEAR} from "../data/constants/setup";
-import Week from "../data/core/Week";
-import Work, {WORK_SCHEMA} from "../data/core/Work";
-import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
-import {fetchArtists, fetchWeeks, putWork, uploadFile} from "../utils/connectors";
-import NotFound from "./404";
+import {ResponseMessages} from "../../components/errors";
+import FileItem, {FrontendFileItem} from "../../components/file-item";
+import {TextareaInput, TextInput} from "../../components/forms";
+import InterfaceLink from "../../components/interface-link";
+import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
+import {ACTIVE_YEAR} from "../../data/constants/setup";
+import Week from "../../data/core/Week";
+import Work, {WORK_SCHEMA} from "../../data/core/Work";
+import {ArtistsState, RootState, WeeksState, WorksState} from "../../store/state";
+import {fetchArtists, fetchWeeks, putWork, uploadFile} from "../../utils/connectors";
+import NotFound from "../404";
 
 /**
  * Re-order an item after dragging it.
@@ -55,6 +55,10 @@ const dropHandler = (
   setState(reorder(state, source.index, destination.index));
 };
 
+/**
+ * @returns {JSX.Element} the element
+ * @constructor
+ */
 const SubmissionForm = () => {
   // Only authenticated users are allowed to submit.
 
