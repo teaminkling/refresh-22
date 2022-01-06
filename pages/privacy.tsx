@@ -1,4 +1,5 @@
 import type {NextPage} from "next";
+import Head from "next/head";
 import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography";
 
 /**
@@ -8,6 +9,10 @@ import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography
 const Privacy: NextPage = () => {
   return (
     <StaticPage>
+      <Head>
+        <title>Privacy - Design Refresh</title>
+      </Head>
+
       <Header>
         Privacy <span className={"hidden sm:inline-block"}>Policy</span>
       </Header>

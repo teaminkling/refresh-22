@@ -1,5 +1,6 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
+import Head from "next/head";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
@@ -53,6 +54,16 @@ const Works = () => {
   if (work) {
     response = (
       <>
+        <Head>
+          <title>{work.title} - Design Refresh</title>
+
+          <meta name="description" content={work.description} />
+          <meta property="og:description" content={work.description} />
+          <meta name="twitter:description" content={work.description} />
+
+          <meta property="og:image" content={work.thumbnailUrl} />
+          <meta name="twitter:image" content={work.thumbnailUrl} />
+        </Head>
         <div className={"pt-6 px-4 py-4 flex-col 2xl:flex 2xl:flex-row"}>
           <div className={"px-2 py-2 md:px-3 md:py-5"}>
             <Fancybox>

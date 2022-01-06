@@ -5,6 +5,7 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faAngleDown, faAngleRight, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Joi, {ValidationError, ValidationResult} from "joi";
+import Head from "next/head";
 import {ChangeEvent, createRef, SyntheticEvent, useEffect, useState} from "react";
 import {DragDropContext, Droppable, DroppableProvided, DropResult} from "react-beautiful-dnd";
 import {useDispatch, useSelector} from "react-redux";
@@ -136,6 +137,10 @@ const SubmissionForm = () => {
   } else {
     response = (
       <>
+        <Head>
+          <title>Submit - Design Refresh</title>
+        </Head>
+
         <Header>Submit</Header>
 
         <form>

@@ -1,6 +1,7 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Head from "next/head";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
 import {useEffect} from "react";
@@ -106,6 +107,21 @@ const SingleArtist = (): JSX.Element => {
 
     response = (
       <StaticPage>
+        <Head>
+          <title>{artist.name} - Design Refresh</title>
+
+          <meta name="description" content={"The Design Refresh portfolio of " + artist.name} />
+          <meta
+            property="og:description" content={"The Design Refresh portfolio of " + artist.name}
+          />
+
+          <meta
+            name="twitter:description" content={"The Design Refresh portfolio of " + artist.name}
+          />
+
+          <meta property="og:image" content={artist.thumbnailUrl} />
+          <meta name="twitter:image" content={artist.thumbnailUrl} />
+        </Head>
         <img src={artist.thumbnailUrl} alt={"The user's thumbnail URL."} className={"pt-8"} />
         <Header>
           {name}

@@ -38,13 +38,6 @@ export const Document = () => {
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
 
-        <meta property="og:site_name" content="Design Refresh" />
-        <meta property="og:title" content="Design Refresh" />
-        <meta name="twitter:title" content="Design Refresh" />
-
-        <meta property="og:url" content="https://refresh.fiveclawd.com/" />
-        <meta name="twitter:url" content="https://refresh.fiveclawd.com/" />
-
         <meta name="description" content={DEFAULT_DESCRIPTION} />
         <meta property="og:description" content={DEFAULT_DESCRIPTION} />
         <meta name="twitter:description" content={DEFAULT_DESCRIPTION} />

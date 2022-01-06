@@ -1,11 +1,16 @@
 /**
  * The submission form.
  */
+import Head from "next/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 const BetaInfo = () => {
   return (
     <StaticPage>
+      <Head>
+        <title>Beta - Design Refresh</title>
+      </Head>
+
       <img
         src={"/art/404.png"}
         alt={"Refresh!"}

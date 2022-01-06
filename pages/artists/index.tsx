@@ -1,3 +1,4 @@
+import Head from "next/head";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
@@ -46,6 +47,10 @@ const Artists = () => {
 
   return (
     <StaticPage>
+      <Head>
+        <title>Artists - Design Refresh</title>
+      </Head>
+
       <Header>Artists</Header>
 
       <table className={"w-full text-xl table-auto p-1 mt-4 table-fixed"}>

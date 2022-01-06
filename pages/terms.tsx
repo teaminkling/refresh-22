@@ -1,4 +1,5 @@
 import type {NextPage} from "next";
+import Head from "next/head";
 import StaticPage, {Header, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 /**
@@ -8,6 +9,10 @@ import StaticPage, {Header, Paragraph, SubHeader, UnorderedList} from "../compon
 const Terms: NextPage = () => {
   return (
     <StaticPage>
+      <Head>
+        <title>Terms - Design Refresh</title>
+      </Head>
+
       <Header>
         Terms <span className={"hidden sm:inline-block"}>of Use</span>
       </Header>

@@ -1,4 +1,5 @@
 import type {NextPage} from "next";
+import Head from "next/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 
 /**
@@ -8,6 +9,10 @@ import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../comp
 const Guide: NextPage = () => {
   return (
     <StaticPage>
+      <Head>
+        <title>Guide - Design Refresh</title>
+      </Head>
+
       <img
         src={"/art/guide.png"}
         alt={"An artist placing a completed work in the gallery."}

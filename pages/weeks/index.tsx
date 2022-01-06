@@ -6,6 +6,7 @@ import {
   faLockOpen
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Head from "next/head";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
@@ -102,6 +103,9 @@ const Weeks = () => {
   if (weeksDivs.length > 0) {
     response = (
       <>
+        <Head>
+          <title>Weeks - Design Refresh</title>
+        </Head>
         <StaticPage>
           <Header>Viewing Weeks</Header>
 
