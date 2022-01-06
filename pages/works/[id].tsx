@@ -181,8 +181,9 @@ const Works = () => {
                 Artist&apos;s Description
               </h2>
 
-              <Markdown markdown={work.description} />
-
+              <div className={"max-w-3xl pr-0 xl:pr-12 3xl:max-w-xl"}>
+                <Markdown markdown={work.description} />
+              </div>
             </div>
           </div>
         </div>
