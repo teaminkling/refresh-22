@@ -34,7 +34,9 @@ const Home: NextPage = () => {
 
   // TODO: works retrieved needs pagination etc
 
-  const mainContent = (Object.values(worksData.works) || []).length > 0 ? (
+  const mainContent = (
+    Object.values(worksData.works).filter(work => work.isApproved) || []
+  ).length > 0 ? (
     <div className={"mx-2 my-2 md:mr-5"}>
       <>
         {

@@ -53,6 +53,10 @@ const Artists = () => {
 
       <Header>Artists</Header>
 
+      <p className={"text-sm"}>
+        Note that unapproved posts count here too.
+      </p>
+
       <table className={"w-full text-xl table-auto p-1 mt-4 table-fixed"}>
         <thead className={"bg-gray-50 table-header-group"}>
           <tr className={"table-row border-b border-black"}>

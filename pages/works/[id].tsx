@@ -173,7 +173,7 @@ const Works = () => {
 
               {work.medium ? <>
                 <p className={"hidden 2xl:block"}>
-                  <i>Created with {work.medium}.</i>
+                  A <i>{work.medium}</i> piece.
                 </p>
               </> : <></>}
 
