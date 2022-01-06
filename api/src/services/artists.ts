@@ -3,7 +3,7 @@ import {ACTIVE_YEAR, EDITORS} from "../../../data/constants/setup";
 import Artist, {ARTIST_SCHEMA} from "../../../data/core/Artist";
 import {ARTISTS} from "../constants/kv";
 import Environment from "../types/environment";
-import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
+import {createBadRequestResponse, createForbiddenResponse, createJsonResponse} from "../utils/http";
 
 /**
  * Return the artists.
@@ -49,7 +49,7 @@ export const putArtist = async (
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!identifier || !isStaff && identifier !== input.discordId) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+    return createForbiddenResponse(env.ALLOWED_ORIGIN);
   }
 
   // Retrieve the artist.

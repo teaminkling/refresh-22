@@ -6,10 +6,8 @@ import {
   MAXIMUM_CONTENT_LENGTH,
   UPLOAD_EXPIRY
 } from "../../../data/constants/setup";
-import Artist from "../../../data/core/Artist";
 import Work, {UrlItem, WORK_SCHEMA} from "../../../data/core/Work";
 import {
-  ARTISTS,
   WORKS_WITH_ARTIST_INDEX,
   WORKS_WITH_ID_INDEX,
   WORKS_WITH_WEEK_INDEX,
@@ -18,7 +16,12 @@ import {
 import Environment from "../types/environment";
 import {scrapeThumbnail, uploadScrapedThumbnail, uploadThumbnails} from "../utils/connectors";
 import {postOrEditDiscordWork} from "../utils/discord";
-import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
+import {
+  createBadRequestResponse,
+  createForbiddenResponse,
+  createJsonResponse,
+  createNotFoundResponse
+} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
 import {placeWork} from "../utils/kv";
 
@@ -148,7 +151,7 @@ export const putWork = async (
   // Ensure user is authenticated at all before doing any other CPU computation.
 
   if (!identifier) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+    return createForbiddenResponse(env.ALLOWED_ORIGIN);
   }
 
   // Validate all data and ensure it is escaped for HTML.
@@ -191,7 +194,11 @@ export const putWork = async (
     // This isn't very robust, but we don't ever expect anything to ever collide.
 
     if (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
-      throw new Error("Collision error! This requires developer intervention.");
+      return createBadRequestResponse(new ValidationError(
+        "A post already exists with the exact same info!",
+        null,
+        [],
+      ), env.ALLOWED_ORIGIN);
     }
 
     effectiveId = newId;
@@ -294,12 +301,8 @@ export const putWork = async (
 export const postUpload = async (
   env: Environment, request: Request, identifier: string | undefined,
 ): Promise<Response> => {
-  const artists: Record<string, Artist> = JSON.parse(
-    (await env.REFRESH_KV.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
-  );
-
   if (!identifier) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+    return createForbiddenResponse(env.ALLOWED_ORIGIN);
   }
 
   const requestData: { filename: string; contentLength: number } = await request.json();
@@ -309,7 +312,11 @@ export const postUpload = async (
   const extension: string = _filenameParts[_filenameParts.length - 1];
 
   if (_filenameParts.length < 2) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+    return createBadRequestResponse(new ValidationError(
+      "This doesn't seem to be a file. Does it have a file extension?",
+      null,
+      [],
+    ), env.ALLOWED_ORIGIN);
   }
 
   // Prevent legitimate users from uploading a file that is too large.

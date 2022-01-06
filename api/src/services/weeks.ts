@@ -8,7 +8,7 @@ import Week, {WEEK_SCHEMA} from "../../../data/core/Week";
 import {WEEKS} from "../constants/kv";
 import Environment from "../types/environment";
 import {postOrEditDiscordWeek} from "../utils/discord";
-import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
+import {createBadRequestResponse, createForbiddenResponse, createJsonResponse} from "../utils/http";
 
 /**
  * Return the weeks information, redacting if the user signed in is not an authenticated user.
@@ -64,7 +64,7 @@ export const putWeeks = async (
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+    return createForbiddenResponse(env.ALLOWED_ORIGIN);
   }
 
   // Validate type and length and then escape the correct request variables. This is such that a

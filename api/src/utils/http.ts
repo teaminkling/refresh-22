@@ -5,7 +5,7 @@
 import {ValidationError} from "joi";
 
 /**
- * @param {string} origin the origin, if it is known
+ * @param {string} origin the single allowed origin, if it is known
  * @returns {Headers} the CORS headers
  */
 export const generateCorsHeaders = (origin?: string) => {
@@ -16,14 +16,9 @@ export const generateCorsHeaders = (origin?: string) => {
   });
 };
 
-/**
- * Create a JSON response with the given body.
- *
- * @param {BodyInit | undefined} body the body
- * @param {string | undefined} origin the allowed origin for the CORS headers
- * @returns {Promise<Response>} the JSON response
- */
-export const createJsonResponse = async (body?: BodyInit, origin?: string): Promise<Response> => {
+export const createGenericResponse = (
+  body?: BodyInit, origin?: string, status?: number,
+) => {
   const newHeaders = new Headers();
 
   newHeaders.append("Content-Type", "application/json");
@@ -32,30 +27,20 @@ export const createJsonResponse = async (body?: BodyInit, origin?: string): Prom
   }
 
   return new Response(
-    body || "{}", {headers: newHeaders}
+    body || "{}", {headers: newHeaders, status: status},
   );
 };
 
-/**
- * Create a 404 response.
- *
- * Sometimes this is returned instead of a different 400-class exception to make it harder to
- * perform a path traversal or brute force path enumeration attack.
- *
- * @param {string | undefined} origin the allowed origin for the CORS headers
- * @returns {Promise<Response>} a 404 response
- */
+export const createJsonResponse = async (body?: BodyInit, origin?: string): Promise<Response> => {
+  return createGenericResponse(body, origin);
+};
+
 export const createNotFoundResponse = async (origin?: string): Promise<Response> => {
-  const newHeaders = new Headers();
-
-  newHeaders.append("Content-Type", "application/json");
-  for (const [key, value] of generateCorsHeaders(origin).entries()) {
-    newHeaders.append(key, value);
-  }
-
-  return new Response(
-    "{\"status\": \"Not Found.\"}", {status: 404, headers: newHeaders}
-  );
+  return createGenericResponse(JSON.stringify({
+    "message": "Not Found",
+    "details": null,
+    "_original": [],
+  }), origin, 404);
 };
 
 /**
@@ -70,14 +55,27 @@ export const createNotFoundResponse = async (origin?: string): Promise<Response>
 export const createBadRequestResponse = async (
   error: ValidationError, origin?: string
 ): Promise<Response> => {
-  const newHeaders = new Headers();
+  return createGenericResponse(JSON.stringify(
+    {
+      "message": error.message,
+      "details": error.details,
+      "_original": error._original,
+    }
+  ), origin, 400);
+};
 
-  newHeaders.append("Content-Type", "application/json");
-  for (const [key, value] of generateCorsHeaders(origin).entries()) {
-    newHeaders.append(key, value);
-  }
-
-  return new Response(
-    JSON.stringify(error), {status: 400, headers: newHeaders}
-  );
+/**
+ * Create a 403 response.
+ *
+ * @param {string} origin the allowed origin for the CORS headers
+ * @returns {Promise<Response>} a 403 response
+ */
+export const createForbiddenResponse = async (
+  origin?: string
+): Promise<Response> => {
+  return createGenericResponse(JSON.stringify({
+    "message": "Forbidden",
+    "details": null,
+    "_original": [],
+  }), origin, 403);
 };
