@@ -47,6 +47,8 @@ import {placeWork} from "../utils/kv";
 export const getWorks = async (
   env: Environment, params: URLSearchParams, identifier?: string,
 ): Promise<Response> => {
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
+
   // Escape search terms (remove slashes).
 
   const year: string | null = sanitize(params.get("year")) || ACTIVE_YEAR.toString();
@@ -56,35 +58,47 @@ export const getWorks = async (
   // If the artist is present, that cancels the most results, so use that as search. Otherwise
   // use the week. If neither are present, use all posts in the list.
 
-  let results: Work[] = [];
+  const results: Record<string, Work> = {};
   if (artistId) {
     const works_with_artist_index: Record<string, Work> = JSON.parse(
       (await env.REFRESH_KV.get(`${WORKS_WITH_ARTIST_INDEX}/${artistId}`)) || "[]",
     );
 
-    Object.values(works_with_artist_index).forEach((work: Work) => results.push(work));
+    Object.values(works_with_artist_index).forEach(
+      (work: Work) => {
+        if (work.isApproved || isStaff) {
+          results[work.id] = work;
+        }
+      }
+    );
   } else if (week) {
     const works_with_week_index: Record<string, Work> = JSON.parse(
       (await env.REFRESH_KV.get(`${WORKS_WITH_WEEK_INDEX}/${year}/${week}`)) || "[]",
     );
 
-    Object.values(works_with_week_index).forEach((work: Work) => results.push(work));
+    Object.values(works_with_week_index).forEach(
+      (work: Work) => {
+        if (work.isApproved || isStaff) {
+          results[work.id] = work;
+        }
+      }
+    );
   } else {
     const works_without_index: Work[] = JSON.parse(
       (await env.REFRESH_KV.get(`${WORKS_WITHOUT_INDEX}`)) || "[]"
     );
 
-    works_without_index.forEach((work: Work) => results.push(work));
+    works_without_index.forEach(
+      (work: Work) => {
+        if (work.isApproved || isStaff) {
+          results[work.id] = work;
+        }
+      }
+    );
   }
 
-  // The output currently has all works, not just published ones. Check the auth now. If it's
-  // not a staff user, remove things from the output. No need to check for ownership: if the
-  // requesting user called this, their posts should be in local storage already.
+  // The result is easiest to parse on the frontend when it is a map of IDs to works.
 
-  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
-  if (!isStaff) {
-    results = results.filter((result: Work) => result.isApproved);
-  }
 
   return createJsonResponse(JSON.stringify({data: results}), env.ALLOWED_ORIGIN);
 };
@@ -114,7 +128,7 @@ export const getWork = async (
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
-  return createJsonResponse(JSON.stringify({data: work}), env.ALLOWED_ORIGIN);
+  return createJsonResponse(JSON.stringify({[work.id]: work}), env.ALLOWED_ORIGIN);
 };
 
 /**

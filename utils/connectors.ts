@@ -129,7 +129,7 @@ export const fetchWorks = (
   );
 };
 
-export const fetchWorksById = (
+export const fetchWorkById = (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   worksData: WorksState,
   id: string,

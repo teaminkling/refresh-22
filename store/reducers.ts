@@ -71,20 +71,31 @@ const worksReducer: Reducer<WorksState, AddWorksAction> = (
       JSON.stringify(state.weeksToRetrievalDate)
     );
 
-    switch ([action.source, typeof target]) {
-      case [WorkSource.DIRECT, "undefined"]:
+    let index: number | string | undefined = target;
+    switch (action.source) {
+      case WorkSource.DIRECT:
         break;
-      case [WorkSource.BY_WEEK, "number"]:
-        weeksToRetrievalDate[typeof target === "number" ? target : -1] = new Date().toISOString();
+      case WorkSource.BY_WEEK:
+        index = typeof target === "number" ? target : undefined;
+
+        if (!index) {
+          throw new Error("By-week reducer call to works failed due to unknown index.");
+        }
+
+        weeksToRetrievalDate[index] = new Date().toISOString();
 
         break;
-      case [WorkSource.BY_ARTIST, "string"]:
-        artistsToRetrievalDate[typeof target === "string" ? target : "undefined"] = (
-          new Date().toISOString()
-        );
+      case WorkSource.BY_ARTIST:
+        index = typeof target === "string" ? target : undefined;
+
+        if (!index) {
+          throw new Error("By-artist reducer call to works failed due to unknown index.");
+        }
+
+        artistsToRetrievalDate[index] = (new Date().toISOString());
 
         break;
-      case [WorkSource.SEARCH, "undefined"]:
+      case WorkSource.SEARCH:
         worksLastRetrieved = new Date().toISOString();
 
         break;
