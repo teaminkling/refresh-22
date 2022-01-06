@@ -114,7 +114,7 @@ export const postOrEditDiscordWork = async (
       {
         "type": "rich",
         "title": work.title,
-        "url": `https://refresh.fiveclawd.com/works?id=${work.id}`,
+        "url": `${env.ALLOWED_ORIGIN}/works?id=${work.id}`,
         "description": (
           `A ${work.medium ? "_" + work.medium + "_ " : ""}piece by <@${work.artistId}>!`
         ),
