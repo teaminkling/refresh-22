@@ -4,12 +4,12 @@
 
 import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} from "jose";
 import {GetKeyFunction} from "jose/dist/types/types";
+import Toucan from "toucan-js";
 import {getArtists, putArtist} from "./services/artists";
 import {getWeeks, putWeeks} from "./services/weeks";
 import {getWork, getWorks, postUpload, putWork} from "./services/works";
 import Environment from "./types/environment";
 import {createNotFoundResponse, generateCorsHeaders} from "./utils/http";
-
 
 /**
  * Handle an API request.
@@ -30,6 +30,14 @@ const handleRequest = async (
   request: Request,
   identifier?: string,
 ): Promise<Response> => {
+  if (!env.REFRESH_KV) {
+    return new Response(JSON.stringify({
+      "message": "Server is undergoing maintenance. Please try again in 10 seconds.",
+      "details": null,
+      "_original": [],
+    }), {status: 503});
+  }
+
   switch (`${method.toLowerCase()}/${routine.toLowerCase()}`) {
     case ("get/weeks"):
       return getWeeks(env, identifier);
