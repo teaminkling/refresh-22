@@ -118,49 +118,6 @@ export const getWork = async (
 };
 
 /**
- * Perform the work for the {@link putWork} function.
- *
- * @param {Environment} env the workers environment
- * @param {Work} work the work
- * @returns {Promise<Response>} the response
- */
-const updateWorkIndices = async (env: Environment, work: Work): Promise<Response> => {
-  // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
-
-  const rawBackendWork: string | null = await env.REFRESH_KV.get(
-    `${WORKS_WITH_ID_INDEX}/${work.id}`
-  );
-
-  const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
-
-  // Determine the work ID.
-
-  let effectiveId: string = work.id;
-  if (!backendWork) {
-    // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
-    // client is valid, the ID will be some kind of random string.
-
-    const newId: string = await determineShortId(work.artistId, work.urls);
-
-    // This isn't very robust, but we don't ever expect anything to ever collide.
-
-    if (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
-      throw new Error("Collision error! This requires developer intervention.");
-    }
-
-    effectiveId = newId;
-  }
-
-  // Important: all our validations are for nothing if we don't make sure we re-set this ID.
-
-  work.id = effectiveId;
-
-  await placeWork(env.REFRESH_KV, work);
-
-  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
-};
-
-/**
  * Create or update a post in the database.
  *
  * The ID provided by the user is used to find an existing post. If it doesn't exist, the ID is
@@ -199,6 +156,36 @@ export const putWork = async (
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
+  // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
+
+  const rawBackendWork: string | null = await env.REFRESH_KV.get(
+    `${WORKS_WITH_ID_INDEX}/${input.id}`
+  );
+
+  const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
+
+  // Determine the work ID.
+
+  let effectiveId: string = input.id;
+  if (!backendWork) {
+    // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
+    // client is valid, the ID will be some kind of random string.
+
+    const newId: string = await determineShortId(input.artistId, input.urls);
+
+    // This isn't very robust, but we don't ever expect anything to ever collide.
+
+    if (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
+      throw new Error("Collision error! This requires developer intervention.");
+    }
+
+    effectiveId = newId;
+  }
+
+  // Important: all our validations are for nothing if we don't make sure we re-set this ID.
+
+  input.id = effectiveId;
+
   // Generate the thumbnail for the main post if it's not explicitly provided.
 
   if (!input.thumbnailUrl) {
@@ -232,7 +219,9 @@ export const putWork = async (
     input.discordId = discordId;
   }
 
-  return await updateWorkIndices(env, input);
+  await placeWork(env.REFRESH_KV, input);
+
+  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
 };
 
 /**
