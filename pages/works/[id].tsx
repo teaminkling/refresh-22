@@ -86,6 +86,18 @@ const Works = () => {
                       }
                     }
 
+                    // Don't go to external links if we think we can render them.
+
+                    const hostname: string = new URL(item.url).hostname.toLowerCase();
+
+                    if (
+                      hostname.includes("youtu")
+                      || hostname.includes("twitch.tv")
+                      || hostname.includes("vimeo")
+                    ) {
+                      item.meta = undefined;
+                    }
+
                     // noinspection HtmlUnknownAttribute
                     return (
                       // eslint-disable-next-line react/jsx-no-target-blank
@@ -101,12 +113,21 @@ const Works = () => {
                         <img
                           src={item.hiDpiThumbnail}
                           srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail}`}
-                          className={"align-bottom pb-6 object-cover"}
+                          className={"align-bottom object-cover " + (item.meta ? "" : "pb-6")}
                           style={{maxHeight: 586.5, width: 800}}
                           alt={
                             `The ${index}th image for: ${work.title || "Untitled"}.`
                           }
                         />
+                        {
+                          item.meta ?
+                            <p className={
+                              "uppercase text-gray-400 text-center py-2 text-xs"
+                            }>
+                              This is a URL: <code>{new URL(item.url).hostname}</code>. Please
+                              be careful!
+                            </p> : <></>
+                        }
                       </a>
                     );
                   })
