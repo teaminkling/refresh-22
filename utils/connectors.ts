@@ -102,6 +102,86 @@ export const fetchWeeks = (
   );
 };
 
+/**
+ * Fetch works, either entirely or via a search query.
+ *
+ * @param {ThunkDispatch<RootState, never, AnyAction>} dispatch the dispatch
+ * @param {WorksState} worksData the works data
+ * @param {string | undefined} query if provided, the query part, including the `?` character
+ * @param {string | undefined} token the token
+ * @param {boolean} force whether to force a retrieval
+ */
+export const fetchWorks = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  worksData: WorksState,
+  query?: string,
+  token?: string,
+  force?: boolean,
+): void => {
+  fetchGeneric<WorksState, Record<string, Work>>(
+    "/api/works",
+    dispatch,
+    (works: Record<string, Work>) => addWorks(works, WorkSource.SEARCH),
+    worksData,
+    worksData.worksLastRetrieved,
+    token,
+    force,
+  );
+};
+
+export const fetchWorksById = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  worksData: WorksState,
+  id: string,
+  token?: string,
+): void => {
+  fetchGeneric<WorksState, Record<string, Work>>(
+    `/api/work?id=${id}`,
+    dispatch,
+    (works: Record<string, Work>) => addWorks(works, WorkSource.DIRECT),
+    worksData,
+    null,
+    token,
+    true,
+  );
+};
+
+export const fetchWorksByWeek = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  worksData: WorksState,
+  week: number,
+  token?: string,
+  force?: boolean,
+): void => {
+  fetchGeneric<WorksState, Record<string, Work>>(
+    `/api/works?week=${week}`,
+    dispatch,
+    (works: Record<string, Work>) => addWorks(works, WorkSource.BY_WEEK, week),
+    worksData,
+    worksData.weeksToRetrievalDate[week],
+    token,
+    force,
+  );
+};
+
+export const fetchWorksByArtist = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  worksData: WorksState,
+  artist: string,
+  token?: string,
+  force?: boolean,
+): void => {
+  fetchGeneric<WorksState, Record<string, Work>>(
+    `/api/works?artist=${artist}`,
+    dispatch,
+    (works: Record<string, Work>) => addWorks(works, WorkSource.BY_ARTIST, artist),
+    worksData,
+    worksData.artistsToRetrievalDate[artist],
+    token,
+    force,
+  );
+};
+
 export const putArtist = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   artistsData: ArtistsState,

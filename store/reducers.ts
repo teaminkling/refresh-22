@@ -53,8 +53,53 @@ const worksReducer: Reducer<WorksState, AddWorksAction> = (
   state: WorksState = {
     works: {}, worksLastRetrieved: null, artistsToRetrievalDate: {}, weeksToRetrievalDate: {}
   },
-  action: AddWorksAction = {type: ADD_WORKS_TYPE, works: {}, source: WorkSource.DIRECT},
+  action: AddWorksAction = {
+    type: ADD_WORKS_TYPE, works: {}, source: WorkSource.DIRECT
+  },
 ): WorksState => {
+  const type: string = action.type;
+  const target: number | string | undefined = action.sourceTarget;
+
+  if (type === ADD_WORKS_TYPE) {
+    let worksLastRetrieved: string | null = state.worksLastRetrieved?.slice() || null;
+
+    const artistsToRetrievalDate: Record<string, string> = JSON.parse(
+      JSON.stringify(state.artistsToRetrievalDate)
+    );
+
+    const weeksToRetrievalDate: Record<number, string> = JSON.parse(
+      JSON.stringify(state.weeksToRetrievalDate)
+    );
+
+    switch ([action.source, typeof target]) {
+      case [WorkSource.DIRECT, "undefined"]:
+        break;
+      case [WorkSource.BY_WEEK, "number"]:
+        weeksToRetrievalDate[typeof target === "number" ? target : -1] = new Date().toISOString();
+
+        break;
+      case [WorkSource.BY_ARTIST, "string"]:
+        artistsToRetrievalDate[typeof target === "string" ? target : "undefined"] = (
+          new Date().toISOString()
+        );
+
+        break;
+      case [WorkSource.SEARCH, "undefined"]:
+        worksLastRetrieved = new Date().toISOString();
+
+        break;
+      default:
+        throw new Error("Unknown work source type.");
+    }
+
+    return {
+      works: JSON.parse(JSON.stringify(action.works)),
+      worksLastRetrieved: worksLastRetrieved,
+      artistsToRetrievalDate: artistsToRetrievalDate,
+      weeksToRetrievalDate: weeksToRetrievalDate,
+    };
+  }
+
   return state;
 };
 

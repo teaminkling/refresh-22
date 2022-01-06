@@ -104,13 +104,17 @@ export const addWeeks = (weeks: Record<string, Week>) => (dispatch: Dispatch): v
 export interface AddWorksAction extends Action {
   works: Record<string, Work>;
   source: WorkSource;
+  sourceTarget?: number | string;
 }
 
-const addWorksSync = (works: Record<string, Work>, source: WorkSource): AddWorksAction => {
+const addWorksSync = (
+  works: Record<string, Work>, source: WorkSource, sourceTarget?: number | string,
+): AddWorksAction => {
   return {
     type: ADD_WORKS_TYPE,
     works: works,
     source: source,
+    sourceTarget: sourceTarget,
   };
 };
 
@@ -119,10 +123,11 @@ const addWorksSync = (works: Record<string, Work>, source: WorkSource): AddWorks
  *
  * @param {Record<string, Work>} works the works
  * @param {WorkSource} source the source of the works request
+ * @param {never | undefined} sourceTarget the target of the source used to update the access map
  * @returns {CallableFunction} the thunk action creator
  */
 export const addWorks = (
-  works: Record<string, Work>, source: WorkSource,
+  works: Record<string, Work>, source: WorkSource, sourceTarget?: number | string,
 ) => (dispatch: Dispatch): void => {
-  dispatch(addWorksSync(works, source));
+  dispatch(addWorksSync(works, source, sourceTarget));
 };
