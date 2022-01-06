@@ -12,10 +12,11 @@ import Environment from "../types/environment";
  * @param {Environment} env the environment
  * @param {URL} contentUrl the content URL
  * @param {string} identifier the user's identifier
+ * @returns {Promise<string>} the hi-DPI URL
  */
 export const uploadThumbnails = async (
   env: Environment, contentUrl: URL, identifier: string,
-): Promise<void> => {
+): Promise<string> => {
   const _contentPathParts = contentUrl.pathname.split("/");
   const filename = _contentPathParts[_contentPathParts.length - 1];
 
@@ -80,4 +81,6 @@ export const uploadThumbnails = async (
       },
     }
   );
+
+  return hiDpiUploadUrl.toString();
 };

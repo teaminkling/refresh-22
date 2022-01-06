@@ -207,7 +207,7 @@ export const putWork = async (
     if (
       contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.hostname.includes(".mp3")
     ) {
-      await uploadThumbnails(env, contentUrl, identifier);
+      input.thumbnailUrl = await uploadThumbnails(env, contentUrl, identifier);
     } else if (contentUrl.hostname.includes(".mp3")) {
       // This is a music file.
 

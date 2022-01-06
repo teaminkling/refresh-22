@@ -113,8 +113,11 @@ export const postOrEditDiscordWork = async (
     "embeds": [
       {
         "type": "rich",
+        "title": work.title,
         "url": `https://refresh.fiveclawd.com/works?id=${work.id}`,
-        "description": `A ${work.medium || " "}piece by <@${work.artistId}>!`,
+        "description": (
+          `A ${work.medium ? "_" + work.medium + "_ " : ""}piece by <@${work.artistId}>!`
+        ),
         "image": {
           "url": work.thumbnailUrl,
         },
