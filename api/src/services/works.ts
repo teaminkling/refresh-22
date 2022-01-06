@@ -294,7 +294,7 @@ export const postUpload = async (
     (await env.REFRESH_KV.get(`${ARTISTS}/${ACTIVE_YEAR}`)) || "{}"
   );
 
-  if (!identifier || !Object.keys(artists).includes(identifier)) {
+  if (!identifier) {
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 

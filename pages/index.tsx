@@ -40,7 +40,7 @@ const Home: NextPage = () => {
     <div className={"mx-2 my-2 md:mr-5"}>
       <>
         {
-          Object.values(worksData.works).map((work: Work) => {
+          Object.values(worksData.works).filter(work => work.isApproved).map((work: Work) => {
             const artistName: string = (
               artistsData.artists[work.artistId]?.name
               || work.firstSeenArtistInfo?.name
