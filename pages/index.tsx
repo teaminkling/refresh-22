@@ -1,5 +1,12 @@
 import type {NextPage} from "next";
+import {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {Dispatch} from "redux";
+import GalleryItem from "../components/gallery-item";
 import {Header, Paragraph} from "../components/typography";
+import Work from "../data/core/Work";
+import {ArtistsState, RootState, WorksState} from "../store/state";
+import {fetchArtists, fetchWorksByWeek} from "../utils/connectors";
 
 /**
  * The home page/gallery.
@@ -8,12 +15,50 @@ import {Header, Paragraph} from "../components/typography";
  * @constructor
  */
 const Home: NextPage = () => {
-  // noinspection JSMismatchedCollectionQueryUpdate
-  const items: JSX.Element[] = [];
+  // Fetch the items.
 
-  const mainContent = items.length > 0 ? (
+  const dispatch: Dispatch = useDispatch();
+
+  const worksData: WorksState = useSelector((state: RootState) => state.worksData);
+  const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
+
+  useEffect(
+    () => {
+      // TODO: De-hardcode this in prep for week 2.
+
+      fetchWorksByWeek(dispatch, worksData, 1);
+      fetchArtists(dispatch, artistsData);
+    },
+    []
+  );
+
+  // TODO: works retrieved needs pagination etc
+
+  const mainContent = Object.values(worksData.works).length > 0 ? (
     <div className={"mx-2 my-2 md:mr-5"}>
-      <></>
+      <>
+        {
+          Object.values(worksData.works).map((work: Work) => {
+            const artistName: string = (
+              artistsData.artists[work.artistId]?.name
+              || work.firstSeenArtistInfo?.name
+              || "Unknown User"
+            );
+
+            return <GalleryItem
+              key={work.id}
+              id={work.id}
+              title={work.title}
+              artist={artistName}
+              medium={work.medium}
+              description={work.description}
+              retinaPreview={work.thumbnailUrl || "/placeholders/submission.png"}
+              preview={work.smallThumbnailUrl || "/placeholders/submission.png"}
+              submittedTimestamp={work.submittedTimestamp}
+            />;
+          })
+        }
+      </>
     </div>
   ) : (
     <div className={"flex items-center justify-center h-full"}>

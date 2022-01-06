@@ -28,6 +28,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
+    "remove-markdown": "^0.3.0",
     "uuid": "^8.3.2",
     "wrangler": "^0.0.6"
   },
@@ -35,6 +36,7 @@
     "@types/node": "16.11.11",
     "@types/react": "17.0.37",
     "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/remove-markdown": "^0.3.1",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",

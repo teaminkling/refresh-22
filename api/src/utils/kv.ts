@@ -24,7 +24,7 @@ export const placeWork = async (kv: KVNamespace, work: Work): Promise<void> => {
   // Set the artist-based map.
 
   const worksByArtist: Record<string, Work> = JSON.parse(
-    await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${work.artistId}`) || "[]"
+    await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${work.artistId}`) || "{}"
   );
 
   worksByArtist[work.id] = work;

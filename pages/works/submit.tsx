@@ -292,7 +292,7 @@ const SubmissionForm = () => {
           </SubHeader>
 
           <Paragraph>
-            Your work will not appear in the gallery/list until it has been approved.
+            Your work will not appear in the gallery/list to others until it has been approved.
           </Paragraph>
 
           <Paragraph>
@@ -358,6 +358,7 @@ const SubmissionForm = () => {
                     ).filter((item: UrlItem) => item.url !== ""),
                   ],
                   isApproved: false,
+                  submittedTimestamp: new Date().toISOString(),
                 };
 
                 const validation: ValidationResult = WORK_SCHEMA.validate(work);
@@ -395,6 +396,7 @@ const SubmissionForm = () => {
                   work.items = urlWrappers;
                   if (thumbnailPointer) {
                     work.thumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
+                    work.smallThumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
                   }
 
                   await putWork(dispatch, worksData, accessToken, work);

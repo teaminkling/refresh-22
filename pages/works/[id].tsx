@@ -1,4 +1,5 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import moment from "moment";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
@@ -8,7 +9,6 @@ import {Dispatch} from "redux";
 import Fancybox from "../../components/fancybox";
 import {Markdown} from "../../components/markdown";
 import SquareLink from "../../components/square-link";
-import {Header, SubHeader} from "../../components/typography";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
@@ -53,7 +53,7 @@ const Works = () => {
   if (work) {
     response = (
       <>
-        <div className={"pt-6 px-4 py-4 flex-col xl:flex xl:flex-row"}>
+        <div className={"pt-6 px-4 py-4 flex-col 2xl:flex 2xl:flex-row"}>
           <div className={"px-2 py-2 md:px-3 md:py-5"}>
             <Fancybox>
               <div>
@@ -87,8 +87,8 @@ const Works = () => {
                         <img
                           src={item.hiDpiThumbnail}
                           srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail}`}
-                          className={"align-bottom pb-6"}
-                          style={{width: 800}}
+                          className={"align-bottom pb-6 object-cover"}
+                          style={{maxHeight: 586.5, width: 800}}
                           alt={
                             `The ${index}th image for: ${work.title || "Untitled"}.`
                           }
@@ -101,29 +101,21 @@ const Works = () => {
             </Fancybox>
           </div>
 
-          <div
-            className={"px-2 flex xl:hidden xl:text-sm"}
-            style={{maxWidth: 100}}
-          >
-            <Header>
-              {id}
-            </Header>
-
-            <SubHeader>
-              by {artist?.name || work.firstSeenArtistInfo?.name || "Unknown"}
-            </SubHeader>
-          </div>
-
-          <div className={"pt-6 px-6 py-4 hidden xl:flex xl:flex-col"}>
-            <div className={"fixed"}>
+          <div className={"2xl:pt-6 px-6 pb-4"}>
+            <div className={"2xl:fixed"}>
               <h1 className={"py-3 text-5xl"}>
                 <b>{work.title}</b>
               </h1>
+
               <h2 className={"text-3xl pb-4"}>
                 by&nbsp;
                 <Link href={`/artists/${artistName}`}>
                   <a className={"underline"} style={{color: "#7C7CE0"}}>{artistName}</a>
                 </Link>
+
+                <p className={"text-sm mt-3 text-gray-400"}>
+                  Posted: {moment(work.submittedTimestamp).toString()}
+                </p>
               </h2>
 
               <div className={"pt-2 pb-4"}>

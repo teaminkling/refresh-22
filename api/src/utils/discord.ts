@@ -19,7 +19,6 @@ import Environment from "../types/environment";
 export const postOrEditDiscordWeek = async (
   week: Week, webhookUrl: string,
 ): Promise<string | null> => {
-
   const content: Record<string, unknown> = {
     "content": (
       `**Week ${week.week}: ${week.theme}**\n\n${week.information}\n\n`

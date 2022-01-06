@@ -116,15 +116,15 @@ export const getWork = async (
   env: Environment, params: URLSearchParams,
 ): Promise<Response> => {
   const id: string | null = sanitize(params.get("id"));
-  if (!id) {
+  if (!id || id === "undefined") {
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
-  const work: Work | undefined | null = JSON.parse(
+  const work: Work = JSON.parse(
     (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
   );
 
-  if (!work) {
+  if (!work?.id) {
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
@@ -210,7 +210,7 @@ export const putWork = async (
     let thumbnail: string | undefined = undefined;
 
     if (
-      contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.hostname.includes(".mp3")
+      contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.pathname.includes(".mp3")
     ) {
       // Just generate a normal thumbnail. It is easily derived from the name.
 
@@ -218,7 +218,7 @@ export const putWork = async (
 
       input.items[index].smallThumbnail = smallThumbnail;
       input.items[index].hiDpiThumbnail = hiDpiThumbnail;
-    } else if (!contentUrl.hostname.includes(".mp3")) {
+    } else if (!contentUrl.pathname.includes(".mp3")) {
       // This is a URL, we should get the meta preview image and crop it.
 
       thumbnail = await scrapeThumbnail(contentUrl);
@@ -234,16 +234,23 @@ export const putWork = async (
         input.items[index].smallThumbnail = smallThumbnail;
         input.items[index].hiDpiThumbnail = hiDpiThumbnail;
       }
+    } else {
+      input.items[index].smallThumbnail = "/placeholders/audio_submission.png";
+      input.items[index].hiDpiThumbnail = "/placeholders/audio_submission.png";
     }
   }
 
   // Find the thumbnail for the main post if it's not explicitly provided.
 
   if (!input.thumbnailUrl) {
+    const smallThumbnails = Object.values(input.items).map((item: UrlItem) => item.smallThumbnail);
     const thumbnails = Object.values(input.items).map((item: UrlItem) => item.hiDpiThumbnail);
+
+    // Allow explosion.
 
     if (thumbnails.length > 0) {
       input.thumbnailUrl = thumbnails[0];
+      input.smallThumbnailUrl = smallThumbnails[0];
 
       const noPlaceholders = thumbnails.filter(
         (url: string | undefined) => url && !url.includes("placeholder")
@@ -251,6 +258,7 @@ export const putWork = async (
 
       if (thumbnails.length > 1 && noPlaceholders.length > 0 && noPlaceholders) {
         input.thumbnailUrl = noPlaceholders[0];
+        input.smallThumbnailUrl = noPlaceholders[0];
       }
     }
   }

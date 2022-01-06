@@ -1,6 +1,7 @@
 import {faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import removeMd from "remove-markdown";
 import InterfaceLink from "./interface-link";
 
 /**
@@ -25,7 +26,7 @@ interface ItemProps {
   /**
    * The name of the medium.
    */
-  medium: string;
+  medium?: string;
 
   /**
    * The description of the piece.
@@ -41,6 +42,11 @@ interface ItemProps {
    * The preview URL if the screen is not high DPI.
    */
   preview: string;
+
+  /**
+   * The timestamp of the post.
+   */
+  submittedTimestamp: string;
 }
 
 /**
@@ -59,11 +65,11 @@ const GalleryItem = (props: ItemProps) => {
   }
 
   let medium = props.medium;
-  if (medium.length > 128) {
+  if (medium && medium.length > 128) {
     medium = medium.substring(0, 128) + "...";
   }
 
-  let description = props.description;
+  let description = removeMd(props.description);
   if (description.length > 380) {
     description = description.substring(0, 380) + "...";
   }
@@ -76,9 +82,9 @@ const GalleryItem = (props: ItemProps) => {
             <img
               src={props.retinaPreview}
               srcSet={`${props.preview}, ${props.retinaPreview} 1.5x`}
-              className={"align-bottom"}
-              style={{width: 800}}
-              alt={`A gallery preview image with the title: ${props.title}`}
+              className={"align-bottom object-cover"}
+              style={{height: 586.5, width: 800}}
+              alt={`A gallery preview image with the title: ${props.title}.`}
             />
           </a>
         </Link>
@@ -109,11 +115,13 @@ const GalleryItem = (props: ItemProps) => {
           <p className={"px-4 text-sm"}>
             <b>{title}</b>
           </p>
-          <p className={"hidden 2xl:block px-4 text-sm"}>
-            <i>
-              {medium}
-            </i>
-          </p>
+          {
+            medium ? <p className={"hidden 2xl:block px-4 text-sm"}>
+              <i>
+                {medium}
+              </i>
+            </p> : <></>
+          }
           <p className={"px-4  text-sm"}>
             by {props.artist}
           </p>
