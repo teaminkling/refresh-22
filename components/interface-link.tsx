@@ -114,7 +114,7 @@ const InterfaceLink = (props: NavItemProps) => {
       >
         {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className={"mr-3"} /> : props.icon}
         <span className={spacing} />
-        {isLoading ? "Please Wait" : props.title}
+        {isLoading ? "Please wait; do not background this page!" : props.title}
       </a>
     );
   }
