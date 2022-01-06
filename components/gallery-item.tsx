@@ -60,7 +60,7 @@ interface ItemProps {
  */
 const GalleryItem = (props: ItemProps) => {
   let title = props.title;
-  if (title.length > 128) {
+  if (title && title.length > 128) {
     title = title.substring(0, 128) + "...";
   }
 
@@ -70,7 +70,7 @@ const GalleryItem = (props: ItemProps) => {
   }
 
   let description = removeMd(props.description);
-  if (description.length > 380) {
+  if (description && description.length > 380) {
     description = description.substring(0, 380) + "...";
   }
 

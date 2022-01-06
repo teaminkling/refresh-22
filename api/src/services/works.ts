@@ -97,10 +97,7 @@ export const getWorks = async (
     );
   }
 
-  // The result is easiest to parse on the frontend when it is a map of IDs to works.
-
-
-  return createJsonResponse(JSON.stringify({data: results}), env.ALLOWED_ORIGIN);
+  return createJsonResponse(JSON.stringify(results), env.ALLOWED_ORIGIN);
 };
 
 /**
