@@ -163,8 +163,12 @@ export const putWork = async (
   // Verify poster is either the same as the one in the work or is a staff member.
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
-  if (!isStaff || input.artistId !== identifier) {
-    return createNotFoundResponse(env.ALLOWED_ORIGIN);
+  if (!isStaff && input.artistId !== identifier) {
+    return createBadRequestResponse(new ValidationError(
+      "Posting artist is not the same as the work artist.",
+      null,
+      [],
+    ), env.ALLOWED_ORIGIN);
   }
 
   // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
