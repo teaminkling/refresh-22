@@ -45,12 +45,13 @@ The backend is more straightforward:
 ```shell
 cd api;
 npm run build
-wrangler publish
+wrangler publish --env production
 ```
 
 ## License
 
-All rights reserved.
+The source code is licensed by Apache 2.0. You are free to copy, adapt, and read any of the code as
+you please.
 
-"Design Refresh", "FiveClawd", marketing materials (including the logo), and user-generated content
-is All Rights Reserved of their respective copyright holders.
+However, "Design Refresh", "FiveClawd", marketing materials (including the logo), and user-generated
+content is All Rights Reserved of their respective copyright holders.

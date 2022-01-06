@@ -5,7 +5,7 @@
  * @constructor
  */
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {faDiscord, faTwitch} from "@fortawesome/free-brands-svg-icons";
+import {faDiscord, faGithub, faTwitch} from "@fortawesome/free-brands-svg-icons";
 import {
   faBars,
   faClock,
@@ -210,6 +210,10 @@ const Sidebar = (): JSX.Element => {
               <SquareLink
                 location={"https://discord.gg/NuUB469UXM"}
                 icon={<FontAwesomeIcon icon={faDiscord} />}
+              />
+              <SquareLink
+                location={"https://github.com/teaminkling/refresh-22"}
+                icon={<FontAwesomeIcon icon={faGithub} />}
               />
             </div>
 
