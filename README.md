@@ -5,8 +5,8 @@ act as the source website for all future content, 2022 and onwards (potentially)
 
 ## Architecture
 
-This is a NextJS SSG + Serverless API app running on Cloudflare Pages and Cloudflare Workers. It is
-designed to be free to operate with small enough levels of bandwidth/computing power.
+This is a NextJS SSG + Serverless API app running on Vercel and Cloudflare Workers. It is designed
+to be free to operate with small enough levels of bandwidth/computing power.
 
 ## Local Development
 
