@@ -88,12 +88,15 @@ const Works = () => {
 
                     // noinspection HtmlUnknownAttribute
                     return (
+                      // eslint-disable-next-line react/jsx-no-target-blank
                       <a
-                        key={item.url && item.meta}
-                        data-fancybox={"gallery"}
+                        key={item.meta ? item.meta : item.url}
+                        data-fancybox={item.meta ? undefined : "gallery"}
                         href={item.url}
                         data-src={item.url}
                         data-type={dataType}
+                        target={item.meta ? "_blank" : undefined}
+                        rel={item.meta ? "noreferrer" : undefined}
                       >
                         <img
                           src={item.hiDpiThumbnail}
