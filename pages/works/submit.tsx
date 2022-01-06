@@ -80,12 +80,6 @@ const SubmissionForm = () => {
     (state: RootState) => state.worksData,
   );
 
-  // Some posts might just be prose. Very few of them, though, so this is collapsed by default.
-
-  const proseRef = createRef<HTMLTextAreaElement>();
-
-  const [isProseOpen, setIsProseOpen] = useState<boolean>(false);
-
   // Uploading a thumbnail is unnecessary unless the user deliberately wants to use one.
 
   const thumbnailRef = createRef<HTMLInputElement>();
@@ -102,7 +96,6 @@ const SubmissionForm = () => {
   const [title, setTitle] = useState<string>("");
   const [medium, setMedium] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [prose, setProse] = useState<string>("");
   const [thumbnailPointer, setThumbnailPointer] = useState<File | undefined>(undefined);
 
   // After we submit, there are messages we need to retrieve:
@@ -243,42 +236,6 @@ const SubmissionForm = () => {
 
           <InterfaceLink
             location={"#"}
-            title={isProseOpen ? "Close Written Input" : "Open Written Input"}
-            icon={<FontAwesomeIcon icon={
-              isProseOpen ? faAngleDown : faAngleRight
-            } />}
-            clickBack={async () => {
-              setIsProseOpen(!isProseOpen);
-
-              // Toggle the actual parent.
-
-              const parent: HTMLElement | undefined = proseRef.current?.parentElement || undefined;
-
-              if (parent) {
-                const oldClassName: string = parent.className;
-
-                if (oldClassName === "hidden") {
-                  parent.className = "";
-                } else {
-                  parent.className = "hidden";
-                }
-              }
-            }}
-          />
-
-          <TextareaInput
-            passedRef={proseRef}
-            id={"prose"}
-            label={"Written Input (poetry, prose, lyrics, etc.)"}
-            rows={24}
-            blurCallback={(event: SyntheticEvent<HTMLTextAreaElement, unknown> | undefined) => {
-              setProse(event?.currentTarget.value || "");
-            }}
-            isInitiallyHidden
-          />
-
-          <InterfaceLink
-            location={"#"}
             title={isThumbnailOpen ? "Close Manual Thumbnail" : "Open Manual Thumbnail"}
             icon={<FontAwesomeIcon icon={
               isThumbnailOpen ? faAngleDown : faAngleRight
@@ -391,7 +348,6 @@ const SubmissionForm = () => {
                   title: title,
                   medium: medium,
                   description: description,
-                  prose: prose,
                   urls: [
                     ...items.map(
                       (item: FrontendFileItem) => {

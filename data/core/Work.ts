@@ -59,13 +59,6 @@ export default interface Work {
   description: string;
 
   /**
-   * If the submission contains text as prose, the prose in the work.
-   *
-   * Max of 65536 characters (66 KiB uncompressed).
-   */
-  prose?: string;
-
-  /**
    * A list of URLs related to the content of this work.
    *
    * Order matters and is represented in provided order on the frontend.
@@ -107,7 +100,6 @@ export const WORK_SCHEMA = Joi.object(
     title: Joi.string().min(1).max(128).required(),
     medium: Joi.string().max(128).allow("").optional(),
     description: Joi.string().min(3).max(1920).required(),
-    prose: Joi.string().max(65536).allow("").optional(),
     urls: Joi.array().items(Joi.string().uri({
       allowRelative: false,
     })).min(1).required(),

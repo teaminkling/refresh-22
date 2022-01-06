@@ -31,11 +31,13 @@ const About: NextPage = () => {
           <ListItem>
             <b>Starts on:</b> 2nd January 2022
           </ListItem>
+
           <ListItem>
             <b>Runs for:</b> 16 weeks
           </ListItem>
+
           <ListItem>
-            <b>Accepts:</b> 🎨 Digital/traditional art, 🎵 music, ✍ prose, and more!
+            <b>Accepts:</b> 🎨 Digital/traditional art, 🎵 music, 🎥 videos, and more!
           </ListItem>
         </UnorderedList>
 
