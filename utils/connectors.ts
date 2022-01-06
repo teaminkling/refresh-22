@@ -74,7 +74,7 @@ export const fetchArtists = (
   token?: string,
   force?: boolean,
 ): void => {
-  return fetchGeneric<ArtistsState, Record<string, Artist>>(
+  fetchGeneric<ArtistsState, Record<string, Artist>>(
     "/api/artists",
     dispatch,
     addArtists,
@@ -91,7 +91,7 @@ export const fetchWeeks = (
   token?: string,
   force?: boolean,
 ): void => {
-  return fetchGeneric<WeeksState, Record<string, Week>>(
+  fetchGeneric<WeeksState, Record<string, Week>>(
     "/api/weeks",
     dispatch,
     addWeeks,
