@@ -4,8 +4,7 @@ import {
   faCrown,
   faGripLines,
   faLink,
-  faTimes,
-  faVideo
+  faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ChangeEvent, SyntheticEvent, useState} from "react";
@@ -17,7 +16,6 @@ import {Draggable, DraggableProvided} from "react-beautiful-dnd";
 enum FileItemMode {
   DEFAULT_MODE,
   IMAGE_MODE,
-  VIDEO_MODE,
   URL_MODE,
 }
 
@@ -106,20 +104,10 @@ const InitialButtons = (props: FileItemProps) => {
       className={BUTTON_CLASSES}
       type={"button"}
       onClick={() => {
-        props.setMode ? props.setMode(FileItemMode.VIDEO_MODE) : null;
-      }}
-    >
-      <FontAwesomeIcon icon={faVideo} fixedWidth /> Video
-    </button>
-
-    <button
-      className={BUTTON_CLASSES}
-      type={"button"}
-      onClick={() => {
         props.setMode ? props.setMode(FileItemMode.URL_MODE) : null;
       }}
     >
-      <FontAwesomeIcon icon={faLink} fixedWidth /> URL & Other
+      <FontAwesomeIcon icon={faLink} fixedWidth /> Video, Prose, & URL
     </button>
 
     {
@@ -228,35 +216,6 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
         props.setParentState(newState);
       }}
     />
-  </>;
-};
-
-const VideoModeView = (props: FileItemProps) => {
-  return <>
-    <button
-      className={BUTTON_CLASSES}
-      type={"button"}
-      onClick={() => {
-        const newState: FrontendFileItem[] = props.parentState.slice();
-
-        newState[props.index].url = undefined;
-        newState[props.index].file = undefined;
-
-        props.setMode ? props.setMode(FileItemMode.DEFAULT_MODE) : null;
-      }}
-    >
-      <FontAwesomeIcon icon={faBackspace} fixedWidth /> Back
-    </button>
-    <span className={"inline-block pl-4 leading-8"}>
-      Please use&nbsp;
-      <a
-        href={"https://youtube.com/upload"}
-        target={"_blank"}
-        rel={"noreferrer"}
-        style={{color: "#7C7CE0"}}
-        className={"hover:underline"}
-      >YouTube</a> to upload video links!
-    </span>
   </>;
 };
 
@@ -370,10 +329,6 @@ const FileItem = (props: FileItemProps) => {
       break;
     case (FileItemMode.IMAGE_MODE):
       itemElement = <ImageAndAudioModeView {...props} setMode={setMode} />;
-
-      break;
-    case (FileItemMode.VIDEO_MODE):
-      itemElement = <VideoModeView {...props} setMode={setMode} />;
 
       break;
     case (FileItemMode.URL_MODE):
