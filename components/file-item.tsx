@@ -256,12 +256,13 @@ const UrlModeView = (props: FileItemProps) => {
                 }}>
                 <p className={"mb-4"}>
                   We support the following third party sites without needing to leave the site:
-                  Twitch, YouTube, Vimeo, SoundCloud, and Mixcloud.
+                  Twitch, YouTube, Vimeo, and SoundCloud.
                 </p>
 
                 <p>
-                  Otherwise, we recommend Webtoon for comics, itch.io for games, and Google Drive
-                  for PDFs, prose, etc.
+                  Otherwise, we recommend Webtoon for comics, itch.io for games, and whatever you
+                  like for PDF and prose (as long as you don&apos;t mind providing your own
+                  thumbnail).
                 </p>
               </span> : <></>
           }
