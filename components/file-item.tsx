@@ -254,37 +254,15 @@ const UrlModeView = (props: FileItemProps) => {
                   left: "50%",
                   marginLeft: "-8em"
                 }}>
-                Check out&nbsp;
-                <a
-                  href={"https://webtoons.com"}
-                  target={"_blank"}
-                  rel={"noreferrer"}
-                  style={{color: "#7C7CE0"}}
-                  className={"hover:underline"}
-                >
-                  Webtoon
-                </a>
-                &nbsp;for comics,&nbsp;
-                <a
-                  href={"https://itch.io"}
-                  target={"_blank"}
-                  rel={"noreferrer"}
-                  style={{color: "#7C7CE0"}}
-                  className={"hover:underline"}
-                >
-                  itch.io
-                </a>
-                &nbsp;for games, and&nbsp;
-                <a
-                  href={"https://drive.google.com"}
-                  target={"_blank"}
-                  rel={"noreferrer"}
-                  style={{color: "#7C7CE0"}}
-                  className={"hover:underline"}
-                >
-                  Google Drive
-                </a>
-                &nbsp;for PDFs and (most) other file types!
+                <p className={"mb-4"}>
+                  We support the following third party sites without needing to leave the site:
+                  Twitch, YouTube, Vimeo, SoundCloud, and Mixcloud.
+                </p>
+
+                <p>
+                  Otherwise, we recommend Webtoon for comics, itch.io for games, and Google Drive
+                  for PDFs, prose, etc.
+                </p>
               </span> : <></>
           }
         </div>
