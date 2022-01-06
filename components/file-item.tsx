@@ -276,6 +276,7 @@ const UrlModeView = (props: FileItemProps) => {
           width: "95%",
           marginLeft: "1vw"
         }}
+        placeholder={"E.g., https://example.com/your-work"}
         onBlur={(event: SyntheticEvent<HTMLInputElement, FocusEvent>) => {
           const newState: FrontendFileItem[] = props.parentState.slice();
 
