@@ -128,7 +128,7 @@ const Edit = (): JSX.Element => {
 
   useEffect(() => {
     fetchArtists(dispatch, artistsData);
-  });
+  }, []);
 
   if (isAuthenticated) {
     const idParts: string[] = user?.sub?.split("|") || [];
