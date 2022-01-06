@@ -95,44 +95,67 @@ const handleJwt = async (
  * The main Cloudflare Worker for this backend project.
  */
 const worker = {
-  async fetch(request: Request, env: Environment) {
-    const method: string = request.method.toLowerCase();
-
-    // Handle preflight request without handling JWT since it's not necessary.
-
-    if (method === "options") {
-      return new Response(
-        "{}", {headers: generateCorsHeaders(env.ALLOWED_ORIGIN)}
-      );
-    }
-
-    // If there's a JWT, validate it.
-
-    const jwt: string | null = (
-      request.headers.get("Authorization")?.replace("Bearer ", "")?.trim()
-    ) || null;
-
-    const identifier: string | undefined = await handleJwt(jwt, env.AUDIENCE, env.JWKS_URL);
-
-    // If it's a normal request, check the URL and handle normally.
-
-    const url = new URL(request.url);
-    const pathParts: string[] = url.pathname.split("/").filter(
-      (part: string) => part && part !== "api"
-    );
-
-    if (pathParts.length === 0) {
-      return createNotFoundResponse();
-    }
-
-    return handleRequest(
-      env,
-      method,
-      pathParts[0],
-      url.searchParams,
+  async fetch(
+    request: Request, env: Environment, context: EventContext<Environment, never, unknown>
+  ) {
+    const sentry = new Toucan({
+      dsn: env.SENTRY_DSN,
+      context: context,
       request,
-      identifier,
-    );
+      allowedHeaders: ["user-agent"],
+      allowedSearchParams: /(.*)/,
+      environment: env.ENVIRONMENT,
+      debug: env.ENVIRONMENT === "development",
+    });
+
+    try {
+      const method: string = request.method.toLowerCase();
+
+      // Handle preflight request without handling JWT since it's not necessary.
+
+      if (method === "options") {
+        return new Response(
+          "{}", {headers: generateCorsHeaders(env.ALLOWED_ORIGIN)}
+        );
+      }
+
+      // If there's a JWT, validate it.
+
+      const jwt: string | null = (
+        request.headers.get("Authorization")?.replace("Bearer ", "")?.trim()
+      ) || null;
+
+      const identifier: string | undefined = await handleJwt(jwt, env.AUDIENCE, env.JWKS_URL);
+
+      // If it's a normal request, check the URL and handle normally.
+
+      const url = new URL(request.url);
+      const pathParts: string[] = url.pathname.split("/").filter(
+        (part: string) => part && part !== "api"
+      );
+
+      if (pathParts.length === 0) {
+        return createNotFoundResponse();
+      }
+
+      return handleRequest(
+        env,
+        method,
+        pathParts[0],
+        url.searchParams,
+        request,
+        identifier,
+      );
+    } catch (error: unknown) {
+      sentry.captureException(error);
+      return new Response(JSON.stringify(
+        {
+          "message": "Internal Server Error",
+          "details": null,
+          "_original": [],
+        },
+      ), {status: 500});
+    }
   }
 };
 

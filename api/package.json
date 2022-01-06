@@ -4,6 +4,7 @@
   "type": "module",
   "main": "./out/index.js",
   "scripts": {
+    "dev": "echo \"You want: wrangler dev --env development\"",
     "build": "tsc; esbuild dist/api/src/index.js --bundle --format=esm --minify --outfile=out/index.js"
   },
   "devDependencies": {
@@ -18,6 +19,7 @@
     "eslint-plugin-import": "^2.25.3",
     "joi": "^17.5.0",
     "jose": "^4.3.7",
+    "toucan-js": "^2.5.0",
     "typescript": "^4.5.4",
     "uuid": "^8.3.2",
     "xss": "^1.0.10"

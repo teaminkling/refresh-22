@@ -14,4 +14,6 @@ export default interface Environment {
   AWS_S3_BUCKET: string;
   TWIC_URL: string;
   CDN_HOSTNAME: string;
+  SENTRY_DSN: string;
+  ENVIRONMENT: string;
 }

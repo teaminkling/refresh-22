@@ -1,15 +1,17 @@
-type = "javascript"
 name = "api"
+type = "javascript"
 workers_dev = true
 
-account_id = ""
-usage_model = ""
-route = ""
-zone_id = ""
-
-kv_namespaces = []
+account_id = "<snip>"
 
 compatibility_date = "2021-12-19"
+
+kv-namespaces = [
+  { binding = "REFRESH_KV", id = "<snip>", preview_id = "<snip>" }
+]
+
+[build]
+command = "npm run build"
 
 [build.upload]
 format = "modules"
@@ -20,41 +22,62 @@ main = "./index.js"
 type = "ESModule"
 globs = ["**/*.js"]
 
-[vars]
-ALLOWED_ORIGIN = "http://localhost:3000"
-AUDIENCE = "http://localhost:8787/api/"
-JWKS_URL = "https://refresh-dev.au.auth0.com"
-WEEKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
-WORKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
-AWS_DEFAULT_REGION = ""
-AWS_S3_BUCKET = ""
-TWIC_URL = ""
-CDN_HOSTNAME = "refresh-cdn.fiveclawd.com"
+[env.development]
+kv-namespaces = [
+  { binding = "REFRESH_KV", id = "<snip>", preview_id = "<snip>" }
+]
+
+[env.development.vars]
+ALLOWED_ORIGIN = "<snip>"
+AUDIENCE = "<snip>"
+JWKS_URL = "<snip>"
+WORKS_DISCORD_URL = "<snip>"
+WEEKS_DISCORD_URL = "<snip>"
+AWS_ACCESS_KEY_ID = "<snip>"
+AWS_SECRET_ACCESS_KEY = "<snip>"
+AWS_DEFAULT_REGION = "<snip>"
+AWS_S3_BUCKET = "<snip>"
+TWIC_URL = "<snip>"
+CDN_HOSTNAME = "<snip>"
+SENTRY_DSN = "<snip>"
+ENVIRONMENT = "development"
+
+[env.staging]
+kv-namespaces = [
+  { binding = "REFRESH_KV", id = "<snip>", preview_id = "<snip>" }
+]
 
 [env.staging.vars]
-ALLOWED_ORIGIN = "https://refresh.inklingtest.com"
-AUDIENCE = "https://refresh.inklingtest.com/api/"
-JWKS_URL = "https://refresh-uat.au.auth0.com"
-WEEKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
-WORKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
-AWS_DEFAULT_REGION = ""
-AWS_S3_BUCKET = ""
-TWIC_URL = ""
-CDN_HOSTNAME = "refresh-cdn.fiveclawd.com"
+ALLOWED_ORIGIN = "<snip>"
+AUDIENCE = "<snip>"
+JWKS_URL = "<snip>"
+WORKS_DISCORD_URL = "<snip>"
+WEEKS_DISCORD_URL = "<snip>"
+AWS_ACCESS_KEY_ID = "<snip>"
+AWS_SECRET_ACCESS_KEY = "<snip>"
+AWS_DEFAULT_REGION = "<snip>"
+AWS_S3_BUCKET = "<snip>"
+TWIC_URL = "<snip>"
+CDN_HOSTNAME = "<snip>"
+SENTRY_DSN = "<snip>"
+ENVIRONMENT = "staging"
+
+[env.production]
+kv-namespaces = [
+  { binding = "REFRESH_KV", id = "<snip>", preview_id = "<snip>" }
+]
 
 [env.production.vars]
-ALLOWED_ORIGIN = "https://refresh.fiveclawd.com"
-AUDIENCE = "https://refresh.fiveclawd.com/api/"
-JWKS_URL = "https://refresh.au.auth0.com"
-WEEKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
-WORKS_DISCORD_URL = "https://discord.com/api/webhooks/..."
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
-AWS_DEFAULT_REGION = ""
-AWS_S3_BUCKET = ""
-TWIC_URL = ""
-CDN_HOSTNAME = "refresh-cdn.fiveclawd.com"
+ALLOWED_ORIGIN = "<snip>"
+AUDIENCE = "<snip>"
+JWKS_URL = "<snip>"
+WORKS_DISCORD_URL = "<snip>"
+WEEKS_DISCORD_URL = "<snip>"
+AWS_ACCESS_KEY_ID = "<snip>"
+AWS_SECRET_ACCESS_KEY = "<snip>"
+AWS_DEFAULT_REGION = "<snip>"
+AWS_S3_BUCKET = "<snip>"
+TWIC_URL = "<snip>"
+CDN_HOSTNAME = "<snip>"
+SENTRY_DSN = "<snip>"
+ENVIRONMENT = "production"
