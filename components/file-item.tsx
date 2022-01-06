@@ -181,7 +181,7 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
               }}
             >
               <p className={"mb-4"}>
-                PNG, JPG, GIF, and MP3 files are supported. The maximum file size is 32 MiB.
+                PNG, JPG, and MP3 files are supported. The maximum file size is 32 MiB.
               </p>
               <p className={"mb-4"}>
                 If you are uploading an image, please upload one that is at least 720 pixels
@@ -215,6 +215,7 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
 
         props.setParentState(newState);
       }}
+      accept={".mp3,.png,.jpg,.jpeg"}
     />
   </>;
 };

@@ -1,7 +1,7 @@
 import {faFrownOpen} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ValidationError, ValidationErrorItem} from "joi";
-import {ListItem, UnorderedList} from "./typography";
+import {UnorderedList} from "./typography";
 
 /**
  * The props for response messages.
@@ -55,17 +55,17 @@ export const ResponseMessages = (
             }
 
             errorElements.push(
-              <ListItem key={detail.message}>
+              <li key={detail.message}>
                 {message}
-              </ListItem>
+              </li>
             );
           }
         );
       } else {
         errorElements.push(
-          <ListItem key={error.message}>
+          <li key={error.message}>
             {error.message}
-          </ListItem>
+          </li>
         );
       }
     }

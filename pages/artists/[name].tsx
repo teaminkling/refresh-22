@@ -55,20 +55,20 @@ const SingleArtist = (): JSX.Element => {
     response = (
       <div className={"flex items-center justify-center h-full"}>
         <div className={"text-center pb-16"}>
-          <img
-            src={"/art/user404.png"}
-            alt={"A lost user."}
-            className={"w-96 pt-16 m-auto"}
-          />
+          <img src={"/art/user404.png"} alt={"A lost user."} className={"w-96 pt-16 m-auto"} />
+
           <Header>
             Artist 404
           </Header>
+
           <SubHeader>
             Can&apos;t find that user!
           </SubHeader>
+
           <Paragraph>
             Are they still being processed?
           </Paragraph>
+
           <Paragraph>
             That can take up to an hour.
           </Paragraph>
