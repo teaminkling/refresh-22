@@ -7,7 +7,7 @@ import {
   UPLOAD_EXPIRY
 } from "../../../data/constants/setup";
 import Artist from "../../../data/core/Artist";
-import Work, {WORK_SCHEMA} from "../../../data/core/Work";
+import Work, {UrlItem, WORK_SCHEMA} from "../../../data/core/Work";
 import {
   ARTISTS,
   WORKS_WITH_ARTIST_INDEX,
@@ -16,7 +16,7 @@ import {
   WORKS_WITHOUT_INDEX
 } from "../constants/kv";
 import Environment from "../types/environment";
-import {uploadThumbnails} from "../utils/connectors";
+import {scrapeThumbnail, uploadScrapedThumbnail, uploadThumbnails} from "../utils/connectors";
 import {postOrEditDiscordWork} from "../utils/discord";
 import {createBadRequestResponse, createJsonResponse, createNotFoundResponse} from "../utils/http";
 import {determineShortId, sanitize} from "../utils/io";
@@ -185,7 +185,7 @@ export const putWork = async (
     // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
     // client is valid, the ID will be some kind of random string.
 
-    const newId: string = await determineShortId(input.artistId, input.urls);
+    const newId: string = await determineShortId(input.artistId, input.items);
 
     // This isn't very robust, but we don't ever expect anything to ever collide.
 
@@ -200,30 +200,59 @@ export const putWork = async (
 
   input.id = effectiveId;
 
-  // Generate the thumbnail for the main post if it's not explicitly provided.
+  // Generate the thumbnails for all items.
 
-  if (!input.thumbnailUrl) {
-    const contentUrl: URL = new URL(input.urls[0]);
+  for (const item of input.items) {
+    const index: number = input.items.indexOf(item);
+
+    const contentUrl: URL = new URL(item.url);
+
+    let thumbnail: string | undefined = undefined;
 
     if (
       contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.hostname.includes(".mp3")
     ) {
-      input.thumbnailUrl = await uploadThumbnails(env, contentUrl, identifier);
-    } else if (contentUrl.hostname.includes(".mp3")) {
-      // This is a music file.
+      // Just generate a normal thumbnail. It is easily derived from the name.
 
-      // TODO: Select a placeholder.
-    } else {
+      const [smallThumbnail, hiDpiThumbnail] = await uploadThumbnails(env, contentUrl, identifier);
+
+      input.items[index].smallThumbnail = smallThumbnail;
+      input.items[index].hiDpiThumbnail = hiDpiThumbnail;
+    } else if (!contentUrl.hostname.includes(".mp3")) {
       // This is a URL, we should get the meta preview image and crop it.
 
-      // TODO: Fetch the meta information via the Cloudflare native DOM mutation API.
+      thumbnail = await scrapeThumbnail(contentUrl);
+
+      if (thumbnail) {
+        // The meta image might be completely the wrong size. We need to re-upload.
+
+        const [smallThumbnail, hiDpiThumbnail] = await uploadScrapedThumbnail(
+          env, identifier, thumbnail, item.url
+        );
+
+        input.items[index].meta = thumbnail;
+        input.items[index].smallThumbnail = smallThumbnail;
+        input.items[index].hiDpiThumbnail = hiDpiThumbnail;
+      }
     }
   }
 
-  // Generate the thumbnails for all other posts if there are more than one.
+  // Find the thumbnail for the main post if it's not explicitly provided.
 
-  if (input.urls.length > 1) {
-    // do nothing for now
+  if (!input.thumbnailUrl) {
+    const thumbnails = Object.values(input.items).map((item: UrlItem) => item.hiDpiThumbnail);
+
+    if (thumbnails.length > 0) {
+      input.thumbnailUrl = thumbnails[0];
+
+      const noPlaceholders = thumbnails.filter(
+        (url: string | undefined) => url && !url.includes("placeholder")
+      );
+
+      if (thumbnails.length > 1 && noPlaceholders.length > 0 && noPlaceholders) {
+        input.thumbnailUrl = noPlaceholders[0];
+      }
+    }
   }
 
   // Edit the Discord post for this work (can fail without 500).
@@ -268,6 +297,7 @@ export const postUpload = async (
 
   const _filename = requestData.filename;
   const _filenameParts = _filename.split(".");
+  const extension: string = _filenameParts[_filenameParts.length - 1];
 
   if (_filenameParts.length < 2) {
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
@@ -283,8 +313,6 @@ export const postUpload = async (
       [],
     ), env.ALLOWED_ORIGIN);
   }
-
-  const extension: string = _filenameParts[_filenameParts.length - 1];
 
   // Set up the AWS/S3 integration (actually B2).
 

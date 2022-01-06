@@ -1,5 +1,7 @@
 import {AwsClient} from "aws4fetch";
+import {load} from "cheerio";
 import {ValidationError} from "joi";
+import {getUuid5String} from "../../../data/utils/uuid";
 import Environment from "../types/environment";
 
 /**
@@ -16,7 +18,7 @@ import Environment from "../types/environment";
  */
 export const uploadThumbnails = async (
   env: Environment, contentUrl: URL, identifier: string,
-): Promise<string> => {
+): Promise<string[]> => {
   const _contentPathParts = contentUrl.pathname.split("/");
   const filename = _contentPathParts[_contentPathParts.length - 1];
 
@@ -82,5 +84,82 @@ export const uploadThumbnails = async (
     }
   );
 
-  return hiDpiUploadUrl.toString();
+  // Allow explosion.
+
+  const bucket: string = env.AWS_S3_BUCKET.split(".")[0];
+  return [
+    `https://${env.CDN_HOSTNAME}/file/${bucket}/ugc/thumbs/reg-dpi/${identifier}/${filename}`,
+    `https://${env.CDN_HOSTNAME}/file/${bucket}/ugc/thumbs/hi-dpi/${identifier}/${filename}`
+  ];
+};
+
+/**
+ * Attempt to scrape a URL and return the meta image.
+ *
+ * @param {URL} url the URL to scrape
+ * @returns {Promise<string | undefined>} if found, a social image
+ */
+export const scrapeThumbnail = async (url: URL): Promise<string | undefined> => {
+  const _scrapedResponse: Response = await fetch(url.toString());
+
+  const $ = load(await _scrapedResponse.text());
+
+  const openGraphImage: string | undefined = $(
+    "meta[property='og:image']"
+  ).attr("content");
+
+  const twitterImage: string | undefined = $(
+    "meta[name='twitter:image']"
+  ).attr("content");
+
+  return openGraphImage || twitterImage;
+};
+
+/**
+ * Upload a scraped thumbnail to S3.
+ *
+ * @param {Environment} env the environment
+ * @param {string} identifier the identifier
+ * @param {string} scrapedImageUrl the scraped image URL
+ * @param {string} itemUrl the URL of the actual image
+ * @returns {Promise<string[]>} the thumbnails
+ */
+export const uploadScrapedThumbnail = async (
+  env: Environment, identifier: string, scrapedImageUrl: string, itemUrl: string,
+) => {
+  const _filenameParts = scrapedImageUrl.split(".");
+  const extension: string = _filenameParts[_filenameParts.length - 1];
+
+  const aws: AwsClient = new AwsClient({
+    "accessKeyId": env.AWS_ACCESS_KEY_ID,
+    "secretAccessKey": env.AWS_SECRET_ACCESS_KEY,
+    "region": env.AWS_DEFAULT_REGION,
+  });
+
+  const _thumbnailResponse: Response = await fetch(scrapedImageUrl);
+  const thumbnailBlob: Blob = await _thumbnailResponse.blob();
+
+  const stagingUrl = new URL(
+    `https://${env.AWS_S3_BUCKET}/ugc/${getUuid5String(itemUrl)}.${extension}`,
+  );
+
+  await aws.fetch(
+    stagingUrl, {
+      method: "PUT",
+      headers: {"Content-Length": thumbnailBlob.size.toString()},
+      body: thumbnailBlob,
+      aws: {
+        service: "s3", signQuery: true, allHeaders: true,
+      },
+    }
+  );
+
+  // Explode here if necessary.
+
+  const _bucketName: string = env.AWS_S3_BUCKET.split(".")[0];
+  stagingUrl.pathname = stagingUrl.pathname.replaceAll(
+    "/ugc/", `/file/${_bucketName}/ugc/`,
+  );
+
+  return await uploadThumbnails(env, stagingUrl, identifier);
 };

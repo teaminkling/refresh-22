@@ -16,7 +16,7 @@ import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
 import {ACTIVE_YEAR} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
-import Work, {WORK_SCHEMA} from "../../data/core/Work";
+import Work, {UrlItem, WORK_SCHEMA} from "../../data/core/Work";
 import {ArtistsState, RootState, WeeksState, WorksState} from "../../store/state";
 import {fetchArtists, fetchWeeks, putWork, uploadFile} from "../../utils/connectors";
 import NotFound from "../404";
@@ -348,12 +348,14 @@ const SubmissionForm = () => {
                   title: title,
                   medium: medium,
                   description: description,
-                  urls: [
+                  items: [
                     ...items.map(
-                      (item: FrontendFileItem) => {
-                        return item.url || (item.file && "https://placeholder.com") || "";
+                      (item: FrontendFileItem): UrlItem => {
+                        const url = item.url || (item.file && "https://placeholder.com") || "";
+
+                        return {url: url};
                       }
-                    ).filter(text => text !== ""),
+                    ).filter((item: UrlItem) => item.url !== ""),
                   ],
                   isApproved: false,
                 };
@@ -368,13 +370,13 @@ const SubmissionForm = () => {
 
                   const accessToken: string = await getAccessTokenSilently();
 
-                  const urls: string[] = [];
+                  const urlWrappers: UrlItem[] = [];
                   for (const item of items) {
                     if (item.url) {
-                      urls.push(item.url);
+                      urlWrappers.push({url: item.url});
                     } else if (item.file) {
                       const urlValidation = Joi.string().regex(
-                        /.*\.(png)|(jpg)|(jpeg)|(mp3)(gif)/
+                        /.*\.(png)|(jpg)|(jpeg)|(mp3)/
                       ).validate(
                         item.file.name
                       );
@@ -383,14 +385,14 @@ const SubmissionForm = () => {
                         errors.push(urlValidation.error);
                       }
 
-                      urls.push(await uploadFile(accessToken, item.file));
+                      urlWrappers.push({url: await uploadFile(accessToken, item.file)});
                     }
                   }
 
                   // Next, we associate the URLs with the work then send it off to the backend.
                   // If the thumbnail was explicitly provided, we give that in too.
 
-                  work.urls = urls;
+                  work.items = urlWrappers;
                   if (thumbnailPointer) {
                     work.thumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
                   }

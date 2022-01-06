@@ -5,6 +5,25 @@ import Joi from "joi";
 import {LAST_ACTIVE_WEEK} from "../constants/setup";
 import Artist, {ARTIST_SCHEMA} from "./Artist";
 
+export interface UrlItem {
+  url: string;
+
+  /**
+   * The meta image, if the original URL is just a link.
+   */
+  meta?: string;
+
+  /**
+   * The thumbnail for non hi-DPI screens.
+   */
+  smallThumbnail?: string;
+
+  /**
+   * The thumbnail for hi-DPI screens.
+   */
+  hiDpiThumbnail?: string;
+}
+
 export default interface Work {
   /**
    * The internal ID.
@@ -63,7 +82,7 @@ export default interface Work {
    *
    * Order matters and is represented in provided order on the frontend.
    */
-  urls: string[];
+  items: UrlItem[];
 
   /**
    * The thumbnail URL.
@@ -88,6 +107,15 @@ export default interface Work {
 
 // Note: I can't find specifications for the length of a snowflake, so we limit it to 64 chars.
 
+export const URL_ITEM_SCHEMA = Joi.object(
+  {
+    url: Joi.string().uri({allowRelative: false}).min(1).required(),
+    meta: Joi.string().uri({allowRelative: false}).min(1).optional(),
+    smallThumbnail: Joi.string().uri({allowRelative: false}).min(1).optional(),
+    hiDpiThumbnail: Joi.string().uri({allowRelative: false}).min(1).optional(),
+  }
+);
+
 export const WORK_SCHEMA = Joi.object(
   {
     id: Joi.string().min(4).max(12).required(),
@@ -100,9 +128,7 @@ export const WORK_SCHEMA = Joi.object(
     title: Joi.string().min(1).max(128).required(),
     medium: Joi.string().max(128).allow("").optional(),
     description: Joi.string().min(3).max(1920).required(),
-    urls: Joi.array().items(Joi.string().uri({
-      allowRelative: false,
-    })).min(1).required(),
+    items: Joi.array().items(URL_ITEM_SCHEMA).min(1).required(),
     thumbnailUrl: Joi.string().uri().allow("").optional(),
     isApproved: Joi.boolean().required(),
     discordId: Joi.string().alphanum().max(64).allow("").optional(),

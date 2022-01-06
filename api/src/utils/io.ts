@@ -2,6 +2,8 @@
  * Utils related to I/O.
  */
 
+import {UrlItem} from "../../../data/core/Work";
+
 /**
  * Remove slashes and slash escapes in any user input to prevent path traversal
  *
@@ -22,10 +24,10 @@ export const sanitize = (text: string | null): string | null => {
  * @param {string} artistId the artist ID
  * @param {string[]} urls the URLs in the work
  */
-export const determineShortId = async (artistId: string, urls: string[]): Promise<string> => {
+export const determineShortId = async (artistId: string, urls: UrlItem[]): Promise<string> => {
   // Concatenate the key.
 
-  const key: ArrayBuffer = new TextEncoder().encode(artistId + urls.join(", "));
+  const key: ArrayBuffer = new TextEncoder().encode(artistId + JSON.stringify(urls));
 
   // Return the SHA256 hash of that key as a Base64 string.
 
