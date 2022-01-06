@@ -2,6 +2,7 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useRouter} from "next/router";
+import {ParsedUrlQuery} from "querystring";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
@@ -13,56 +14,42 @@ import {fetchArtists} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 
 /**
- * The props for a single artist.
- */
-interface SingleArtistProps {
-  name: string;
-}
-
-/**
  * A component that retrieves an existing user.
  *
- * @param {SingleArtistProps} props the props
  * @returns {JSX.Element} the element
  * @constructor
  */
-const SingleArtist = (props: SingleArtistProps): JSX.Element => {
-  const nameFromParam: string = props.name;
+const SingleArtist = (): JSX.Element => {
+  const router = useRouter();
+  const query: ParsedUrlQuery = router.query;
+
+  // Determine the name we want to retrieve.
+
+  const _rawName: string | string[] | undefined = query.name || "unknown";
+  const name: string = typeof _rawName === "object" ? _rawName[0] : _rawName;
+
+  // Determine the current user's ID.
 
   const {user}: Auth0ContextInterface = useAuth0();
 
   const _userParts: string[] = user?.sub?.split("|") || [];
   const idFromAuth0: string = _userParts.length > 0 ? _userParts[_userParts.length - 1] : "";
 
-  const artistsData: ArtistsState = useSelector(
-    (state: RootState) => state.artistsData,
-  );
-
   // Update artists cache if necessary.
 
   const dispatch: Dispatch = useDispatch();
+  const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
+
   useEffect(() => {
     fetchArtists(dispatch, artistsData);
   }, []);
 
-  // Now that we know for sure that there are some artists, we try to fetch the one here.
+  // Try to grab the ID from the state rather than from Auth0.
 
-  const router = useRouter();
-
-  if (nameFromParam === "me") {
-    router.push({
-      pathname: "/artists",
-      query: {name: encodeURI(artistsData.artists[idFromAuth0]?.name || "unknown")}
-    }).then();
-  }
-
-  const discordId: string | undefined = artistsData.usernameToId[nameFromParam];
-
-  // Start to build a response.
+  const idFromState: string | undefined = artistsData.usernameToId[name];
 
   let response: JSX.Element;
-
-  if (!discordId) {
+  if (!idFromState) {
     // User isn't in KV yet.
 
     response = (
@@ -83,21 +70,19 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
             Are they still being processed?
           </Paragraph>
           <Paragraph>
-            That can take up to 24 hours.
+            That can take up to an hour.
           </Paragraph>
         </div>
       </div>
     );
   } else {
-    // User was found.
+    const artist: Artist = artistsData.artists[idFromState];
 
-    const artist: Artist = artistsData.artists[discordId];
+    // Place the socials down.
 
     const socialsElements: JSX.Element[] = [];
     artist.socials.forEach((socialUrl: string) => {
       const parsedSocial: ParsedSocial = parseSocial(socialUrl);
-
-      // noinspection HttpUrlsUsage
       socialsElements.push(
         <div key={socialUrl} className={"hover:bg-gray-100"}>
           <a href={parsedSocial.link} target={"_blank"} rel="noreferrer">
@@ -123,7 +108,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
       <StaticPage>
         <img src={artist.thumbnailUrl} alt={"The user's thumbnail URL."} className={"pt-8"} />
         <Header>
-          {nameFromParam}
+          {name}
         </Header>
 
         <Paragraph>
@@ -139,7 +124,7 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
 
         <InterfaceLink
           title={"View Filtered Gallery"}
-          location={`/?artist=${nameFromParam}`}
+          location={`/?artist=${name}`}
           nextLink
         />
 
@@ -154,8 +139,6 @@ const SingleArtist = (props: SingleArtistProps): JSX.Element => {
       </StaticPage>
     );
   }
-
-  // First, we need to check that the artist actually exists.
 
   return response;
 };

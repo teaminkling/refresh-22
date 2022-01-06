@@ -157,7 +157,7 @@ const Edit = (): JSX.Element => {
 
         <InterfaceLink
           title={"View Profile"}
-          location={`/artists?name=${existingUsername.current}`}
+          location={`/artists/${existingUsername.current}`}
           nextLink
         />
 

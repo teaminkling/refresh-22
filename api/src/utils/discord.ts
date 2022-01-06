@@ -114,7 +114,7 @@ export const postOrEditDiscordWork = async (
       {
         "type": "rich",
         "title": work.title,
-        "url": `${env.ALLOWED_ORIGIN}/works?id=${work.id}`,
+        "url": `${env.ALLOWED_ORIGIN}/works/${work.id}`,
         "description": (
           `A ${work.medium ? "_" + work.medium + "_ " : ""}piece by <@${work.artistId}>!`
         ),
@@ -125,7 +125,7 @@ export const postOrEditDiscordWork = async (
         "author": {
           "name": artistName,
           "icon_url": artistIcon,
-          "url": `https://refresh.fiveclawd.com/artists?name=${artistName}`,
+          "url": `https://refresh.fiveclawd.com/artists/${artistName}`,
         },
         "footer": {
           "text": work.weekNumbers.map(weekNumber => `Week ${weekNumber}`).join(", "),
