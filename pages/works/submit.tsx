@@ -344,6 +344,7 @@ const SubmissionForm = () => {
           <input
             ref={thumbnailRef}
             type={"file"}
+            accept={".png,.jpg,.jpeg"}
             className={
               "shadow border mx-2 py-2 px-3 leading-tight my-2 inline-block hidden"
             }
