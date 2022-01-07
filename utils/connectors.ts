@@ -62,7 +62,13 @@ const fetchGeneric = <T, R>(
       {headers: headers},
     ).then(
       (response: Response) => response.json().then(
-        (_data: R) => dispatch(action(_data))
+        (_data: R) => {
+          if (response.ok) {
+            dispatch(action(_data));
+          } else {
+            throw _data;
+          }
+        }
       )
     );
   }
