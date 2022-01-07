@@ -133,7 +133,13 @@ const WorksById = () => {
                             }>
                               This is a URL: <code>{new URL(item.url).hostname}</code>. Please
                               be careful!
-                            </p> : <></>
+                            </p> : <>
+                              <p className={
+                                "uppercase text-gray-400 text-center py-2 text-xs"
+                              }>
+                                Click me to expand!
+                              </p>
+                            </>
                         }
                       </a>
                     );

@@ -171,6 +171,7 @@ const GalleryItem = (props: ItemProps) => {
                     title={"Approve?"}
                     location={"#"}
                     icon={<FontAwesomeIcon icon={faCheck} />}
+                    customWaitMessage={"Please Wait"}
                     clickBack={
                       async () => {
                         await approveWorks(
