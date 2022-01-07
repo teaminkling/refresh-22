@@ -122,7 +122,7 @@ const SubmissionForm = () => {
     const defaultWeek: number = Math.max(
       ...Object.values(weeksData.weeks).filter((week: Week) => week.isPublished).map(
         (week: Week) => week.week
-      ).sort()
+      )
     );
 
     setWeekNumbers([defaultWeek]);

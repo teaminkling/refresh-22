@@ -49,30 +49,32 @@ const incrementArtistWorkCount = async (kv: KVNamespace, artistId: string) => {
 };
 
 /**
- * Place a {@link Work} at the correct places
+ * Place a {@link Work} at the correct places.
+ *
+ * It's likely the aggregates booleans won't be used, but they're there for the time being.
  *
  * @param {KVNamespace} kv the main key-value store
  * @param {Work} work the {@link Work} to place
  * @param {boolean} isNew whether this is a new work (read: not an update)
- * @param {boolean} isSkipAggregates whether to skip writing to aggregates
- * @param {boolean} isOnlyAggregates whether to only write to aggregates
+ * @param {boolean} isSkipArtist whether to skip writing to artist aggregates
+ * @param {boolean} isSkipWeek whether to skip writing to week aggregates
+ * @param {boolean} isSkipList whether to skip writing the overarching list of all works
  */
 export const placeWork = async (
   kv: KVNamespace,
   work: Work,
   isNew: boolean,
-  isSkipAggregates?: boolean,
-  isOnlyAggregates?: boolean,
+  isSkipArtist?: boolean,
+  isSkipWeek?: boolean,
+  isSkipList?: boolean,
 ): Promise<void> => {
   // Update the ID-based map. This is agnostic to the setter above.
 
-  if (!isOnlyAggregates) {
-    await kv.put(`${WORKS_WITH_ID_INDEX}/${work.id}`, JSON.stringify(work));
-  }
+  await kv.put(`${WORKS_WITH_ID_INDEX}/${work.id}`, JSON.stringify(work));
 
   // Set the artist-based map.
 
-  if (!isSkipAggregates) {
+  if (!isSkipArtist) {
     const worksByArtist: Record<string, Work> = JSON.parse(
       await kv.get(`${WORKS_WITH_ARTIST_INDEX}/${work.artistId}`) || "{}"
     );
@@ -82,9 +84,11 @@ export const placeWork = async (
     await kv.put(
       `${WORKS_WITH_ARTIST_INDEX}/${work.artistId}`, JSON.stringify(worksByArtist)
     );
+  }
 
-    // Set the week-based map.
+  // Set the week-based map.
 
+  if (!isSkipWeek) {
     for (const weekNumber of work.weekNumbers) {
       const weekIndex: Record<string, Work> = JSON.parse(
         await kv.get(
@@ -98,9 +102,11 @@ export const placeWork = async (
         `${WORKS_WITH_WEEK_INDEX}/${work.year}/${weekNumber}`, JSON.stringify(weekIndex),
       );
     }
+  }
 
-    // Set the simple list of works.
+  // Set the simple list of works.
 
+  if (!isSkipList) {
     const worksWithoutIndex: Work[] = JSON.parse(
       await kv.get(`${WORKS_WITHOUT_INDEX}`) || "[]"
     );

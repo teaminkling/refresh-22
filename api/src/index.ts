@@ -7,7 +7,7 @@ import {GetKeyFunction} from "jose/dist/types/types";
 import Toucan from "toucan-js";
 import {getArtists, putArtist} from "./services/artists";
 import {getWeeks, putWeeks} from "./services/weeks";
-import {getWork, getWorks, postUpload, putWork} from "./services/works";
+import {getWork, getWorks, postApprove, postUpload, putWork} from "./services/works";
 import Environment from "./types/environment";
 import {createNotFoundResponse, generateCorsHeaders} from "./utils/http";
 
@@ -57,6 +57,8 @@ const handleRequest = async (
       return putWork(env, request, identifier);
     case ("post/upload"):
       return postUpload(env, request, identifier);
+    case ("post/approve"):
+      return postApprove(env, request, identifier);
   }
 
   return createNotFoundResponse();

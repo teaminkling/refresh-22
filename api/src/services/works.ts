@@ -57,6 +57,9 @@ export const getWorks = async (
   const year: string | null = sanitize(params.get("year")) || ACTIVE_YEAR.toString();
   const week: string | null = sanitize(params.get("week"));
   const artistId: string | null = sanitize(params.get("artistId"));
+  const isUnapproved: boolean = (
+    ["1", "true"].includes(sanitize(params.get("isUnapproved"))?.toLowerCase() || "???")
+  );
 
   // If the artist is present, that cancels the most results, so use that as search. Otherwise
   // use the week. If neither are present, use all posts in the list.
@@ -69,7 +72,15 @@ export const getWorks = async (
 
     Object.values(works_with_artist_index).forEach(
       (work: Work) => {
+        // Add the work if it's approved.
+
         if (work.isApproved || isStaff) {
+          // But don't add it if the staff member just wants unapproved work.
+
+          if (isStaff && isUnapproved && work.isApproved) {
+            return;
+          }
+
           results[work.id] = work;
         }
       }
@@ -82,6 +93,10 @@ export const getWorks = async (
     Object.values(works_with_week_index).forEach(
       (work: Work) => {
         if (work.isApproved || isStaff) {
+          if (isStaff && isUnapproved && work.isApproved) {
+            return;
+          }
+
           results[work.id] = work;
         }
       }
@@ -94,6 +109,10 @@ export const getWorks = async (
     works_without_index.forEach(
       (work: Work) => {
         if (work.isApproved || isStaff) {
+          if (isStaff && isUnapproved && work.isApproved) {
+            return;
+          }
+
           results[work.id] = work;
         }
       }
@@ -361,4 +380,68 @@ export const postUpload = async (
       data: {url: signedRequest.url},
     }
   ), env.ALLOWED_ORIGIN);
+};
+
+/**
+ * Approve the given works.
+ *
+ * The request body contains all of the work IDs to be approved. In order to avoid race conditions,
+ * the approval happens one by one and then is updated with whatever the backend states on
+ * request for the aggregated writes.
+ *
+ * @param {Environment} env the workers environment
+ * @param {Request} request the request
+ * @param {string | undefined} identifier the identifier of the calling user
+ * @returns {Promise<Response>} a response with a pre-signed upload URL
+ */
+export const postApprove = async (
+  env: Environment, request: Request, identifier: string | undefined,
+): Promise<Response> => {
+  const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
+  if (!isStaff) {
+    return createForbiddenResponse(env.ALLOWED_ORIGIN);
+  }
+
+  const requestBody: { ids: string[] } = await request.json();
+
+  const works: Work[] = [];
+  for (const id of requestBody.ids) {
+    // Allow explosion if work can't be found.
+
+    const work: Work = JSON.parse(
+      (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
+    );
+
+    work.isApproved = true;
+
+    // Edit the post, write to ID, and to weeks and artist aggregates, but not the main list.
+
+    await placeWork(
+      env.REFRESH_KV, work, false, false, false, true
+    );
+
+    works.push(work);
+  }
+
+  // Read from the list of everything, merge with the new values, then write.
+
+  const worksWithoutIndex: Work[] = JSON.parse(
+    await env.REFRESH_KV.get(`${WORKS_WITHOUT_INDEX}`) || "[]"
+  );
+
+  const idToAllWorks: Record<string, Work> = Object.fromEntries(worksWithoutIndex.map(
+    (work: Work) => [work.id, work]
+  ));
+
+  works.forEach((work: Work) => {
+    idToAllWorks[work.id] = work;
+  });
+
+  await env.REFRESH_KV.put(WORKS_WITHOUT_INDEX, JSON.stringify(
+    Object.values(idToAllWorks).sort((a: Work, b: Work) => {
+      return new Date(b.submittedTimestamp).valueOf() - new Date(a.submittedTimestamp).valueOf();
+    })
+  ));
+
+  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
 };

@@ -105,11 +105,15 @@ export const fetchWeeks = (
 /**
  * Fetch works, either entirely or via a search query.
  *
+ * This endpoint could fetch stale or incomplete data due to race conditions. It is validated
+ * once a day, which is how often race condition-affected works would need to be re-approved.
+ *
  * @param {ThunkDispatch<RootState, never, AnyAction>} dispatch the dispatch
  * @param {WorksState} worksData the works data
  * @param {string | undefined} query if provided, the query part, including the `?` character
  * @param {string | undefined} token the token
- * @param {boolean} force whether to force a retrieval
+ * @param {boolean | undefined} force whether to force a retrieval
+ * @param {boolean | undefined} isUnapproved whether to only retrieve unapproved posts
  */
 export const fetchWorks = (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
@@ -117,9 +121,10 @@ export const fetchWorks = (
   query?: string,
   token?: string,
   force?: boolean,
+  isUnapproved?: boolean,
 ): void => {
   fetchGeneric<WorksState, Record<string, Work>>(
-    "/api/works",
+    `/api/works?isUnapproved=${isUnapproved || false}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.SEARCH),
     worksData,
