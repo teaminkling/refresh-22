@@ -233,43 +233,47 @@ export const putWork = async (
     input.submittedTimestamp = backendWork.submittedTimestamp;
   }
 
-  // Generate the thumbnails for all items.
+  // Generate the thumbnails for all items if they're new or have changed.
 
-  for (const item of input.items) {
-    const index: number = input.items.indexOf(item);
+  if (!backendWork || (backendWork.items.toString() !== input.items.toString())) {
+    for (const item of input.items) {
+      const index: number = input.items.indexOf(item);
 
-    const contentUrl: URL = new URL(item.url);
+      const contentUrl: URL = new URL(item.url);
 
-    let thumbnail: string | undefined = undefined;
+      let thumbnail: string | undefined = undefined;
 
-    if (
-      contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.pathname.includes(".mp3")
-    ) {
-      // Just generate a normal thumbnail. It is easily derived from the name.
+      if (
+        contentUrl.hostname.includes(env.CDN_HOSTNAME) && !contentUrl.pathname.includes(".mp3")
+      ) {
+        // Just generate a normal thumbnail. It is easily derived from the name.
 
-      const [smallThumbnail, hiDpiThumbnail] = await uploadThumbnails(env, contentUrl, identifier);
-
-      input.items[index].smallThumbnail = smallThumbnail;
-      input.items[index].hiDpiThumbnail = hiDpiThumbnail;
-    } else if (!contentUrl.pathname.includes(".mp3")) {
-      // This is a URL, we should get the meta preview image and crop it.
-
-      thumbnail = await scrapeThumbnail(contentUrl);
-
-      if (thumbnail) {
-        // The meta image might be completely the wrong size. We need to re-upload.
-
-        const [smallThumbnail, hiDpiThumbnail] = await uploadScrapedThumbnail(
-          env, identifier, thumbnail, item.url
+        const [smallThumbnail, hiDpiThumbnail] = await uploadThumbnails(
+          env, contentUrl, identifier
         );
 
-        input.items[index].meta = thumbnail;
         input.items[index].smallThumbnail = smallThumbnail;
         input.items[index].hiDpiThumbnail = hiDpiThumbnail;
+      } else if (!contentUrl.pathname.includes(".mp3")) {
+        // This is a URL, we should get the meta preview image and crop it.
+
+        thumbnail = await scrapeThumbnail(contentUrl);
+
+        if (thumbnail) {
+          // The meta image might be completely the wrong size. We need to re-upload.
+
+          const [smallThumbnail, hiDpiThumbnail] = await uploadScrapedThumbnail(
+            env, identifier, thumbnail, item.url
+          );
+
+          input.items[index].meta = thumbnail;
+          input.items[index].smallThumbnail = smallThumbnail;
+          input.items[index].hiDpiThumbnail = hiDpiThumbnail;
+        }
+      } else {
+        input.items[index].smallThumbnail = "/placeholders/audio_submission.png";
+        input.items[index].hiDpiThumbnail = "/placeholders/audio_submission.png";
       }
-    } else {
-      input.items[index].smallThumbnail = "/placeholders/audio_submission.png";
-      input.items[index].hiDpiThumbnail = "/placeholders/audio_submission.png";
     }
   }
 
