@@ -266,11 +266,11 @@ export const putWork = async (
   );
 
   if (response.ok) {
-    // We don't need to worry about copying the objects because the reducers will do that for us.
+    if (work.id !== "noop") {
+      worksData.works[work.id] = work;
 
-    worksData.works[work.id] = work;
-
-    dispatch(addWorks(worksData.works, WorkSource.DIRECT));
+      dispatch(addWorks(worksData.works, WorkSource.DIRECT));
+    }
   } else {
     throw new Error(await response.text());
   }
