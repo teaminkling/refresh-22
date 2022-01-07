@@ -43,11 +43,7 @@ export const postOrEditDiscordWeek = async (
   }
 
   const response: Response = await fetch(url, {
-    method: method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(content),
+    method: method, headers: {"Content-Type": "application/json"}, body: JSON.stringify(content),
   });
 
   // Send a message if the discord ID is not provided. Can fail. First post write will run twice.
@@ -141,7 +137,7 @@ export const postOrEditDiscordWork = async (
 
   if (work.discordId) {
     url = `${env.WORKS_DISCORD_URL}/messages/${work.discordId}`;
-    method = "patch";
+    method = "PATCH";
   } else {
     url = `${env.WORKS_DISCORD_URL}?wait=true`;
     method = "post";
@@ -164,5 +160,5 @@ export const postOrEditDiscordWork = async (
     console.error("Discord ID was not saved for work ID: %s", work.id);
   }
 
-  return work.discordId ? null : discordId;
+  return discordId;
 };

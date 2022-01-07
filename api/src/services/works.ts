@@ -182,9 +182,10 @@ export const putWork = async (
     return createBadRequestResponse(validation.error, env.ALLOWED_ORIGIN);
   }
 
-  // Stop malicious users from self-verifying on submission.
+  // Stop malicious users from self-verifying or editing another person's Discord post on PUT.
 
   input.isApproved = false;
+  input.discordId = undefined;
 
   // Verify poster is either the same as the one in the work or is a staff member.
 
@@ -197,7 +198,7 @@ export const putWork = async (
     ), env.ALLOWED_ORIGIN);
   }
 
-  // Try to retrieve an existing work. Note we are using the definitely consistent Redis DB.
+  // Try to retrieve an existing work.
 
   const rawBackendWork: string | null = await env.REFRESH_KV.get(
     `${WORKS_WITH_ID_INDEX}/${input.id}`
@@ -205,12 +206,12 @@ export const putWork = async (
 
   const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
 
-  // Determine the work ID.
+  // If editing, verify that the ID of the work presented matches the one in the backend.
 
-  let effectiveId: string = input.id;
-  if (!backendWork) {
-    // Work doesn't exist. Determine what the ID should be, ignoring what the user put. If the
-    // client is valid, the ID will be some kind of random string.
+  if (backendWork && backendWork.id !== input.id) {
+    return createForbiddenResponse(env.ALLOWED_ORIGIN);
+  } else if (!backendWork) {
+    // If there's no backend work, then the ID must be changed.
 
     const newId: string = await determineShortId(input.artistId, input.items);
 
@@ -224,12 +225,13 @@ export const putWork = async (
       ), env.ALLOWED_ORIGIN);
     }
 
-    effectiveId = newId;
+    input.id = newId;
+  } else {
+    // There is a backend work. Keep some of the old data.
+
+    input.discordId = backendWork.discordId;
+    input.submittedTimestamp = backendWork.submittedTimestamp;
   }
-
-  // Important: all our validations are for nothing if we don't make sure we re-set this ID.
-
-  input.id = effectiveId;
 
   // Generate the thumbnails for all items.
 

@@ -6,6 +6,8 @@ import {faAngleDown, faAngleRight, faPlus} from "@fortawesome/free-solid-svg-ico
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Joi, {ValidationError, ValidationResult} from "joi";
 import Head from "next/head";
+import {useRouter} from "next/router";
+import {ParsedUrlQuery} from "querystring";
 import {ChangeEvent, createRef, SyntheticEvent, useEffect, useState} from "react";
 import {DragDropContext, Droppable, DroppableProvided, DropResult} from "react-beautiful-dnd";
 import {useDispatch, useSelector} from "react-redux";
@@ -103,6 +105,19 @@ const SubmissionForm = () => {
 
   const [messagesView, setMessagesView] = useState<JSX.Element>(<></>);
 
+  // A submit form turns into an edit form if the ID is present in the URL query.
+
+  const router = useRouter();
+  const query: ParsedUrlQuery = router.query;
+
+  const _rawEdit: string | string[] | undefined = query.edit;
+  const edit: string | undefined = typeof _rawEdit === "object" ? _rawEdit[0] : _rawEdit;
+
+  let editWork: Work | undefined = undefined;
+  if (edit) {
+    editWork = worksData.works[edit];
+  }
+
   useEffect(() => {
     fetchArtists(dispatch, artistsData);
 
@@ -117,16 +132,27 @@ const SubmissionForm = () => {
       fetchWeeks(dispatch, weeksData, undefined, false);
     }
 
+    // Fill in with the edited work if present.
+
+    if (editWork) {
+      setWeekNumbers(editWork.weekNumbers);
+      setTitle(editWork.title);
+      setMedium(editWork.medium || "");
+      setDescription(editWork.description);
+    }
+
     // If we know the weeks, we can fill in the default for the weeks input.
 
-    const defaultWeek: number = Math.max(
-      ...Object.values(weeksData.weeks).filter((week: Week) => week.isPublished).map(
-        (week: Week) => week.week
-      )
-    );
+    if (!weekNumbers.toString()) {
+      const defaultWeek: number = Math.max(
+        ...Object.values(weeksData.weeks).filter((week: Week) => week.isPublished).map(
+          (week: Week) => week.week
+        )
+      );
 
-    setWeekNumbers([defaultWeek]);
-  }, []);
+      setWeekNumbers([defaultWeek]);
+    }
+  }, [edit]);
 
   // Finally, define the complex form.
 
@@ -141,13 +167,32 @@ const SubmissionForm = () => {
           <title>Submit - Design Refresh</title>
         </Head>
 
-        <Header>Submit</Header>
+        <Header>
+          {edit ? "Edit Work" : "Submit Work"}
+        </Header>
 
         <form>
+          {
+            editWork ? (
+              <>
+                <TextInput
+                  id={"edit-id"}
+                  label={"Editing ID:"}
+                  initialValue={editWork.id}
+                  isDisabled
+                />
+              </>
+            ) : <></>
+          }
+
           <TextInput
             id={"weeks"}
             label={"Week(s)"}
-            initialValue={weekNumbers.length > 0 ? weekNumbers[0].toString() : ""}
+            initialValue={
+              editWork ? editWork.weekNumbers.join(", ") : (
+                weekNumbers.length > 0 ? weekNumbers[0].toString() : ""
+              )
+            }
             blurCallback={(event: SyntheticEvent<HTMLInputElement, unknown> | undefined) => {
               setWeekNumbers(
                 event?.currentTarget.value.split(",").map(
@@ -160,6 +205,9 @@ const SubmissionForm = () => {
           <TextInput
             id={"title"}
             label={"Title"}
+            initialValue={
+              editWork ? editWork.title : ""
+            }
             blurCallback={(event: SyntheticEvent<HTMLInputElement, unknown> | undefined) => {
               setTitle(event?.currentTarget.value || "");
             }}
@@ -169,6 +217,9 @@ const SubmissionForm = () => {
           <TextInput
             id={"medium"}
             label={"Medium"}
+            initialValue={
+              editWork ? editWork.medium : ""
+            }
             blurCallback={(event: SyntheticEvent<HTMLInputElement, unknown> | undefined) => {
               setMedium(event?.currentTarget.value || "");
             }}
@@ -177,6 +228,9 @@ const SubmissionForm = () => {
           <TextareaInput
             id={"description"}
             label={"Description (supports Markdown)"}
+            initialValue={
+              editWork ? editWork.description : ""
+            }
             blurCallback={(event: SyntheticEvent<HTMLTextAreaElement, unknown> | undefined) => {
               setDescription(event?.currentTarget.value || "");
             }}
@@ -241,7 +295,7 @@ const SubmissionForm = () => {
 
           <InterfaceLink
             location={"#"}
-            title={isThumbnailOpen ? "Close Manual Thumbnail" : "Open Manual Thumbnail"}
+            title={isThumbnailOpen ? "Close Custom Thumbnail" : "Open Custom Thumbnail"}
             icon={<FontAwesomeIcon icon={
               isThumbnailOpen ? faAngleDown : faAngleRight
             } />}
@@ -340,7 +394,7 @@ const SubmissionForm = () => {
                 // hasn't create their profile yet.
 
                 const work: Work = {
-                  id: "noop",
+                  id: editWork ? editWork.id : "noop",
                   year: ACTIVE_YEAR,
                   weekNumbers: weekNumbers,
                   artistId: id,

@@ -42,8 +42,6 @@ const BetaInfo = () => {
 
       <UnorderedList>
         <ListItem><b>Ability to sort and filter the gallery.</b></ListItem>
-        <ListItem><b>Ability to edit works after posting them.</b></ListItem>
-        <ListItem><b>Add a call to action with the theme on the front page.</b></ListItem>
         <ListItem>A nicer drag-and-drop interface for editing socials.</ListItem>
         <ListItem>Stop flashing a 404 before loading a page.</ListItem>
       </UnorderedList>

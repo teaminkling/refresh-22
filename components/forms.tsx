@@ -42,6 +42,11 @@ interface TextInputProps {
    * Whether this item should visually show that it's required.
    */
   isRequired?: boolean;
+
+  /**
+   * Whether the user can physically modify the input.
+   */
+  isDisabled?: boolean;
 }
 
 /**
@@ -73,6 +78,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
         defaultValue={props.initialValue}
         onBlur={props.blurCallback}
         required={props.isRequired}
+        disabled={props.isDisabled}
       />
     </>
   );

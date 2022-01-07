@@ -1,4 +1,5 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
+import {faLockOpen} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import Head from "next/head";
@@ -15,7 +16,7 @@ import SquareLink from "../../components/square-link";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
-import {getIsEditor} from "../../utils/auth";
+import {getIsEditor, getUserId} from "../../utils/auth";
 import {approveWorks, fetchArtists, fetchWorkById} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
@@ -24,6 +25,7 @@ const WorksById = () => {
   const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
   const isEditor = getIsEditor(user);
+  const userId: string | undefined = user ? getUserId(user) : undefined;
 
   const router = useRouter();
   const query: ParsedUrlQuery = router.query;
@@ -226,9 +228,23 @@ const WorksById = () => {
                         }
                       }
                     />
-                    <p className={"text-yellow-500 mt-2"}>
-                      <b>Note to Admin:</b> up to a 30 minute delay. Page refresh required.
+                    <p className={"text-yellow-500 my-2"}>
+                      <b>Note to Admin:</b> up to a 5 minute delay on approval
                     </p>
+                  </div> : <></>
+              }
+
+              {
+                isEditor || work.discordId === userId ?
+                  <div>
+                    <InterfaceLink
+                      title={"Edit Work"}
+                      location={`/works/submit?edit=${work.id}`}
+                      icon={
+                        <FontAwesomeIcon icon={faLockOpen} />
+                      }
+                      nextLink
+                    />
                   </div> : <></>
               }
             </div>
