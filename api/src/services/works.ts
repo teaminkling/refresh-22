@@ -271,14 +271,16 @@ export const putWork = async (
     }
   }
 
-  // Edit the Discord post for this work (can fail without 500).
+  // Post/Edit the Discord ID for this work (can fail without 500).
+
+  const hadDiscordIdAlready = !!input.discordId;
 
   const discordId: string | null = await postOrEditDiscordWork(env, input);
   if (discordId) {
     input.discordId = discordId;
   }
 
-  await placeWork(env.REFRESH_KV, input);
+  await placeWork(env.REFRESH_KV, input, hadDiscordIdAlready);
 
   return createJsonResponse("{}", env.ALLOWED_ORIGIN);
 };
