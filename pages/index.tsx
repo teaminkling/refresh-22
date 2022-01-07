@@ -5,6 +5,7 @@ import {Dispatch} from "redux";
 import GalleryItem from "../components/gallery-item";
 import {Header, Paragraph} from "../components/typography";
 import Work from "../data/core/Work";
+import {shuffle} from "../data/utils/data-structures";
 import {ArtistsState, RootState, WorksState} from "../store/state";
 import {fetchArtists, fetchWorksByWeek} from "../utils/connectors";
 
@@ -34,13 +35,17 @@ const Home: NextPage = () => {
 
   // TODO: works retrieved needs pagination etc
 
-  const mainContent = (
-    Object.values(worksData.works).filter(work => work.isApproved) || []
-  ).length > 0 ? (
+  const works: Work[] = shuffle<Work>(
+    Object.values(
+      worksData.works || []
+    ).filter(work => work.isApproved)
+  );
+
+  const mainContent = works.length > 0 ? (
     <div className={"mx-2 my-2 md:mr-5"}>
       <>
         {
-          Object.values(worksData.works).filter(work => work.isApproved).map((work: Work) => {
+          works.map((work: Work) => {
             const artistName: string = (
               artistsData.artists[work.artistId]?.name
               || work.firstSeenArtistInfo?.name
