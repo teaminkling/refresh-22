@@ -1,3 +1,4 @@
+import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import Head from "next/head";
@@ -8,16 +9,22 @@ import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import Fancybox from "../../components/fancybox";
+import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import SquareLink from "../../components/square-link";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
-import {fetchArtists, fetchWorkById} from "../../utils/connectors";
+import {getIsEditor} from "../../utils/auth";
+import {approveWorks, fetchArtists, fetchWorkById} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
 
-const Works = () => {
+const WorksById = () => {
+  const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+
+  const isEditor = getIsEditor(user);
+
   const router = useRouter();
   const query: ParsedUrlQuery = router.query;
 
@@ -149,7 +156,14 @@ const Works = () => {
                 </Link>
 
                 <p className={"text-sm mt-3 text-gray-400"}>
-                  Posted: {moment(work.submittedTimestamp).toString()}
+                  Posted: {moment(work.submittedTimestamp).toString()}&nbsp;
+                  {
+                    work.isApproved ? <span className={"text-green-800"}>
+                      Approved
+                    </span> : <span className={"text-yellow-500"}>
+                      Pending Approval
+                    </span>
+                  }
                 </p>
               </h2>
 
@@ -184,6 +198,29 @@ const Works = () => {
               <div className={"max-w-3xl pr-0 xl:pr-12 3xl:max-w-xl"}>
                 <Markdown markdown={work.description} />
               </div>
+
+              {
+                isEditor && !work.isApproved ?
+                  <div>
+                    <InterfaceLink
+                      title={"(ADMIN) Approve?"}
+                      location={"#"}
+                      clickBack={
+                        async () => {
+                          await approveWorks(
+                            await getAccessTokenSilently(),
+                            [work.id],
+                            dispatch,
+                            worksData,
+                          );
+                        }
+                      }
+                    />
+                    <p className={"text-yellow-500 mt-2"}>
+                      <b>Note to Admin:</b> up to a 30 minute delay. Page refresh required.
+                    </p>
+                  </div> : <></>
+              }
             </div>
           </div>
         </div>
@@ -194,4 +231,4 @@ const Works = () => {
   return response;
 };
 
-export default Works;
+export default WorksById;

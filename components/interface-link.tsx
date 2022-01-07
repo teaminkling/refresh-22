@@ -41,6 +41,16 @@ interface NavItemProps {
    * This only applies if the link is not a Next link.
    */
   clickBack?: (arg?: unknown) => Promise<void>;
+
+  /**
+   * If provided, replaces the wait message.
+   */
+  customWaitMessage?: string;
+
+  /**
+   * If handled, any errors won't be immediately `alert`ed to the user.
+   */
+  isHandled?: boolean;
 }
 
 /**
@@ -92,6 +102,12 @@ const InterfaceLink = (props: NavItemProps) => {
         (error: Error) => {
           setIsLoading(false);
 
+          if (!props.isHandled) {
+            alert(
+              `Unhandled error!\n\n${error}\n\nPlease report this to papapastry#888 on Discord.`
+            );
+          }
+
           throw error;
         }
       );
@@ -114,7 +130,10 @@ const InterfaceLink = (props: NavItemProps) => {
       >
         {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className={"mr-3"} /> : props.icon}
         <span className={spacing} />
-        {isLoading ? "Please wait and do not background this page!" : props.title}
+        {
+          isLoading ? props.customWaitMessage || "Please wait; do not background this page!"
+            : props.title
+        }
       </a>
     );
   }

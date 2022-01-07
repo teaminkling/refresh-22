@@ -113,7 +113,6 @@ export const fetchWeeks = (
  * @param {string | undefined} query if provided, the query part, including the `?` character
  * @param {string | undefined} token the token
  * @param {boolean | undefined} force whether to force a retrieval
- * @param {boolean | undefined} isUnapproved whether to only retrieve unapproved posts
  */
 export const fetchWorks = (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
@@ -121,10 +120,9 @@ export const fetchWorks = (
   query?: string,
   token?: string,
   force?: boolean,
-  isUnapproved?: boolean,
 ): void => {
   fetchGeneric<WorksState, Record<string, Work>>(
-    `/api/works?isUnapproved=${isUnapproved || false}`,
+    `/api/works${query}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.SEARCH),
     worksData,
@@ -322,4 +320,53 @@ export const uploadFile = async (
   }
 
   throw new Error(await presignedUrlResponse.text());
+};
+
+/**
+ * Ask the backend to approve some works.
+ *
+ * @param {string} token the access token
+ * @param {string[]} works the works to approve by ID
+ * @param {ThunkDispatch<RootState, never, AnyAction> | undefined} dispatch the dispatch
+ * @param {WorksState | undefined} worksData the state
+ */
+export const approveWorks = async (
+  token: string,
+  works: string[],
+  dispatch?: ThunkDispatch<RootState, never, AnyAction>,
+  worksData?: WorksState,
+): Promise<void> => {
+  const response: Response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/approve`,
+    {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(works),
+    }
+  );
+
+  if (response.ok) {
+    // If we want to, we could modify the state directly so the editor immediately sees works.
+
+    if (dispatch && worksData) {
+      // Create a copy of the works data where the IDs we've presented are approved.
+
+      const newWorks: Record<string, Work> = {};
+
+      Object.values(worksData.works).filter((work: Work) => works.includes(work.id)).forEach(
+        (work: Work) => {
+          work.isApproved = true;
+
+          newWorks[work.id] = work;
+        }
+      );
+
+      dispatch(addWorks(newWorks, WorkSource.SEARCH));
+    }
+  } else {
+    throw new Error(await response.text());
+  }
 };

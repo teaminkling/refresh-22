@@ -9,6 +9,7 @@
 
 import {combineReducers, Reducer} from "redux";
 import Artist from "../data/core/Artist";
+import Work from "../data/core/Work";
 import {AddArtistsAction, AddWeeksAction, AddWorksAction} from "./actions";
 import {WorkSource} from "./enums";
 import {ArtistsState, RootState, WeeksState, WorksState} from "./state";
@@ -103,8 +104,17 @@ const worksReducer: Reducer<WorksState, AddWorksAction> = (
         throw new Error("Unknown work source type.");
     }
 
+    // The state needs to be merged.
+
+    const mergedWorks = JSON.parse(JSON.stringify(state.works));
+    Object.values(action.works).forEach(
+      (work: Work) => {
+        mergedWorks[work.id] = work;
+      }
+    );
+
     return {
-      works: JSON.parse(JSON.stringify(action.works)),
+      works: mergedWorks,
       worksLastRetrieved: worksLastRetrieved,
       artistsToRetrievalDate: artistsToRetrievalDate,
       weeksToRetrievalDate: weeksToRetrievalDate,

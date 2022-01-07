@@ -9,6 +9,7 @@ import {faDiscord, faGithub, faTwitch} from "@fortawesome/free-brands-svg-icons"
 import {
   faBars,
   faClock,
+  faHardHat,
   faLink,
   faQuestionCircle,
   faTimes,
@@ -18,6 +19,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import {ReactNode, useState} from "react";
 import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
+import {getIsEditor} from "../utils/auth";
 import {getDateOfNextEvent, getNatureOfNextEvent} from "../utils/time";
 import InterfaceLink from "./interface-link";
 import SquareLink from "./square-link";
@@ -107,6 +109,8 @@ const Sidebar = (): JSX.Element => {
     user, isLoading, isAuthenticated, loginWithRedirect, logout
   }: Auth0ContextInterface = useAuth0();
 
+  const isEditor = getIsEditor(user);
+
   const loading = <InterfaceLink title={"Loading..."} />;
   const auth = isAuthenticated ? (
     <>
@@ -126,6 +130,17 @@ const Sidebar = (): JSX.Element => {
       <div className={"my-5"} />
 
       <InterfaceLink location={"/works/submit"} title={"Submit"} nextLink />
+
+      {
+        isEditor ?
+          <InterfaceLink
+            location={"/works/moderate"}
+            title={"Moderate"}
+            icon={<FontAwesomeIcon icon={faHardHat} fixedWidth />}
+            nextLink
+          />
+          : <></>
+      }
     </>
   ) : (
     <>

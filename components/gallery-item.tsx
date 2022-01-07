@@ -1,7 +1,12 @@
-import {faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
+import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
+import {faAngleDoubleLeft, faCheck} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import {useDispatch, useSelector} from "react-redux";
+import {Dispatch} from "redux";
 import removeMd from "remove-markdown";
+import {RootState, WorksState} from "../store/state";
+import {approveWorks} from "../utils/connectors";
 import InterfaceLink from "./interface-link";
 
 /**
@@ -47,6 +52,11 @@ interface ItemProps {
    * The timestamp of the post.
    */
   submittedTimestamp: string;
+
+  /**
+   * Whether the approval icon should be placed on the gallery item.
+   */
+  isEditor?: boolean;
 }
 
 /**
@@ -59,7 +69,19 @@ interface ItemProps {
  * @constructor
  */
 const GalleryItem = (props: ItemProps) => {
+  const {getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+
+  // Get the work data, but don't fetch for it.
+
+  const dispatch: Dispatch = useDispatch();
+
+  const worksData: WorksState = useSelector((state: RootState) => state.worksData);
+
+  // Build the response.
+
   let response = <></>;
+
+  // These checks are redundant but they were once required so I am keeping them here.
 
   let title = props.title;
   if (title && title.length > 128) {
@@ -77,7 +99,6 @@ const GalleryItem = (props: ItemProps) => {
   }
 
   if (title) {
-
     response = (
       <div className={"flex-col xl:flex xl:flex-row"}>
         <div className={"px-2 py-2 md:px-3 md:py-4 hover:opacity-95"}>
@@ -119,6 +140,7 @@ const GalleryItem = (props: ItemProps) => {
             <p className={"px-4 text-sm"}>
               <b>{title}</b>
             </p>
+
             {
               medium ? <p className={"hidden 2xl:block px-4 text-sm"}>
                 <i>
@@ -126,12 +148,15 @@ const GalleryItem = (props: ItemProps) => {
                 </i>
               </p> : <></>
             }
+
             <p className={"px-4  text-sm"}>
               by {props.artist}
             </p>
+
             <p className={"pt-8 px-4 hidden xl:block text-sm"}>
               {description}
             </p>
+
             <p className={"pt-8 px-4 hidden xl:block"}>
               <InterfaceLink
                 location={`/works/${props.id}`}
@@ -139,6 +164,25 @@ const GalleryItem = (props: ItemProps) => {
                 icon={<FontAwesomeIcon icon={faAngleDoubleLeft} />}
                 nextLink
               />
+
+              {
+                props.isEditor ?
+                  <InterfaceLink
+                    title={"Approve?"}
+                    location={"#"}
+                    icon={<FontAwesomeIcon icon={faCheck} />}
+                    clickBack={
+                      async () => {
+                        await approveWorks(
+                          await getAccessTokenSilently(),
+                          [props.id],
+                          dispatch,
+                          worksData,
+                        );
+                      }
+                    }
+                  /> : <></>
+              }
             </p>
           </span>
         </div>

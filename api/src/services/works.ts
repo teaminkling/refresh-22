@@ -402,10 +402,10 @@ export const postApprove = async (
     return createForbiddenResponse(env.ALLOWED_ORIGIN);
   }
 
-  const requestBody: { ids: string[] } = await request.json();
+  const ids: string[] = await request.json();
 
   const works: Work[] = [];
-  for (const id of requestBody.ids) {
+  for (const id of ids) {
     // Allow explosion if work can't be found.
 
     const work: Work = JSON.parse(
