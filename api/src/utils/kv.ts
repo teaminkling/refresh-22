@@ -17,19 +17,19 @@ import {
  * Increment an artist's work count.
  *
  * @param {KVNamespace} kv the main key-value store
- * @param {string} artistId the artist to place
+ * @param {Work} work the work with the artist and first artist details, if required
  */
-const incrementArtistWorkCount = async (kv: KVNamespace, artistId: string) => {
-  const rawBackendArtist: string | null = await kv.get(`${ARTISTS}/${artistId}`);
-  const backendArtist: Artist | undefined = (
-    rawBackendArtist ? JSON.parse(rawBackendArtist) : undefined
-  );
+const incrementArtistWorkCount = async (kv: KVNamespace, work: Work) => {
+  const rawArtist: string | null = await kv.get(`${ARTISTS}/${work.artistId}`);
+  const artist: Artist | undefined = (
+    rawArtist ? JSON.parse(rawArtist) : undefined
+  ) || work.firstSeenArtistInfo;
 
-  if (backendArtist) {
-    if (backendArtist.worksCount) {
-      backendArtist.worksCount++;
+  if (artist) {
+    if (artist.worksCount) {
+      artist.worksCount++;
     } else {
-      backendArtist.worksCount = 1;
+      artist.worksCount = 1;
     }
 
     // As usual, this might have race conditions.
@@ -38,13 +38,13 @@ const incrementArtistWorkCount = async (kv: KVNamespace, artistId: string) => {
       await kv.get(`${ARTISTS}/${ACTIVE_YEAR}`) || "{}"
     );
 
-    aggregateArtists[artistId] = backendArtist;
+    aggregateArtists[work.artistId] = artist;
 
     await kv.put(`${ARTISTS}/${ACTIVE_YEAR}`, JSON.stringify(aggregateArtists));
 
     // Also put it in a guaranteed consistent call.
 
-    await kv.put(`${ARTISTS}/${artistId}`, JSON.stringify(backendArtist));
+    await kv.put(`${ARTISTS}/${work.artistId}`, JSON.stringify(artist));
   }
 };
 
@@ -119,6 +119,6 @@ export const placeWork = async (
   // Now that the work is placed, increment the artist.
 
   if (isNew) {
-    await incrementArtistWorkCount(kv, work.artistId);
+    await incrementArtistWorkCount(kv, work);
   }
 };

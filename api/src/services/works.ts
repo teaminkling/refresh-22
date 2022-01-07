@@ -182,6 +182,10 @@ export const putWork = async (
     return createBadRequestResponse(validation.error, env.ALLOWED_ORIGIN);
   }
 
+  // Stop malicious users from self-verifying on submission.
+
+  input.isApproved = false;
+
   // Verify poster is either the same as the one in the work or is a staff member.
 
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
