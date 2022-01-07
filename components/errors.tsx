@@ -21,6 +21,11 @@ interface ResponseMessagesProps {
    * The type of everything that can be invalid, e.g., "URI".
    */
   validityType?: string;
+
+  /**
+   * The custom element (in a green text style div) to render on success.
+   */
+  successElement?: JSX.Element;
 }
 
 /**
@@ -86,7 +91,7 @@ export const ResponseMessages = (
 
       </>
     ) : <p className={"text-green-800"}>
-      Success!
+      {props.successElement ? props.successElement : <span>Success!</span>}
     </p>}
     {errorElements.length > 0 ? <UnorderedList>{errorElements}</UnorderedList> : <></>}
   </div>;

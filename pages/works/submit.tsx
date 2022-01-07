@@ -139,6 +139,16 @@ const SubmissionForm = () => {
       setTitle(editWork.title);
       setMedium(editWork.medium || "");
       setDescription(editWork.description);
+
+      setItems(
+        editWork.items.map(
+          (item: UrlItem, index: number) => {
+            return {
+              id: index, url: item.url, file: undefined,
+            };
+          }
+        )
+      );
     }
 
     // If we know the weeks, we can fill in the default for the weeks input.
@@ -461,7 +471,11 @@ const SubmissionForm = () => {
                   await putWork(dispatch, worksData, accessToken, work);
                 }
 
-                setMessagesView(<ResponseMessages errors={errors} />);
+                setMessagesView(<ResponseMessages errors={errors} successElement={
+                  <>
+                    Nice! Your work will be live in less than a minute. Please check Discord!
+                  </>
+                } />);
               }
             }}
           />
