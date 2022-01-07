@@ -7,7 +7,7 @@ import {
   faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {ChangeEvent, SyntheticEvent, useState} from "react";
+import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
 import {Draggable, DraggableProvided} from "react-beautiful-dnd";
 
 /**
@@ -307,30 +307,30 @@ const FileItem = (props: FileItemProps) => {
 
   const currentItem: FrontendFileItem | undefined = props.parentState[props.index];
 
-  let itemElement = <InitialButtons {...props} setMode={setMode} />;
-  if (!currentItem.file && !currentItem.url) {
-    switch (mode) {
-      case (FileItemMode.DEFAULT_MODE):
-        // The default is fine.
-
-        break;
-      case (FileItemMode.IMAGE_MODE):
-        itemElement = <ImageAndAudioModeView {...props} setMode={setMode} />;
-
-        break;
-      case (FileItemMode.URL_MODE):
-        itemElement = <UrlModeView {...props} setMode={setMode} />;
-
-        break;
-      default:
-        // No need to explode if the type is not known, just show nothing.
-
-        break;
+  useEffect(() => {
+    if (currentItem.url) {
+      setMode(FileItemMode.URL_MODE);
     }
-  } else if (currentItem.url) {
-    // For the editing page, show the URL if one exists.
+  }, [currentItem]);
 
-    itemElement = <UrlModeView {...props} setMode={setMode} />;
+  let itemElement = <InitialButtons {...props} setMode={setMode} />;
+  switch (mode) {
+    case (FileItemMode.DEFAULT_MODE):
+      // The default is fine.
+
+      break;
+    case (FileItemMode.IMAGE_MODE):
+      itemElement = <ImageAndAudioModeView {...props} setMode={setMode} />;
+
+      break;
+    case (FileItemMode.URL_MODE):
+      itemElement = <UrlModeView {...props} setMode={setMode} />;
+
+      break;
+    default:
+      // No need to explode if the type is not known, just show nothing.
+
+      break;
   }
 
   return (

@@ -152,7 +152,7 @@ const WorksById = () => {
           </div>
 
           <div className={"2xl:pt-6 px-6 pb-4"}>
-            <div className={"2xl:fixed"}>
+            <div className={"2xl:fixed max-w-3xl pr-0 xl:pr-12 3xl:max-w-xl"}>
               <h1 className={"py-3 text-5xl"}>
                 <b>{work.title}</b>
               </h1>
@@ -196,7 +196,6 @@ const WorksById = () => {
                   </div> : <></>
               }
 
-
               {work.medium ? <>
                 <p className={"hidden 2xl:block"}>
                   A <i>{work.medium}</i> work.
@@ -207,9 +206,7 @@ const WorksById = () => {
                 Artist&apos;s Description
               </h2>
 
-              <div className={"max-w-3xl pr-0 xl:pr-12 3xl:max-w-xl"}>
-                <Markdown markdown={work.description} />
-              </div>
+              <Markdown markdown={work.description} />
 
               {
                 isEditor && !work.isApproved ?
