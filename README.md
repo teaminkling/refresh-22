@@ -5,7 +5,7 @@ act as the source website for all future content, 2022 and onwards (potentially)
 
 ## Architecture
 
-This is a NextJS SSG + Serverless API app running on Vercel and Cloudflare Workers. It is designed
+This is a NextJS SSR + Serverless API app running on Vercel and Cloudflare Workers. It is designed
 to be free to operate with small enough levels of bandwidth/computing power.
 
 ## Local Development
@@ -21,7 +21,7 @@ For the backend:
 
 ```shell
 npm run build
-wrangler dev
+wrangler dev --env development
 ```
 
 For both environments, check you have the following files:
@@ -44,7 +44,6 @@ The backend is more straightforward:
 
 ```shell
 cd api;
-npm run build
 wrangler publish --env production
 ```
 
