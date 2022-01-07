@@ -5,7 +5,7 @@
 import {Auth0Provider} from "@auth0/auth0-react";
 import type {AppProps} from "next/app";
 import Head from "next/head";
-import {FC} from "react";
+import {FC, useEffect} from "react";
 import {useStore} from "react-redux";
 import {Store} from "redux";
 import {persistStore} from "redux-persist";
@@ -52,6 +52,20 @@ if (
  */
 const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
   const store: Store = useStore();
+
+  useEffect(() => {
+    console.log("%cDon't paste anything here.", "color: red; font-size: 32px");
+
+    console.log("...except if you really know what you're doing.");
+    console.log("This console can allow would-be attackers from taking control of your account.");
+    console.log("Read about Self-XSS here: https://en.wikipedia.org/wiki/Self-XSS");
+
+    console.log("%cUnless you're here for easter eggs?", "color: green; font-size: 16px");
+
+    console.log("1. If you poke it 8 times, it might go faster.");
+    console.log("2. (Coming Soon) Question Scimister's signature move in the omnibox.");
+    console.log("3. (Coming Soon) What's the world's most famous cheat code?");
+  }, []);
 
   return (
     <>
