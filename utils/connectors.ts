@@ -46,7 +46,7 @@ const fetchGeneric = <T, R>(
   if (
     force
     || !timeSinceLastFetch
-    || timeSinceLastFetch > 1000 * 60 * 30
+    || timeSinceLastFetch > 1000 * 60 * 5
     || lastRetrievedMoment && (now.hour() > lastRetrievedMoment.hour())
   ) {
     const headers: Record<string, string> = {
