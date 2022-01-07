@@ -223,6 +223,8 @@ const ImageAndAudioModeView = (props: FileItemProps) => {
 const UrlModeView = (props: FileItemProps) => {
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
+  const currentItem: FrontendFileItem | undefined = props.parentState[props.index];
+
   return <>
     <>
       <button
@@ -257,7 +259,7 @@ const UrlModeView = (props: FileItemProps) => {
                 }}>
                 <p className={"mb-4"}>
                   We support the following third party sites without needing to leave the site:
-                  Twitch, YouTube, Vimeo, and SoundCloud.
+                  YouTube and Vimeo.
                 </p>
 
                 <p>
@@ -278,6 +280,7 @@ const UrlModeView = (props: FileItemProps) => {
           width: "95%",
           marginLeft: "1vw"
         }}
+        defaultValue={currentItem ? currentItem.url : ""}
         placeholder={"E.g., https://example.com/your-work"}
         onBlur={(event: SyntheticEvent<HTMLInputElement, FocusEvent>) => {
           const newState: FrontendFileItem[] = props.parentState.slice();
@@ -302,24 +305,32 @@ const UrlModeView = (props: FileItemProps) => {
 const FileItem = (props: FileItemProps) => {
   const [mode, setMode] = useState<FileItemMode>(FileItemMode.DEFAULT_MODE);
 
+  const currentItem: FrontendFileItem | undefined = props.parentState[props.index];
+
   let itemElement = <InitialButtons {...props} setMode={setMode} />;
-  switch (mode) {
-    case (FileItemMode.DEFAULT_MODE):
-      // The default is fine.
+  if (!currentItem.file && !currentItem.url) {
+    switch (mode) {
+      case (FileItemMode.DEFAULT_MODE):
+        // The default is fine.
 
-      break;
-    case (FileItemMode.IMAGE_MODE):
-      itemElement = <ImageAndAudioModeView {...props} setMode={setMode} />;
+        break;
+      case (FileItemMode.IMAGE_MODE):
+        itemElement = <ImageAndAudioModeView {...props} setMode={setMode} />;
 
-      break;
-    case (FileItemMode.URL_MODE):
-      itemElement = <UrlModeView {...props} setMode={setMode} />;
+        break;
+      case (FileItemMode.URL_MODE):
+        itemElement = <UrlModeView {...props} setMode={setMode} />;
 
-      break;
-    default:
-      // No need to explode if the type is not known, just show nothing.
+        break;
+      default:
+        // No need to explode if the type is not known, just show nothing.
 
-      break;
+        break;
+    }
+  } else if (currentItem.url) {
+    // For the editing page, show the URL if one exists.
+
+    itemElement = <UrlModeView {...props} setMode={setMode} />;
   }
 
   return (
