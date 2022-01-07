@@ -58,7 +58,7 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
       <Head>
         {/* eslint-disable-next-line @next/next/no-title-in-document-head */}
         <title>
-          2022 Design Refresh
+          Design Refresh
         </title>
 
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
