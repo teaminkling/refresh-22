@@ -120,7 +120,7 @@ const WorksById = () => {
                         <img
                           src={item.hiDpiThumbnail}
                           srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail}`}
-                          className={"align-bottom object-cover " + (item.meta ? "" : "pb-6")}
+                          className={"align-bottom object-cover"}
                           style={{maxHeight: 586.5, width: 800}}
                           alt={
                             `The ${index}th image for: ${work.title || "Untitled"}.`
@@ -173,27 +173,31 @@ const WorksById = () => {
                 </p>
               </h2>
 
-              <div className={"pt-2 pb-4"}>
-                {
-                  (artist?.socials || []).map(
-                    (socialUrl: string) => {
-                      const parsedSocial: ParsedSocial = parseSocial(socialUrl);
+              {
+                artist?.socials ?
+                  <div className={"pt-2 pb-4"}>
+                    {
+                      artist.socials.map(
+                        (socialUrl: string) => {
+                          const parsedSocial: ParsedSocial = parseSocial(socialUrl);
 
-                      return (
-                        <span key={parsedSocial.link} style={{color: parsedSocial.color}}>
-                          <SquareLink location={parsedSocial.link} icon={
-                            <FontAwesomeIcon icon={parsedSocial.icon} fixedWidth />
-                          } />
-                        </span>
-                      );
+                          return (
+                            <span key={parsedSocial.link} style={{color: parsedSocial.color}}>
+                              <SquareLink location={parsedSocial.link} icon={
+                                <FontAwesomeIcon icon={parsedSocial.icon} fixedWidth />
+                              } />
+                            </span>
+                          );
+                        }
+                      )
                     }
-                  )
-                }
-              </div>
+                  </div> : <></>
+              }
+
 
               {work.medium ? <>
                 <p className={"hidden 2xl:block"}>
-                  A <i>{work.medium}</i> piece.
+                  A <i>{work.medium}</i> work.
                 </p>
               </> : <></>}
 
