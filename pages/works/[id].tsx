@@ -1,5 +1,5 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {faLockOpen} from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faLockOpen, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import Head from "next/head";
@@ -17,7 +17,7 @@ import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
 import {getIsEditor, getUserId} from "../../utils/auth";
-import {approveWorks, fetchArtists, fetchWorkById} from "../../utils/connectors";
+import {approveWorks, deleteWorks, fetchArtists, fetchWorkById} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
 
@@ -60,7 +60,7 @@ const WorksById = () => {
   const artistName: string = artist?.name || work?.firstSeenArtistInfo?.name || "Unknown";
 
   let response = <NotFound />;
-  if (work) {
+  if (work && !work.isSoftDeleted) {
     response = (
       <>
         <Head>
@@ -212,8 +212,10 @@ const WorksById = () => {
                 isEditor && !work.isApproved ?
                   <div>
                     <InterfaceLink
-                      title={"(ADMIN) Approve?"}
+                      title={"(ADMIN) Approve Work"}
                       location={"#"}
+                      icon={<FontAwesomeIcon icon={faCheck} fixedWidth />}
+                      customWaitMessage={"Please wait..."}
                       clickBack={
                         async () => {
                           await approveWorks(
@@ -225,20 +227,40 @@ const WorksById = () => {
                         }
                       }
                     />
-                    <p className={"text-yellow-500 my-2"}>
-                      <b>Note to Admin:</b> up to a 5 minute delay on approval
-                    </p>
                   </div> : <></>
               }
 
               {
-                isEditor || work.discordId === userId ?
+                isEditor ?
+                  <div className={"text-red-600"}>
+                    <InterfaceLink
+                      title={"(ADMIN) Delete Work"}
+                      location={"#"}
+                      icon={<FontAwesomeIcon icon={faTrash} fixedWidth />}
+                      customWaitMessage={"Please wait..."}
+                      clickBack={
+                        async () => {
+                          await deleteWorks(
+                            await getAccessTokenSilently(),
+                            [work.id],
+                            dispatch,
+                            worksData,
+                          );
+                        }
+                      }
+                      isDangerous
+                    />
+                  </div> : <></>
+              }
+
+              {
+                (isEditor || (work.artistId === userId)) ?
                   <div>
                     <InterfaceLink
                       title={"Edit Work"}
                       location={`/works/submit?edit=${work.id}`}
                       icon={
-                        <FontAwesomeIcon icon={faLockOpen} />
+                        <FontAwesomeIcon icon={faLockOpen} fixedWidth />
                       }
                       nextLink
                     />

@@ -26,8 +26,26 @@ import {determineShortId, sanitize} from "../utils/io";
 import {placeWork} from "../utils/kv";
 
 /**
- * Handlers for works endpoints.
+ * @param {boolean} isStaff if the caller of the GET is a staff member
+ * @param {boolean} isSeekingUnapproved if the caller of the GET wants unapproved posts only
+ * @param {Work} work the work to check
+ * @returns {boolean} whether a work should be included in a GET output
  */
+const workRetrievalPredicate = (isStaff: boolean, isSeekingUnapproved: boolean, work: Work) => {
+  if (work.isApproved || isStaff) {
+    // If they're not staff, the post is approved. If they're not seeking unapproved work,
+    // they're seeking approved work. Unless the previous two conditions are met (are staff and
+    // want unapproved) then the work must be approved, so the third condition can't be met.
+
+    if (!isStaff || !isSeekingUnapproved || !work.isApproved) {
+      // If undefined, this will coerce to true anyway.
+
+      return !work.isSoftDeleted;
+    }
+  }
+
+  return false;
+};
 
 /**
  * Using search terms, retrieve the works.
@@ -57,7 +75,10 @@ export const getWorks = async (
   const year: string | null = sanitize(params.get("year")) || ACTIVE_YEAR.toString();
   const week: string | null = sanitize(params.get("week"));
   const artistId: string | null = sanitize(params.get("artistId"));
-  const isUnapproved: boolean = (
+
+  // Note the variable name doesn't match the GET name.
+
+  const isSeekingUnapproved: boolean = (
     ["1", "true"].includes(sanitize(params.get("isUnapproved"))?.toLowerCase() || "???")
   );
 
@@ -70,53 +91,25 @@ export const getWorks = async (
       (await env.REFRESH_KV.get(`${WORKS_WITH_ARTIST_INDEX}/${artistId}`)) || "[]",
     );
 
-    Object.values(works_with_artist_index).forEach(
-      (work: Work) => {
-        // Add the work if it's approved.
-
-        if (work.isApproved || isStaff) {
-          // But don't add it if the staff member just wants unapproved work.
-
-          if (isStaff && isUnapproved && work.isApproved) {
-            return;
-          }
-
-          results[work.id] = work;
-        }
-      }
-    );
+    Object.values(works_with_artist_index).filter(
+      (work: Work) => workRetrievalPredicate(isStaff, isSeekingUnapproved, work)
+    ).forEach((work: Work) => results[work.id] = work);
   } else if (week) {
     const works_with_week_index: Record<string, Work> = JSON.parse(
       (await env.REFRESH_KV.get(`${WORKS_WITH_WEEK_INDEX}/${year}/${week}`)) || "[]",
     );
 
-    Object.values(works_with_week_index).forEach(
-      (work: Work) => {
-        if (work.isApproved || isStaff) {
-          if (isStaff && isUnapproved && work.isApproved) {
-            return;
-          }
-
-          results[work.id] = work;
-        }
-      }
-    );
+    Object.values(works_with_week_index).filter(
+      (work: Work) => workRetrievalPredicate(isStaff, isSeekingUnapproved, work)
+    ).forEach((work: Work) => results[work.id] = work);
   } else {
     const works_without_index: Work[] = JSON.parse(
       (await env.REFRESH_KV.get(`${WORKS_WITHOUT_INDEX}`)) || "[]"
     );
 
-    works_without_index.forEach(
-      (work: Work) => {
-        if (work.isApproved || isStaff) {
-          if (isStaff && isUnapproved && work.isApproved) {
-            return;
-          }
-
-          results[work.id] = work;
-        }
-      }
-    );
+    works_without_index.filter(
+      (work: Work) => workRetrievalPredicate(isStaff, isSeekingUnapproved, work)
+    ).forEach((work: Work) => results[work.id] = work);
   }
 
   return createJsonResponse(JSON.stringify(results), env.ALLOWED_ORIGIN);
@@ -143,7 +136,7 @@ export const getWork = async (
     (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
   );
 
-  if (!work?.id) {
+  if (!work?.id || work.isSoftDeleted) {
     return createNotFoundResponse(env.ALLOWED_ORIGIN);
   }
 
@@ -186,6 +179,7 @@ export const putWork = async (
 
   input.isApproved = false;
   input.discordId = undefined;
+  input.isSoftDeleted = false;
 
   // Verify poster is either the same as the one in the work or is a staff member.
 
@@ -405,26 +399,42 @@ export const postUpload = async (
 };
 
 /**
- * Approve the given works.
+ * The single state changes that can happen on any post but only if triggered by an admin.
+ */
+enum PrivilegedStateChange {
+  APPROVE,
+  UN_APPROVE,
+  DELETE,
+}
+
+/**
+ * Make one of the generic privileged state changes to a work.
  *
- * The request body contains all of the work IDs to be approved. In order to avoid race conditions,
- * the approval happens one by one and then is updated with whatever the backend states on
+ * The request body contains all of the work IDs to be changed. In order to avoid race conditions,
+ * the mutations happens one by one and then is updated with whatever the backend states on
  * request for the aggregated writes.
  *
  * @param {Environment} env the workers environment
  * @param {Request} request the request
+ * @param {PrivilegedStateChange} state the state change options enum
  * @param {string | undefined} identifier the identifier of the calling user
  * @returns {Promise<Response>} a response with a pre-signed upload URL
  */
-export const postApprove = async (
-  env: Environment, request: Request, identifier: string | undefined,
+const makePrivilegedStateChange = async (
+  env: Environment, request: Request, state: PrivilegedStateChange, identifier: string | undefined,
 ): Promise<Response> => {
+  // User must be staff to make any state change to a work
+
   const isStaff: boolean = identifier ? EDITORS.includes(identifier) : false;
   if (!isStaff) {
     return createForbiddenResponse(env.ALLOWED_ORIGIN);
   }
 
+  // State change is always applied to multiple IDs found in the request body.
+
   const ids: string[] = await request.json();
+
+  // Perform the actual state change.
 
   const works: Work[] = [];
   for (const id of ids) {
@@ -434,7 +444,22 @@ export const postApprove = async (
       (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${id}`)) || "{}"
     );
 
-    work.isApproved = true;
+    switch (state) {
+      case PrivilegedStateChange.APPROVE:
+        work.isApproved = true;
+
+        break;
+      case PrivilegedStateChange.DELETE:
+        work.isSoftDeleted = true;
+
+        break;
+      case PrivilegedStateChange.UN_APPROVE:
+        // Doubtful this will be used, but it is here for completeness.
+
+        work.isApproved = false;
+
+        break;
+    }
 
     // Edit the post, write to ID, and to weeks and artist aggregates, but not the main list.
 
@@ -445,7 +470,7 @@ export const postApprove = async (
     works.push(work);
   }
 
-  // Read from the list of everything, merge with the new values, then write.
+  // Read from the list of everything (the only thing left), merge with the new values, then write.
 
   const worksWithoutIndex: Work[] = JSON.parse(
     await env.REFRESH_KV.get(`${WORKS_WITHOUT_INDEX}`) || "[]"
@@ -466,4 +491,32 @@ export const postApprove = async (
   ));
 
   return createJsonResponse("{}", env.ALLOWED_ORIGIN);
+};
+
+/**
+ * Approve the given works.
+ *
+ * @param {Environment} env the workers environment
+ * @param {Request} request the request
+ * @param {string | undefined} identifier the identifier of the calling user
+ * @returns {Promise<Response>} a response with a pre-signed upload URL
+ */
+export const postApprove = async (
+  env: Environment, request: Request, identifier: string | undefined,
+): Promise<Response> => {
+  return makePrivilegedStateChange(env, request, PrivilegedStateChange.APPROVE, identifier);
+};
+
+/**
+ * Soft-delete the given works.
+ *
+ * @param {Environment} env the workers environment
+ * @param {Request} request the request
+ * @param {string | undefined} identifier the identifier of the calling user
+ * @returns {Promise<Response>} a response with a pre-signed upload URL
+ */
+export const deleteWork = async (
+  env: Environment, request: Request, identifier: string | undefined,
+): Promise<Response> => {
+  return makePrivilegedStateChange(env, request, PrivilegedStateChange.DELETE, identifier);
 };

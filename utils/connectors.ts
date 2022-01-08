@@ -361,7 +361,6 @@ export const approveWorks = async (
       // Create a copy of the works data where the IDs we've presented are approved.
 
       const newWorks: Record<string, Work> = {};
-
       Object.values(worksData.works).filter((work: Work) => works.includes(work.id)).forEach(
         (work: Work) => {
           work.isApproved = true;
@@ -370,7 +369,53 @@ export const approveWorks = async (
         }
       );
 
-      dispatch(addWorks(newWorks, WorkSource.SEARCH));
+      dispatch(addWorks(newWorks, WorkSource.DIRECT));
+    }
+  } else {
+    throw new Error(await response.text());
+  }
+};
+
+
+/**
+ * Ask the backend to delete some works.
+ *
+ * @param {string} token the access token
+ * @param {string[]} works the works to delete by ID
+ * @param {ThunkDispatch<RootState, never, AnyAction> | undefined} dispatch the dispatch
+ * @param {WorksState | undefined} worksData the state
+ */
+export const deleteWorks = async (
+  token: string,
+  works: string[],
+  dispatch?: ThunkDispatch<RootState, never, AnyAction>,
+  worksData?: WorksState,
+): Promise<void> => {
+  const response: Response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/work`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(works),
+    }
+  );
+
+  if (response.ok) {
+    if (dispatch && worksData) {
+      const newWorks: Record<string, Work> = {};
+      Object.values(worksData.works).filter((work: Work) => works.includes(work.id)).forEach(
+        (work: Work) => {
+          work.isApproved = false;
+          work.isSoftDeleted = true;
+
+          newWorks[work.id] = work;
+        }
+      );
+
+      dispatch(addWorks(newWorks, WorkSource.DIRECT));
     }
   } else {
     throw new Error(await response.text());

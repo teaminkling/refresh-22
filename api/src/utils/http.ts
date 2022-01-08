@@ -11,7 +11,7 @@ import {ValidationError} from "joi";
 export const generateCorsHeaders = (origin?: string) => {
   return new Headers({
     "Access-Control-Allow-Origin": origin || "https://refresh.fiveclawd.com",
-    "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "*",
   });
 };

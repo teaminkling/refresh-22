@@ -113,6 +113,11 @@ export default interface Work {
    * The mandatory submitted timestamp.
    */
   submittedTimestamp: string;
+
+  /**
+   * Whether this piece has been deleted.
+   */
+  isSoftDeleted?: boolean;
 }
 
 // Note: I can't find specifications for the length of a snowflake, so we limit it to 64 chars.
@@ -144,5 +149,6 @@ export const WORK_SCHEMA = Joi.object(
     isApproved: Joi.boolean().required(),
     discordId: Joi.string().alphanum().max(64).allow("").optional(),
     submittedTimestamp: Joi.string().isoDate().required(),
+    isSoftDeleted: Joi.boolean().optional(),
   },
 );

@@ -38,7 +38,7 @@ const Home: NextPage = () => {
   const works: Work[] = shuffle<Work>(
     Object.values(
       worksData.works || []
-    ).filter(work => work.isApproved)
+    ).filter(work => work.isApproved && !work.isSoftDeleted)
   );
 
   const mainContent = works.length > 0 ? (

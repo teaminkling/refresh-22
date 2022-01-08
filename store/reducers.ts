@@ -104,10 +104,10 @@ const worksReducer: Reducer<WorksState, AddWorksAction> = (
         throw new Error("Unknown work source type.");
     }
 
-    // The state needs to be merged.
+    // The state needs to be merged and deleted posts need to be removed.
 
     const mergedWorks = JSON.parse(JSON.stringify(state.works));
-    Object.values(action.works).forEach(
+    Object.values(action.works).filter(work => !work.isSoftDeleted).forEach(
       (work: Work) => {
         mergedWorks[work.id] = work;
       }

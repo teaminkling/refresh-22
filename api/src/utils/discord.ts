@@ -61,6 +61,8 @@ export const postOrEditDiscordWeek = async (
 /**
  * Post or edit a Discord's submission post.
  *
+ * Note that if works are deleted, they need to be manually removed from the Discord.
+ *
  * @param {Environment} env the environment
  * @param {Work} work the work itself
  * @returns {Promise<string | null>} the ID for the work, if successful

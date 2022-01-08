@@ -1,7 +1,7 @@
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 /**
  * Props for a navigation item.
@@ -51,6 +51,11 @@ interface NavItemProps {
    * If handled, any errors won't be immediately `alert`ed to the user.
    */
   isHandled?: boolean;
+
+  /**
+   * Whether the action is dangerous and probably needs confirmation.
+   */
+  isDangerous?: boolean;
 }
 
 /**
@@ -62,6 +67,15 @@ interface NavItemProps {
  */
 const InterfaceLink = (props: NavItemProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDoubleChecked, setIsDoubleChecked] = useState<boolean>(false);
+
+  // If the action isn't dangerous, assume we've already double-checked things.
+
+  useEffect(() => {
+    if (!props.isDangerous) {
+      setIsDoubleChecked(true);
+    }
+  }, [props.isDangerous]);
 
   const hoverAndActiveClasses = props.location ? (
     " hover:bg-gray-100 focus:bg-gray-200 focus:outline-none focus:shadow-outline "
@@ -119,7 +133,13 @@ const InterfaceLink = (props: NavItemProps) => {
       // eslint-disable-next-line react/jsx-no-target-blank
       <a
         href={props.location === "#" ? "#action" : props.location}
-        onClick={isLoading ? () => null : augmentedClickBack}
+        onClick={
+          isLoading ? () => null : (
+            isDoubleChecked ? augmentedClickBack : () => {
+              setIsDoubleChecked(true);
+            }
+          )
+        }
         suppressHydrationWarning
         className={(
           isLoading ? "cursor-not-allowed " : ""
@@ -132,7 +152,7 @@ const InterfaceLink = (props: NavItemProps) => {
         <span className={spacing} />
         {
           isLoading ? props.customWaitMessage || "Please wait; do not background this page!"
-            : props.title
+            : props.isDangerous && isDoubleChecked ? "Click again to confirm" : props.title
         }
       </a>
     );
