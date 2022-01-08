@@ -68,6 +68,7 @@ const SubmissionForm = () => {
 
   const {user, isAuthenticated, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
+  const userId: string | undefined = getUserId(user);
   const isEditor = getIsEditor(user);
 
   // Fetch the latest weeks and artists.
@@ -201,12 +202,12 @@ const SubmissionForm = () => {
           }
 
           {
-            editWork && isEditor ? (
+            isEditor ? (
               <>
                 <TextInput
                   id={"edit-user-id"}
                   label={"(Admin) User ID:"}
-                  initialValue={editWork.artistId}
+                  initialValue={editWork?.artistId || userId || ""}
                   blurCallback={(event: SyntheticEvent<HTMLInputElement, unknown> | undefined) => {
                     const value: string | undefined = event?.currentTarget.value;
 
@@ -406,7 +407,6 @@ const SubmissionForm = () => {
               // to avoid needing to use the network because we assume the returned URLs will be
               // accurate.
 
-              const userId: string | undefined = getUserId(user);
               if (!userId) {
                 errors.push(
                   new ValidationError(
