@@ -113,8 +113,8 @@ export const postOrEditDiscordWork = async (
         "title": work.title,
         "url": `${env.ALLOWED_ORIGIN}/works/${work.id}`,
         "description": (
-          `A(n) ${work.medium ? "_" + work.medium.toLowerCase() + "_ " : ""}piece by ` +
-          `<@${work.artistId}>!`
+          `A piece by <@${work.artistId}>` +
+          `${work.medium ? ", medium: _" + work.medium + "_." : "."}!`
         ),
         "image": {
           "url": work.thumbnailUrl,

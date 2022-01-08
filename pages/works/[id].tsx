@@ -198,7 +198,7 @@ const WorksById = () => {
 
               {work.medium ? <>
                 <p className={"hidden 2xl:block"}>
-                  A <i>{work.medium}</i> work.
+                  Medium: <i>{work.medium}</i>.
                 </p>
               </> : <></>}
 

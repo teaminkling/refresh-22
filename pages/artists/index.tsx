@@ -53,8 +53,9 @@ const Artists = () => {
 
       <Header>Artists</Header>
 
-      <p className={"text-sm"}>
-        Note that unapproved posts count here too.
+      <p className={"text-sm text-red-500"}>
+        <b>Developer note:</b>While we are in beta, this will not be quite consistent. We
+        apologise for any inconveniences caused.
       </p>
 
       <table className={"w-full text-xl table-auto p-1 mt-4 table-fixed"}>
