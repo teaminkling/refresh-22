@@ -433,7 +433,7 @@ const SubmissionForm = () => {
                   id: editWork ? editWork.id : "noop",
                   year: ACTIVE_YEAR,
                   weekNumbers: weekNumbers,
-                  artistId: isEditor ? artist || editWork?.artistId || userId : userId,
+                  artistId: isEditor ? (artist || editWork?.artistId || userId) : userId,
                   firstSeenArtistInfo: {
                     discordId: userId,
                     name: postingArtistName,
