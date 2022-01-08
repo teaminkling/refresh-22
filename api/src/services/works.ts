@@ -204,7 +204,13 @@ export const putWork = async (
     `${WORKS_WITH_ID_INDEX}/${input.id}`
   );
 
-  const backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
+  let backendWork: Work | null = rawBackendWork ? JSON.parse(rawBackendWork) : null;
+
+  // The backend should ignore erroneously placed works with the "noop" ID.
+
+  if (backendWork?.id === "noop") {
+    backendWork = null;
+  }
 
   // If editing, verify that the ID of the work presented matches the one in the backend.
 
@@ -219,7 +225,7 @@ export const putWork = async (
 
     if (await env.REFRESH_KV.get(`${WORKS_WITH_ID_INDEX}/${newId}`)) {
       return createBadRequestResponse(new ValidationError(
-        "A post already exists with the exact same info!",
+        "A post already exists with the exact same info! Did you mean to edit a work?",
         null,
         [],
       ), env.ALLOWED_ORIGIN);
@@ -315,7 +321,7 @@ export const putWork = async (
     input.discordId = discordId;
   }
 
-  await placeWork(env.REFRESH_KV, input, hadDiscordIdAlready);
+  await placeWork(env.REFRESH_KV, input, !hadDiscordIdAlready);
 
   return createJsonResponse("{}", env.ALLOWED_ORIGIN);
 };
