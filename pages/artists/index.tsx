@@ -54,7 +54,7 @@ const Artists = () => {
       <Header>Artists</Header>
 
       <p className={"text-sm text-red-500"}>
-        <b>Developer note:</b>While we are in beta, this will not be quite consistent. We
+        <b>Developer note:</b> While we are in beta, this will not be quite consistent. We
         apologise for any inconveniences caused.
       </p>
 
