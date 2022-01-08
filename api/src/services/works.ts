@@ -229,6 +229,12 @@ export const putWork = async (
   } else {
     // There is a backend work. Keep some of the old data.
 
+    if (EDITORS.includes(input.artistId)) {
+      // Don't let an admin overwrite state with their own user ID.
+
+      input.artistId = backendWork.artistId;
+    }
+
     input.discordId = backendWork.discordId;
     input.submittedTimestamp = backendWork.submittedTimestamp;
   }

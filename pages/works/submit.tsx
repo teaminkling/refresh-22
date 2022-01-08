@@ -21,6 +21,7 @@ import {ACTIVE_YEAR} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
 import Work, {UrlItem, WORK_SCHEMA} from "../../data/core/Work";
 import {ArtistsState, RootState, WeeksState, WorksState} from "../../store/state";
+import {getIsEditor, getUserId} from "../../utils/auth";
 import {fetchArtists, fetchWeeks, putWork, uploadFile} from "../../utils/connectors";
 import NotFound from "../404";
 
@@ -67,6 +68,8 @@ const SubmissionForm = () => {
 
   const {user, isAuthenticated, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
+  const isEditor = getIsEditor(user);
+
   // Fetch the latest weeks and artists.
 
   const dispatch: Dispatch = useDispatch();
@@ -97,6 +100,7 @@ const SubmissionForm = () => {
 
   const [weekNumbers, setWeekNumbers] = useState<number[]>([]);
   const [title, setTitle] = useState<string>("");
+  const [artist, setArtist] = useState<string>("");
   const [medium, setMedium] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [thumbnailPointer, setThumbnailPointer] = useState<File | undefined>(undefined);
@@ -137,6 +141,7 @@ const SubmissionForm = () => {
     if (editWork) {
       setWeekNumbers(editWork.weekNumbers);
       setTitle(editWork.title);
+      setArtist(editWork.artistId);
       setMedium(editWork.medium || "");
       setDescription(editWork.description);
 
@@ -190,6 +195,25 @@ const SubmissionForm = () => {
                   label={"Editing ID:"}
                   initialValue={editWork.id}
                   isDisabled
+                />
+              </>
+            ) : <></>
+          }
+
+          {
+            editWork && isEditor ? (
+              <>
+                <TextInput
+                  id={"edit-user-id"}
+                  label={"(Admin) User ID:"}
+                  initialValue={editWork.artistId}
+                  blurCallback={(event: SyntheticEvent<HTMLInputElement, unknown> | undefined) => {
+                    const value: string | undefined = event?.currentTarget.value;
+
+                    if (value) {
+                      setArtist(value);
+                    }
+                  }}
                 />
               </>
             ) : <></>
@@ -382,10 +406,8 @@ const SubmissionForm = () => {
               // to avoid needing to use the network because we assume the returned URLs will be
               // accurate.
 
-              const _idParts: string[] = user?.sub?.split("|") || [];
-              const id: string | undefined = _idParts ? _idParts[_idParts.length - 1] : undefined;
-
-              if (!id) {
+              const userId: string | undefined = getUserId(user);
+              if (!userId) {
                 errors.push(
                   new ValidationError(
                     "User's ID is absent. Please contact papapastry#8888 on Discord.",
@@ -394,9 +416,12 @@ const SubmissionForm = () => {
                   )
                 );
               } else {
-                const postingArtistName = artistsData.artists[id]?.name || user?.name || "Unknown";
+                const postingArtistName = (
+                  artistsData.artists[userId]?.name || user?.name || "Unknown"
+                );
+
                 const postingArtistThumbnailUrl: string = (
-                  user?.picture || `https://placem.at/things?w=512&h=512&random=${id}`
+                  user?.picture || `https://placem.at/things?w=512&h=512&random=${userId}`
                 );
 
                 // It shouldn't matter here if approved is true or false. The backend will reset
@@ -408,9 +433,9 @@ const SubmissionForm = () => {
                   id: editWork ? editWork.id : "noop",
                   year: ACTIVE_YEAR,
                   weekNumbers: weekNumbers,
-                  artistId: id,
+                  artistId: isEditor ? artist || editWork?.artistId || userId : userId,
                   firstSeenArtistInfo: {
-                    discordId: id,
+                    discordId: userId,
                     name: postingArtistName,
                     thumbnailUrl: postingArtistThumbnailUrl,
                     socials: [],

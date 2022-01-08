@@ -25,9 +25,11 @@ export const getIsEditor = (user?: User) => {
  * @param {User} user the user
  * @returns {string | undefined} the ID, if found
  */
-export const getUserId = (user: User): string | undefined => {
-  const idParts: string[] = user.sub?.split("|") || [];
-  if (idParts.length > 0) {
-    return idParts[idParts.length - 1];
+export const getUserId = (user?: User): string | undefined => {
+  if (user) {
+    const idParts: string[] = user.sub?.split("|") || [];
+    if (idParts.length > 0) {
+      return idParts[idParts.length - 1];
+    }
   }
 };
