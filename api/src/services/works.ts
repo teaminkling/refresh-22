@@ -241,7 +241,7 @@ export const putWork = async (
 
   // Generate the thumbnails for all items if they're new or have changed.
 
-  if (!backendWork || (backendWork.items.toString() !== input.items.toString())) {
+  if (!backendWork || (JSON.stringify(input.items) !== JSON.stringify(backendWork.items))) {
     for (const item of input.items) {
       const index: number = input.items.indexOf(item);
 
