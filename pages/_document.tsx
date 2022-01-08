@@ -6,7 +6,7 @@ import {Head, Html, Main, NextScript} from "next/document";
 config.autoAddCss = false;
 
 const DEFAULT_IMAGE: string = (
-  (process.env["NEXT_PUBLIC_AUTH0_REDIRECT_URI"] || "") + "/logo/temp_social.png"
+  (process.env["NEXT_PUBLIC_BASE_URI"] || "") + "/logo/temp_social.png"
 );
 
 const DEFAULT_DESCRIPTION = (

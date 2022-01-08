@@ -146,7 +146,14 @@ const Sidebar = (): JSX.Element => {
     <>
       <InterfaceLink
         location={"#"}
-        clickBack={() => loginWithRedirect({connection: "discord"})}
+        clickBack={
+          () => loginWithRedirect(
+            {
+              redirectUri: `${process.env.NEXT_PUBLIC_BASE_URI}/artists/edit`,
+              connection: "discord"
+            }
+          )
+        }
         title={"Login"}
         strong
         icon={<FontAwesomeIcon icon={faDiscord} />}
