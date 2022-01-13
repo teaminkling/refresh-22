@@ -44,7 +44,7 @@ const WorksById = () => {
 
   useEffect(
     () => {
-      if (id !== "unknown") {
+      if (id !== "unknown" && id !== "noop") {
         fetchWorkById(dispatch, worksData, id);
         fetchArtists(dispatch, artistsData);
       }
