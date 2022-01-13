@@ -1,9 +1,5 @@
-import {config, dom} from "@fortawesome/fontawesome-svg-core";
 import {Head, Html, Main, NextScript} from "next/document";
 
-// Handle some issues with Font Awesome on some browsers.
-
-config.autoAddCss = false;
 
 const DEFAULT_IMAGE: string = (
   (process.env["NEXT_PUBLIC_BASE_URI"] || "") + "/logo/temp_social.png"
@@ -51,8 +47,6 @@ export const Document = () => {
 
         <meta property="og:image" content={DEFAULT_IMAGE} />
         <meta name="twitter:image" content={DEFAULT_IMAGE} />
-
-        <style>{dom.css()}</style>
       </Head>
       <body className={"antialiased"}>
         <Main />

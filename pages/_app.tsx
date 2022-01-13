@@ -3,6 +3,7 @@
  */
 
 import {Auth0Provider} from "@auth0/auth0-react";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import type {AppProps} from "next/app";
 import Head from "next/head";
 import {FC, useEffect} from "react";
