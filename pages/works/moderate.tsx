@@ -46,7 +46,7 @@ const Moderate: NextPage = () => {
     (a: Work, b: Work) => {
       return new Date(b.submittedTimestamp).valueOf() - new Date(a.submittedTimestamp).valueOf();
     }
-  ).filter((work: Work) => !work.isApproved && !work.isSoftDeleted);
+  ).filter((work: Work) => !work.isApproved && !work.isSoftDeleted && work.id !== "noop");
 
   const mainContent = isEditor ? (
     <div className={"mx-2 my-2 md:mr-5"}>
