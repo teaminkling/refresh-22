@@ -118,6 +118,7 @@ const Edit = (): JSX.Element => {
       <Header>
         Not Logged In!
       </Header>
+
       <Paragraph>
         You are not logged in! Please log in on the sidebar to access your profile.
       </Paragraph>
@@ -225,12 +226,13 @@ const Edit = (): JSX.Element => {
       </>
     );
   } else if (isLoading) {
-    view = <></>;
+    view = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
   return (
     <StaticPage>
       {view}
+
       {messagesView}
     </StaticPage>
   );

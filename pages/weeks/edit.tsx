@@ -151,7 +151,7 @@ const WeekEditor = (props: WeekEditorProps) => {
  * @constructor
  */
 const Edit = (): JSX.Element => {
-  const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+  const {isLoading, user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
   const [weeks, setWeeks] = useState<Record<number, Week>>({});
 
   const isEditor = getIsEditor(user);
@@ -279,6 +279,8 @@ const Edit = (): JSX.Element => {
         {messagesView}
       </StaticPage>
     );
+  } else if (isLoading) {
+    response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
   return response;
