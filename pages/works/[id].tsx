@@ -60,7 +60,7 @@ const WorksById = () => {
   const artistName: string = artist?.name || work?.firstSeenArtistInfo?.name || "Unknown";
 
   let response = <NotFound />;
-  if (work && !work.isSoftDeleted) {
+  if (work && !work.isSoftDeleted && work.id !== "noop") {
     response = (
       <>
         <Head>
