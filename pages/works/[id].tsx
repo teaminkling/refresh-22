@@ -126,7 +126,7 @@ const WorksById = () => {
                       >
                         <img
                           src={item.hiDpiFullThumbnail}
-                          srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail} 2x`}
+                          srcSet={`${item.smallFullThumbnail}, ${item.hiDpiFullThumbnail} 2x`}
                           className={"align-bottom object-cover"}
                           style={{width: 800}}
                           alt={
@@ -207,9 +207,9 @@ const WorksById = () => {
                 </p>
               </> : <></>}
 
-              <h2 className={"pt-4 text-3xl font-bold"}>
-                Artist&apos;s Description
-              </h2>
+              <p className={"pt-4"}>
+                <b>Artist&apos;s Description</b>
+              </p>
 
               <Markdown markdown={work.description} />
 
