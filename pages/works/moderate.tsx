@@ -4,6 +4,7 @@ import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import GalleryItem from "../../components/gallery-item";
+import StaticPage, {Header} from "../../components/typography";
 import Work from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
 import {getIsEditor} from "../../utils/auth";
@@ -17,7 +18,7 @@ import NotFound from "../404";
  * @constructor
  */
 const Moderate: NextPage = () => {
-  const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+  const {user, isLoading, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
   const isEditor = getIsEditor(user);
 
@@ -48,38 +49,43 @@ const Moderate: NextPage = () => {
     }
   ).filter((work: Work) => !work.isApproved && !work.isSoftDeleted && work.id !== "noop");
 
-  const mainContent = isEditor ? (
-    <div className={"mx-2 my-2 md:mr-5"}>
-      <>
-        {
-          works.map((work: Work) => {
-            const artistName: string = (
-              artistsData.artists[work.artistId]?.name
-              || work.firstSeenArtistInfo?.name
-              || "Unknown User"
-            );
+  let response = <NotFound />;
+  if (isEditor) {
+    response = (
+      <div className={"mx-2 my-2 md:mr-5"}>
+        <>
+          {
+            works.map((work: Work) => {
+              const artistName: string = (
+                artistsData.artists[work.artistId]?.name
+                || work.firstSeenArtistInfo?.name
+                || "Unknown User"
+              );
 
-            return <GalleryItem
-              key={work.id}
-              id={work.id}
-              title={work.title}
-              artist={artistName}
-              medium={work.medium}
-              description={work.description}
-              retinaPreview={work.thumbnailUrl || "/placeholders/submission.png"}
-              preview={work.smallThumbnailUrl || "/placeholders/submission.png"}
-              submittedTimestamp={work.submittedTimestamp}
-              isEditor={isEditor}
-            />;
-          })
-        }
-      </>
-    </div>
-  ) : <NotFound />;
+              return <GalleryItem
+                key={work.id}
+                id={work.id}
+                title={work.title}
+                artist={artistName}
+                medium={work.medium}
+                description={work.description}
+                retinaPreview={work.thumbnailUrl || "/placeholders/submission.png"}
+                preview={work.smallThumbnailUrl || "/placeholders/submission.png"}
+                submittedTimestamp={work.submittedTimestamp}
+                isEditor={isEditor}
+              />;
+            })
+          }
+        </>
+      </div>
+    );
+  } else if (isLoading) {
+    response = <StaticPage><Header>Loading...</Header></StaticPage>;
+  }
 
   return (
     <>
-      {mainContent}
+      {response}
     </>
   );
 };
