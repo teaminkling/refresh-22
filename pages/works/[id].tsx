@@ -125,10 +125,10 @@ const WorksById = () => {
                         rel={item.meta ? "noreferrer" : undefined}
                       >
                         <img
-                          src={item.hiDpiThumbnail}
-                          srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail}`}
+                          src={item.hiDpiFullThumbnail}
+                          srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail} 2x`}
                           className={"align-bottom object-cover"}
-                          style={{maxHeight: 586.5, width: 800}}
+                          style={{width: 800}}
                           alt={
                             `The ${index}th image for: ${work.title || "Untitled"}.`
                           }

@@ -106,9 +106,9 @@ const GalleryItem = (props: ItemProps) => {
             <a>
               <img
                 src={props.retinaPreview}
-                srcSet={`${props.preview}, ${props.retinaPreview} 1.5x`}
+                srcSet={`${props.preview}, ${props.retinaPreview} 2x`}
                 className={"align-bottom object-cover"}
-                style={{height: 586.5, width: 800}}
+                style={{width: 800}}
                 alt={`A gallery preview image with the title: ${props.title}.`}
               />
             </a>
