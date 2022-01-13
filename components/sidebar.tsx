@@ -11,12 +11,10 @@ import {
   faClock,
   faHardHat,
   faLink,
-  faQuestionCircle,
   faTimes,
   faUser
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Link from "next/link";
 import {ReactNode, useState} from "react";
 import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
 import {getIsEditor} from "../utils/auth";
@@ -243,16 +241,6 @@ const Sidebar = (): JSX.Element => {
 
             <InterfaceLink location={"/terms"} title={"Terms"} nextLink />
             <InterfaceLink location={"/privacy"} title={"Privacy"} nextLink />
-            <div className={"m-auto text-center bg-yellow-200 rounded-3xl my-3 py-1.5 mx-4"}>
-              <p>
-                Website is in Beta
-                <Link href={"/beta"}>
-                  <a className={"pl-2"}>
-                    <FontAwesomeIcon icon={faQuestionCircle} />
-                  </a>
-                </Link>
-              </p>
-            </div>
           </div>
         </nav>
       </div>
