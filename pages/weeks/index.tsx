@@ -32,41 +32,11 @@ const Weeks = () => {
 
   // Check that the user is allowed to see the edit button.
 
-  const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+  const {user, isLoading, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
   const isEditor: boolean = getIsEditor(user);
 
-  let response = (
-    <div className={"flex items-center justify-center h-full"}>
-      <div className={"text-center pb-16"}>
-        <img
-          src={"/art/user404.png"}
-          alt={"A lost user."}
-          className={"w-96 pt-16 m-auto"}
-        />
-        <Header>
-          Hold up!
-        </Header>
-        <SubHeader>
-          None of the weeks have been released yet.
-        </SubHeader>
-        <Paragraph>
-          The prompt will be up soon (i.e., once Cindy figures out how to use the site).
-        </Paragraph>
-
-        {
-          isEditor ?
-            <InterfaceLink
-              location={"/weeks/edit"}
-              title={"(Admin) Fuck you, Tom"}
-              icon={<FontAwesomeIcon icon={faHandMiddleFinger} />}
-              nextLink
-            /> : <></>
-        }
-      </div>
-    </div>
-  );
-
+  const [isApiLoading, setIsApiLoading] = useState<boolean>(true);
   useEffect(() => {
     if (user) {
       getAccessTokenSilently().then(
@@ -75,6 +45,8 @@ const Weeks = () => {
     } else {
       fetchWeeks(dispatch, weeksData, undefined, isEditor);
     }
+
+    setIsApiLoading(false);
   }, []);
 
   // Gather weeks data and populate some divs.
@@ -100,6 +72,7 @@ const Weeks = () => {
     }
   );
 
+  let response;
   if (weeksDivs.length > 0) {
     response = (
       <>
@@ -144,6 +117,39 @@ const Weeks = () => {
           </div>
         </StaticPage>
       </>
+    );
+  } else if (isLoading || isApiLoading) {
+    response = <StaticPage><Header>Loading...</Header></StaticPage>;
+  } else {
+    response = (
+      <div className={"flex items-center justify-center h-full"}>
+        <div className={"text-center pb-16"}>
+          <img
+            src={"/art/user404.png"}
+            alt={"A lost user."}
+            className={"w-96 pt-16 m-auto"}
+          />
+          <Header>
+            Hold up!
+          </Header>
+          <SubHeader>
+            None of the weeks have been released yet.
+          </SubHeader>
+          <Paragraph>
+            The prompt will be up soon (i.e., once Cindy figures out how to use the site).
+          </Paragraph>
+
+          {
+            isEditor ?
+              <InterfaceLink
+                location={"/weeks/edit"}
+                title={"(Admin) Fuck you, Tom"}
+                icon={<FontAwesomeIcon icon={faHandMiddleFinger} />}
+                nextLink
+              /> : <></>
+          }
+        </div>
+      </div>
     );
   }
 

@@ -6,13 +6,14 @@ import Head from "next/head";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import Fancybox from "../../components/fancybox";
 import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import SquareLink from "../../components/square-link";
+import StaticPage, {Header} from "../../components/typography";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
@@ -42,12 +43,16 @@ const WorksById = () => {
   const worksData: WorksState = useSelector((state: RootState) => state.worksData);
   const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   useEffect(
     () => {
       if (id !== "unknown" && id !== "noop") {
         fetchWorkById(dispatch, worksData, id);
         fetchArtists(dispatch, artistsData);
       }
+
+      setIsLoading(false);
     },
     [id]
   );
@@ -271,6 +276,8 @@ const WorksById = () => {
         </div>
       </>
     );
+  } else if (isLoading) {
+    response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
   return response;

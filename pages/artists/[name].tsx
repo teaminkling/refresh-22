@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import InterfaceLink from "../../components/interface-link";
@@ -13,6 +13,7 @@ import Artist from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
 import {fetchArtists} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
+import NotFound from "../404";
 
 /**
  * A component that retrieves an existing user.
@@ -41,42 +42,19 @@ const SingleArtist = (): JSX.Element => {
   const dispatch: Dispatch = useDispatch();
   const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     fetchArtists(dispatch, artistsData);
+
+    setIsLoading(false);
   }, []);
 
   // Try to grab the ID from the state rather than from Auth0.
 
   const idFromState: string | undefined = artistsData.usernameToId[name];
 
-  let response: JSX.Element;
-  if (!idFromState) {
-    // User isn't in KV yet.
-
-    response = (
-      <div className={"flex items-center justify-center h-full"}>
-        <div className={"text-center pb-16"}>
-          <img src={"/art/user404.png"} alt={"A lost user."} className={"w-96 pt-16 m-auto"} />
-
-          <Header>
-            Artist 404
-          </Header>
-
-          <SubHeader>
-            Can&apos;t find that user!
-          </SubHeader>
-
-          <Paragraph>
-            Are they still being processed?
-          </Paragraph>
-
-          <Paragraph>
-            That can take up to an hour.
-          </Paragraph>
-        </div>
-      </div>
-    );
-  } else {
+  let response: JSX.Element = <NotFound />;
+  if (idFromState) {
     const artist: Artist = artistsData.artists[idFromState];
 
     // Place the socials down.
@@ -154,6 +132,8 @@ const SingleArtist = (): JSX.Element => {
           </Paragraph>}
       </StaticPage>
     );
+  } else if (isLoading) {
+    response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
   return response;

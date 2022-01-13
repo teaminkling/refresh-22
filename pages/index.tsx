@@ -1,9 +1,9 @@
 import type {NextPage} from "next";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import GalleryItem from "../components/gallery-item";
-import {Header, Paragraph} from "../components/typography";
+import StaticPage, {Header, Paragraph} from "../components/typography";
 import Work from "../data/core/Work";
 import {shuffle} from "../data/utils/data-structures";
 import {ArtistsState, RootState, WorksState} from "../store/state";
@@ -23,12 +23,15 @@ const Home: NextPage = () => {
   const worksData: WorksState = useSelector((state: RootState) => state.worksData);
   const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(
     () => {
       // TODO: De-hardcode this in prep for week 2.
 
       fetchWorksByWeek(dispatch, worksData, 1);
       fetchArtists(dispatch, artistsData);
+
+      setIsLoading(false);
     },
     []
   );
@@ -97,7 +100,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      {mainContent}
+      {isLoading ? <StaticPage><Header>Loading...</Header></StaticPage> : mainContent}
     </>
   );
 };

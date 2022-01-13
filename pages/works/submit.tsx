@@ -67,7 +67,12 @@ const dropHandler = (
 const SubmissionForm = () => {
   // Only authenticated users are allowed to submit.
 
-  const {user, isAuthenticated, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
+  const {
+    user,
+    isLoading,
+    isAuthenticated,
+    getAccessTokenSilently
+  }: Auth0ContextInterface = useAuth0();
 
   const userId: string | undefined = getUserId(user);
   const isEditor = getIsEditor(user);
@@ -173,13 +178,10 @@ const SubmissionForm = () => {
 
   // Finally, define the complex form.
 
-  let response;
-
-  if (!isAuthenticated) {
-    response = <NotFound />;
-  } else {
+  let response = <NotFound />;
+  if (isAuthenticated) {
     response = (
-      <>
+      <StaticPage>
         <Head>
           <title>Submit - Design Refresh</title>
         </Head>
@@ -512,15 +514,15 @@ const SubmissionForm = () => {
             }}
           />
         </form>
-      </>
+
+        {messagesView}
+      </StaticPage>
     );
+  } else if (isLoading) {
+    response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
-  return (
-    <StaticPage>
-      {response} {messagesView}
-    </StaticPage>
-  );
+  return response;
 };
 
 export default SubmissionForm;
