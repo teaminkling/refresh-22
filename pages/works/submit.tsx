@@ -474,27 +474,34 @@ const SubmissionForm = () => {
                       const urlValidation = Joi.string().regex(
                         /.*\.(png)|(jpg)|(jpeg)|(mp3)/
                       ).validate(
-                        item.file.name
+                        item.file.name.toLowerCase()
                       );
 
                       if (urlValidation.error) {
                         errors.push(urlValidation.error);
                       }
 
-                      urlWrappers.push({url: await uploadFile(accessToken, item.file)});
+                      // Don't upload the file if there will be errors.
+
+                      if (errors.length === 0) {
+                        urlWrappers.push({url: await uploadFile(accessToken, item.file)});
+                      }
                     }
                   }
 
                   // Next, we associate the URLs with the work then send it off to the backend.
                   // If the thumbnail was explicitly provided, we give that in too.
 
-                  work.items = urlWrappers;
-                  if (thumbnailPointer) {
-                    work.thumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
-                    work.smallThumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
-                  }
+                  if (errors.length === 0) {
+                    if (thumbnailPointer) {
+                      work.thumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
+                      work.smallThumbnailUrl = await uploadFile(accessToken, thumbnailPointer);
+                    }
 
-                  await putWork(dispatch, worksData, accessToken, work);
+                    work.items = urlWrappers;
+
+                    await putWork(dispatch, worksData, accessToken, work);
+                  }
                 }
 
                 setMessagesView(<ResponseMessages errors={errors} successElement={
