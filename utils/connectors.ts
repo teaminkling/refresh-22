@@ -252,7 +252,7 @@ export const putWork = async (
   worksData: WorksState,
   token: string,
   work: Work,
-): Promise<void> => {
+): Promise<Work> => {
   const response: Response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/work`,
     {
@@ -265,15 +265,21 @@ export const putWork = async (
     }
   );
 
+  // Parse the work that was posted if successful.
+
   if (response.ok) {
-    if (work.id !== "noop") {
-      worksData.works[work.id] = work;
+    const returnedWork: Work = await response.json();
+
+    if (returnedWork.id !== "noop") {
+      worksData.works[returnedWork.id] = returnedWork;
 
       dispatch(addWorks(worksData.works, WorkSource.DIRECT));
     }
-  } else {
-    throw new Error(await response.text());
+
+    return returnedWork;
   }
+
+  throw new Error(await response.text());
 };
 
 /**

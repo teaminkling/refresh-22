@@ -6,6 +6,7 @@ import {faAngleDown, faAngleRight, faPlus} from "@fortawesome/free-solid-svg-ico
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Joi, {ValidationError, ValidationResult} from "joi";
 import Head from "next/head";
+import Link from "next/link";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
 import {ChangeEvent, createRef, SyntheticEvent, useEffect, useState} from "react";
@@ -16,7 +17,7 @@ import {ResponseMessages} from "../../components/errors";
 import FileItem, {FrontendFileItem} from "../../components/file-item";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
-import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
+import StaticPage, {Header, SubHeader} from "../../components/typography";
 import {ACTIVE_YEAR} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
 import Work, {UrlItem, WORK_SCHEMA} from "../../data/core/Work";
@@ -420,7 +421,7 @@ const SubmissionForm = () => {
                 // because it either is waiting to be set and propagate to the edge or the user
                 // hasn't create their profile yet.
 
-                const work: Work = {
+                let work: Work = {
                   id: editWork ? editWork.id : "noop",
                   year: ACTIVE_YEAR,
                   weekNumbers: weekNumbers,
@@ -491,13 +492,20 @@ const SubmissionForm = () => {
 
                     work.items = urlWrappers;
 
-                    await putWork(dispatch, worksData, accessToken, work);
+                    // Replace the work in memory with what was actually placed in the backend.
+
+                    work = await putWork(dispatch, worksData, accessToken, work);
                   }
                 }
 
                 setMessagesView(<ResponseMessages errors={errors} successElement={
                   <>
-                    Nice! Your work will be live in less than a minute. Please check Discord!
+                    Nice! Check out your work&nbsp;
+                    <Link href={`/works/${work.id}`}>
+                      <a className={"underline"} style={{color: "#7C7CE0"}}>
+                        here
+                      </a>
+                    </Link> and on Discord!
                   </>
                 } />);
               }

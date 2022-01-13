@@ -317,7 +317,7 @@ export const putWork = async (
 
   await placeWork(env.REFRESH_KV, input, !hadDiscordIdAlready);
 
-  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
+  return createJsonResponse(JSON.stringify(input), env.ALLOWED_ORIGIN);
 };
 
 /**
