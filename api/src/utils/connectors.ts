@@ -23,11 +23,11 @@ export const uploadThumbnails = async (
   const filename = _contentPathParts[_contentPathParts.length - 1];
 
   const smallThumbnailUrl = (
-    `${env.TWIC_URL}${contentUrl.pathname}?twic=v1/cover=1024x720&focus=auto`
+    `${env.TWIC_URL}${contentUrl.pathname}?twic=v1/cover=1024x720&focus=auto&truecolor`
   );
 
   const hiDpiThumbnailUrl = (
-    `${env.TWIC_URL}${contentUrl.pathname}?twic=v1/cover=2048x1440&focus=auto`
+    `${env.TWIC_URL}${contentUrl.pathname}?twic=v1/cover=2048x1440&focus=auto&truecolor`
   );
 
   // Perform the actual fetches.
