@@ -59,12 +59,6 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
     console.log("...except if you really know what you're doing.");
     console.log("This console can allow would-be attackers from taking control of your account.");
     console.log("Read about Self-XSS here: https://en.wikipedia.org/wiki/Self-XSS");
-
-    console.log("%cUnless you're here for easter eggs?", "color: green; font-size: 16px");
-
-    console.log("1. If you poke it 8 times, it might go faster.");
-    console.log("2. (Coming Soon) Question Scimister's signature move in the omnibox.");
-    console.log("3. (Coming Soon) What's the world's most famous cheat code?");
   }, []);
 
   return (
