@@ -386,15 +386,6 @@ const SubmissionForm = () => {
             Ready?
           </SubHeader>
 
-          <Paragraph>
-            Your work will not appear in the gallery/list to others until it has been approved.
-          </Paragraph>
-
-          <Paragraph>
-            Still, if the upload is successful, you will receive a direct link to your work,
-            noting it might take up to a minute for it to work for everyone else.
-          </Paragraph>
-
           <InterfaceLink
             location={"#"}
             title={"Okay, Send It!"}
