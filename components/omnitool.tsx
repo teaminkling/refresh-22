@@ -14,7 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 interface OmnitoolProps {
   artist: string | undefined;
@@ -32,7 +32,7 @@ interface OmnitoolProps {
  * @constructor
  */
 const Omnitool = (props: OmnitoolProps): JSX.Element => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const router = useRouter();
   const query: ParsedUrlQuery = router.query;
@@ -41,14 +41,6 @@ const Omnitool = (props: OmnitoolProps): JSX.Element => {
   const page: string = (
     typeof _rawP === "object" ? _rawP[0] : _rawP
   ) || "1";
-
-  // Open the omnitool if any queries are set/not undefined.
-
-  useEffect(() => {
-    if (query.p || query.q || query.week || query.artist || query.sort) {
-      setIsOpen(true);
-    }
-  }, [query.p, query.q, query.week, query.artist, query.sort]);
 
   // Keep track of the sort for button effects.
 
