@@ -13,7 +13,7 @@ import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 import Work from "../data/core/Work";
 import {shuffle} from "../data/utils/data-structures";
 import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
-import {fetchArtists, fetchWeeks, fetchWorksByWeek} from "../utils/connectors";
+import {fetchArtists, fetchWeeks, fetchWorksByArtist, fetchWorksByWeek} from "../utils/connectors";
 
 /**
  * The number of posts that appears on a single page.
@@ -64,8 +64,6 @@ const Home: NextPage = () => {
           fetchWorksByWeek(dispatch, worksData, latestWeek).then();
         }
       );
-
-      setIsLoading(false);
     },
     []
   );
@@ -83,6 +81,24 @@ const Home: NextPage = () => {
 
   const artist: string | undefined = typeof _rawArtist === "object" ? _rawArtist[0] : _rawArtist;
   const week: string | undefined = typeof _rawWeek === "object" ? _rawWeek[0] : _rawWeek;
+
+  // If either of the filters are set, we might need to do more fetches.
+
+  useEffect(
+    () => {
+      if (week) {
+        fetchWorksByWeek(dispatch, worksData, parseInt(week)).then();
+      }
+
+      if (artist) {
+        fetchWorksByArtist(dispatch, worksData, artist).then();
+      }
+
+      setIsLoading(false);
+    },
+    [artist, week]
+  );
+
   const sort: string | undefined = typeof _rawSort === "object" ? _rawSort[0] : _rawSort;
 
   // Note that search and page have different names when parsed:
