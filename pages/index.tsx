@@ -1,6 +1,8 @@
 import type {NextPage} from "next";
 import {NextSeo} from "next-seo";
 import Head from "next/head";
+import {useRouter} from "next/router";
+import {ParsedUrlQuery} from "querystring";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
@@ -9,8 +11,13 @@ import StaticPage, {Header, Paragraph} from "../components/typography";
 import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 import Work from "../data/core/Work";
 import {shuffle} from "../data/utils/data-structures";
-import {ArtistsState, RootState, WorksState} from "../store/state";
-import {fetchArtists, fetchWorksByWeek} from "../utils/connectors";
+import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
+import {fetchArtists, fetchWeeks, fetchWorksByWeek} from "../utils/connectors";
+
+/**
+ * The number of posts that appears on a single page.
+ */
+const POSTS_PER_PAGE = 8;
 
 /**
  * The home page/gallery.
@@ -23,28 +30,122 @@ const Home: NextPage = () => {
 
   const dispatch: Dispatch = useDispatch();
 
+  const weeksData: WeeksState = useSelector((state: RootState) => state.weeksData);
   const worksData: WorksState = useSelector((state: RootState) => state.worksData);
   const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
+
+  // Perform the initial retrieval of weeks and artists, then all works by the current week. Any
+  // additional retrievals needed will be provided when the route's search parameters are parsed.
+
+  // We retrieve the current week's works regardless of anything since it is helpful for typical
+  // users of the site going through week-by-week.
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(
     () => {
-      // TODO: De-hardcode this in prep for week 2.
-
-      fetchWorksByWeek(dispatch, worksData, 1);
+      fetchWeeks(dispatch, weeksData);
       fetchArtists(dispatch, artistsData);
+
+      // Find the current week.
+
+      const latestWeek = Math.max(
+        ...Object.values(
+          weeksData.weeks
+        ).filter(
+          week => week.isPublished
+        ).map(
+          week => week.week
+        )
+      );
+
+      fetchWorksByWeek(dispatch, worksData, latestWeek);
 
       setIsLoading(false);
     },
     []
   );
 
-  // TODO: works retrieved needs pagination etc
+  // Parse the query string for artist, week, search, and sort filters.
 
-  const works: Work[] = shuffle<Work>(
-    Object.values(
-      worksData.works || []
-    ).filter(work => work.isApproved && !work.isSoftDeleted && work.id !== "noop")
+  const router = useRouter();
+  const query: ParsedUrlQuery = router.query;
+
+  const _rawArtist: string | string[] | undefined = query.artist;
+  const _rawWeek: string | string[] | undefined = query.week;
+  const _rawQ: string | string[] | undefined = query.q;
+  const _rawP: string | string[] | undefined = query.p;
+  const _rawSort: string | string[] | undefined = query.sort;
+
+  const artist: string | undefined = typeof _rawArtist === "object" ? _rawArtist[0] : _rawArtist;
+  const week: string | undefined = typeof _rawWeek === "object" ? _rawWeek[0] : _rawWeek;
+  const sort: string | undefined = typeof _rawSort === "object" ? _rawSort[0] : _rawSort;
+
+  // Note that search and page have different names when parsed:
+
+  const search: string | undefined = typeof _rawQ === "object" ? _rawQ[0] : _rawQ;
+  const page: string | undefined = typeof _rawP === "object" ? _rawP[0] : _rawP;
+
+  let works: Work[] = Object.values(
+    worksData.works || [],
+  ).filter(
+    work => work.isApproved && !work.isSoftDeleted && work.id !== "noop",
+  ).filter(
+    work => {
+      // Perform the sorting based on the query string. If not present, we don't perform any
+      // fetches, but any information in the cache will be fair game, meaning there will be the
+      // current week's data combined with random works the user has already seen.
+
+      const artistName: string = (
+        artistsData.artists[work.artistId]?.name
+        || work.firstSeenArtistInfo?.name
+        || "Unknown User"
+      );
+
+      const matchesArtist = artist ? artistName === artist : true;
+      const matchesWeek = week ? work.weekNumbers.map(
+        week => week.toString()).includes(week.toString()
+      ) : true;
+
+      const matchesQuery = search ? JSON.stringify(
+        work,
+      ).replaceAll(
+        /\s/g, ""
+      ).toLowerCase().includes(
+        search.toLowerCase().replaceAll(
+          /\s/g, ""
+        )
+      ) : true;
+
+      return matchesArtist && matchesWeek && matchesQuery;
+    }
+  );
+
+  // Shuffling isn't really sorting, but we do that here if required.
+
+  if (sort === "shuffle") {
+    works = shuffle(works);
+  } else {
+    // Default to descending sort.
+
+    works = works.sort(
+      (a: Work, b: Work) => {
+        const aDate = new Date(a.submittedTimestamp);
+        const bDate = new Date(b.submittedTimestamp);
+
+        return bDate.valueOf() - aDate.valueOf();
+      }
+    );
+
+    if (sort === "asc" || sort === "ascending") {
+      works = works.reverse();
+    }
+  }
+
+  // Perform the slice for pagination.
+
+  works = works.slice(
+    page ? (parseInt(page) - 1) * POSTS_PER_PAGE : 0.0,
+    page ? parseInt(page) * POSTS_PER_PAGE : POSTS_PER_PAGE,
   );
 
   const mainContent = works.length > 0 ? (
@@ -87,15 +188,15 @@ const Home: NextPage = () => {
         <div className={"pt-4"} />
 
         <Header>
-          Welcome!
+          Empty!
         </Header>
 
         <Paragraph>
-          Nobody has submitted anything yet.
+          Nobody has submitted anything matching that query.
         </Paragraph>
 
         <Paragraph>
-          Perhaps you&apos;ll be the first?
+          Perhaps you will be the first?
         </Paragraph>
       </div>
     </div>
