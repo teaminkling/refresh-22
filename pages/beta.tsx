@@ -41,11 +41,11 @@ const BetaInfo = () => {
       </Paragraph>
 
       <UnorderedList>
+        <ListItem>Fix the meta/social sharing preview for individual works.</ListItem>
         <ListItem>Display artists correctly and consolidate them daily.</ListItem>
         <ListItem>A nicer drag-and-drop interface for editing socials.</ListItem>
         <ListItem>Display individual work galleries by maintaining aspect ratio.</ListItem>
         <ListItem>Make the weeks page more usable.</ListItem>
-        <ListItem>Stop flashing a 404 before loading a page.</ListItem>
       </UnorderedList>
 
       <Paragraph>
