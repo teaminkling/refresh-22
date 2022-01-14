@@ -1,9 +1,12 @@
 import type {NextPage} from "next";
+import {NextSeo} from "next-seo";
+import Head from "next/head";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import GalleryItem from "../components/gallery-item";
 import StaticPage, {Header, Paragraph} from "../components/typography";
+import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 import Work from "../data/core/Work";
 import {shuffle} from "../data/utils/data-structures";
 import {ArtistsState, RootState, WorksState} from "../store/state";
@@ -100,6 +103,28 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Gallery - Design Refresh</title>
+      </Head>
+
+      <NextSeo
+        title={"Gallery - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
       {isLoading ? <StaticPage><Header>Loading...</Header></StaticPage> : mainContent}
     </>
   );

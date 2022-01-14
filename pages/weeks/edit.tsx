@@ -1,12 +1,14 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import Joi, {ValidationError, ValidationResult} from "joi";
+import {NextSeo} from "next-seo";
+import Head from "next/head";
 import {createRef, SyntheticEvent, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {ResponseMessages} from "../../components/errors";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, SubHeader} from "../../components/typography";
-import {ACTIVE_YEAR} from "../../data/constants/setup";
+import {ACTIVE_YEAR, DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Week, {WEEK_SCHEMA} from "../../data/core/Week";
 import {RootState, WeeksState} from "../../store/state";
 import {getIsEditor} from "../../utils/auth";
@@ -283,7 +285,33 @@ const Edit = (): JSX.Element => {
     response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
-  return response;
+  return (
+    <>
+      <Head>
+        <title>Edit Weeks - Design Refresh</title>
+      </Head>
+
+      <NextSeo
+        title={"Edit Weeks - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/weeks/edit`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
+      {response}
+    </>
+  );
 };
 
 export default Edit;

@@ -2,6 +2,7 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faCheck, faLockOpen, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
+import {NextSeo} from "next-seo";
 import Head from "next/head";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -14,6 +15,7 @@ import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import SquareLink from "../../components/square-link";
 import StaticPage, {Header} from "../../components/typography";
+import {DEFAULT_IMAGE} from "../../data/constants/setup";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
@@ -280,7 +282,38 @@ const WorksById = () => {
     response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
-  return response;
+  // Reduce the meta description if it's too long.
+
+  return (
+    <>
+      <Head>
+        <title>Work: {work.title} - Design Refresh</title>
+      </Head>
+      <NextSeo
+        title={`Work: ${work.title} - Design Refresh`}
+        description={
+          (
+            `"${work.title}" by ${artistName}: ${work.description.slice(0, 155)}`
+          )
+        }
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/${work.id}`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: work.thumbnailUrl || DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
+      {response}
+    </>
+  );
 };
 
 export default WorksById;

@@ -1,10 +1,13 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import type {NextPage} from "next";
+import {NextSeo} from "next-seo";
+import Head from "next/head";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import GalleryItem from "../../components/gallery-item";
 import StaticPage, {Header} from "../../components/typography";
+import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Work from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
 import {getIsEditor} from "../../utils/auth";
@@ -85,6 +88,28 @@ const Moderate: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Moderate Works - Design Refresh</title>
+      </Head>
+
+      <NextSeo
+        title={"Moderate Works - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/moderate`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
       {response}
     </>
   );

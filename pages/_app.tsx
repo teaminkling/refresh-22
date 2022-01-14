@@ -5,13 +5,12 @@
 import {Auth0Provider} from "@auth0/auth0-react";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import type {AppProps} from "next/app";
-import Head from "next/head";
 import {FC, useEffect} from "react";
 import {useStore} from "react-redux";
 import {Store} from "redux";
 import {persistStore} from "redux-persist";
 import {PersistGate} from "redux-persist/integration/react";
-import Sidebar from "../components/sidebar";
+import Layout from "../components/layout";
 import {wrapper} from "../store/store";
 import "../styles/globals.css";
 
@@ -62,35 +61,26 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
     console.log("Read about Self-XSS here: https://en.wikipedia.org/wiki/Self-XSS");
   }, []);
 
+  // noinspection HtmlRequiredTitleElement
   return (
     <>
-      <Head>
-        {/* eslint-disable-next-line @next/next/no-title-in-document-head */}
-        <title>
-          Design Refresh
-        </title>
-
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
       <Auth0Provider
         domain={NEXT_PUBLIC_AUTH0_DOMAIN}
         clientId={NEXT_PUBLIC_AUTH0_CLIENT_ID}
         redirectUri={NEXT_PUBLIC_AUTH0_REDIRECT_URI}
         audience={NEXT_PUBLIC_AUTH0_AUDIENCE}
       >
-        <div className={"md:flex md:flex-row"}>
-          {/* Create a sticky sidebar: */}
+        <PersistGate loading={null} persistor={persistStore(store)}>
+          {
+            // This is needed for proper pre-rendering of head tags.
 
-          <aside className={"md:h-screen sticky top-0"}>
-            <Sidebar />
-          </aside>
-
-          <div className={"flex-col w-full"}>
-            <PersistGate loading={null} persistor={persistStore(store)}>
-              <Component {...pageProps} />
-            </PersistGate>
-          </div>
-        </div>
+            () => (
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            )
+          }
+        </PersistGate>
       </Auth0Provider>
     </>
   );

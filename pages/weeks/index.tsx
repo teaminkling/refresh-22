@@ -6,6 +6,7 @@ import {
   faLockOpen
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {NextSeo} from "next-seo";
 import Head from "next/head";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -13,6 +14,7 @@ import {Dispatch} from "redux";
 import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
+import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
 import {RootState, WeeksState} from "../../store/state";
 import {getIsEditor} from "../../utils/auth";
@@ -154,6 +156,28 @@ const Weeks = () => {
   }
 
   return <>
+    <Head>
+      <title>Weeks - Design Refresh</title>
+    </Head>
+
+    <NextSeo
+      title={"Weeks - Design Refresh"}
+      description={DEFAULT_DESCRIPTION}
+      canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/weeks`}
+      openGraph={{
+        type: "website",
+        site_name: "Design Refresh",
+        images: [
+          {
+            url: DEFAULT_IMAGE,
+          }
+        ],
+      }}
+      twitter={{
+        cardType: "summary_large_image",
+      }}
+    />
+
     {response}
   </>;
 };

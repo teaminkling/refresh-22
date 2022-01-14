@@ -71,3 +71,18 @@ export const MAXIMUM_CONTENT_LENGTH = 32 * 1024 * 1024;
  * The maximum amount of files per post.
  */
 export const MAXIMUM_FILES_PER_WORK = 8;
+
+/**
+ * The default image used in social/meta shares.
+ */
+export const DEFAULT_IMAGE: string = typeof process !== "undefined" ? (
+  (process.env["NEXT_PUBLIC_BASE_URI"] || "") + "/logo/temp_social.png"
+) : "";
+
+/**
+ * The default description used in social/meta shares.
+ */
+export const DEFAULT_DESCRIPTION = (
+  "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
+  "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
+);

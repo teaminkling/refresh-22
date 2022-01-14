@@ -1,5 +1,7 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {ValidationError, ValidationResult} from "joi";
+import {NextSeo} from "next-seo";
+import Head from "next/head";
 import {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AnyAction} from "redux";
@@ -14,6 +16,7 @@ import StaticPage, {
   SubHeader,
   UnorderedList
 } from "../../components/typography";
+import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Artist, {ARTIST_SCHEMA} from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
 import {fetchArtists, putArtist} from "../../utils/connectors";
@@ -231,6 +234,28 @@ const Edit = (): JSX.Element => {
 
   return (
     <StaticPage>
+      <Head>
+        <title>Edit Artist - Design Refresh</title>
+      </Head>
+
+      <NextSeo
+        title={"Edit Artist - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/artists/edit`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
       {view}
 
       {messagesView}

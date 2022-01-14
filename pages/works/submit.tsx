@@ -5,6 +5,7 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faAngleDown, faAngleRight, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Joi, {ValidationError, ValidationResult} from "joi";
+import {NextSeo} from "next-seo";
 import Head from "next/head";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -18,7 +19,7 @@ import FileItem, {FrontendFileItem} from "../../components/file-item";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, SubHeader} from "../../components/typography";
-import {ACTIVE_YEAR} from "../../data/constants/setup";
+import {ACTIVE_YEAR, DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
 import Work, {UrlItem, WORK_SCHEMA} from "../../data/core/Work";
 import {ArtistsState, RootState, WeeksState, WorksState} from "../../store/state";
@@ -522,7 +523,33 @@ const SubmissionForm = () => {
     response = <StaticPage><Header>Loading...</Header></StaticPage>;
   }
 
-  return response;
+  return (
+    <>
+      <Head>
+        <title>Submit Work - Design Refresh</title>
+      </Head>
+
+      <NextSeo
+        title={"Submit Work - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/submit`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
+      {response}
+    </>
+  );
 };
 
 export default SubmissionForm;

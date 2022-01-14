@@ -1,6 +1,8 @@
 import type {NextPage} from "next";
+import {NextSeo} from "next-seo";
 import Head from "next/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
+import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 
 /**
  * @returns {JSX.Element} the element
@@ -12,6 +14,25 @@ const About: NextPage = () => {
       <Head>
         <title>About - Design Refresh</title>
       </Head>
+
+      <NextSeo
+        title={"About - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/about`}
+        openGraph={{
+          type: "website",
+          site_name: "Design Refresh",
+          images: [
+            {
+              url: DEFAULT_IMAGE,
+            }
+          ],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+
       <StaticPage>
         <img
           src={"/art/about.png"}
