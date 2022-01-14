@@ -51,6 +51,7 @@ const Home: NextPage = () => {
       fetchWeeks(dispatch, weeksData).then(
         () => {
           const latestWeek = Math.max(
+            2, // FIXME: Fix hardcoding.
             ...Object.values(
               weeksData.weeks
             ).filter(
