@@ -2,6 +2,7 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faCheck, faLockOpen, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
+import {GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import {NextSeo} from "next-seo";
 import Head from "next/head";
 import Link from "next/link";
@@ -24,7 +25,28 @@ import {approveWorks, deleteWorks, fetchArtists, fetchWorkById} from "../../util
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
 
-const WorksById = () => {
+/**
+ * Retriever for a work for meta rendering.
+ *
+ * @param {GetServerSidePropsContext} context the context with the query string
+ * @returns {Promise<GetServerSidePropsResult>} the props
+ */
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<{ work: Work | undefined }>> => {
+  const _rawId: string | string[] | undefined = context.query.id || "unknown";
+  const id: string = typeof _rawId === "object" ? _rawId[0] : _rawId;
+
+  const work: Work | undefined = await fetchWorkById(id);
+
+  return {
+    props: {
+      work: work,
+    }
+  };
+};
+
+const WorksById = (props: { work: Work | undefined }) => {
   const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
   const isEditor = getIsEditor(user);
@@ -50,7 +72,6 @@ const WorksById = () => {
   useEffect(
     () => {
       if (id !== "unknown" && id !== "noop") {
-        fetchWorkById(dispatch, worksData, id);
         fetchArtists(dispatch, artistsData);
       }
 
@@ -59,7 +80,7 @@ const WorksById = () => {
     [id]
   );
 
-  const work: Work | undefined = worksData.works[id];
+  const work: Work | undefined = props.work;
   const artist: Artist | undefined = (
     work?.artistId ? artistsData.artists[work.artistId] : undefined
   );
@@ -80,6 +101,7 @@ const WorksById = () => {
           <meta property="og:image" content={work.thumbnailUrl} />
           <meta name="twitter:image" content={work.thumbnailUrl} />
         </Head>
+
         <div className={"pt-6 px-4 py-4 flex-col 2xl:flex 2xl:flex-row"}>
           <div className={"px-2 py-2 md:px-3 md:py-5"}>
             <Fancybox>
@@ -287,22 +309,22 @@ const WorksById = () => {
   return (
     <>
       <Head>
-        <title>Work: {work.title} - Design Refresh</title>
+        <title>{work?.title} - Design Refresh</title>
       </Head>
       <NextSeo
-        title={`Work: ${work.title} - Design Refresh`}
+        title={`${work?.title} - Design Refresh`}
         description={
           (
-            `"${work.title}" by ${artistName}: ${work.description.slice(0, 155)}`
+            `"${work?.title || "Untitled"}" by ${artistName}... ${work?.description.slice(0, 155)}`
           )
         }
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/${work.id}`}
+        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/${work?.id}`}
         openGraph={{
           type: "website",
           site_name: "Design Refresh",
           images: [
             {
-              url: work.thumbnailUrl || DEFAULT_IMAGE,
+              url: work?.thumbnailUrl || DEFAULT_IMAGE,
             }
           ],
         }}
