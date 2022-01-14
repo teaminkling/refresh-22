@@ -39,6 +39,9 @@ export const getServerSideProps: GetServerSideProps = async (
 
   const work: Work | undefined = await fetchWorkById(id);
 
+  // FIXME: It's important that the artist's name is fetched here. We are just assuming that nobody
+  //        will change their name for now.
+
   return {
     props: {
       work: work,
@@ -46,11 +49,8 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
-/**
- * @param {{work: Work | undefined}} props the props
- * @returns {JSX.Element} the element
- * @constructor
- */
+// TODO: Change to using defined props.
+
 const WorksById = (props: { work: Work | undefined }) => {
   const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
