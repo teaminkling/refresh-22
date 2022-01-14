@@ -44,22 +44,25 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(
     () => {
-      fetchWeeks(dispatch, weeksData);
-      fetchArtists(dispatch, artistsData);
+      fetchArtists(dispatch, artistsData).then();
 
       // Find the current week.
 
-      const latestWeek = Math.max(
-        ...Object.values(
-          weeksData.weeks
-        ).filter(
-          week => week.isPublished
-        ).map(
-          week => week.week
-        )
-      );
+      fetchWeeks(dispatch, weeksData).then(
+        () => {
+          const latestWeek = Math.max(
+            ...Object.values(
+              weeksData.weeks
+            ).filter(
+              week => week.isPublished
+            ).map(
+              week => week.week
+            )
+          );
 
-      fetchWorksByWeek(dispatch, worksData, latestWeek);
+          fetchWorksByWeek(dispatch, worksData, latestWeek).then();
+        }
+      );
 
       setIsLoading(false);
     },

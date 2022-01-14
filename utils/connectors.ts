@@ -25,7 +25,7 @@ import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
  * @param {string | undefined} token the token if required
  * @param {boolean} force whether to force a backend refresh
  */
-const fetchGeneric = <T, R>(
+const fetchGeneric = async <T, R>(
   endpoint: string,
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   action: (data: R) => (dispatch: Dispatch) => void,
@@ -57,7 +57,7 @@ const fetchGeneric = <T, R>(
       headers["Authorization"] = token;
     }
 
-    fetch(
+    await fetch(
       `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}${endpoint}`,
       {headers: headers},
     ).then(
@@ -74,13 +74,13 @@ const fetchGeneric = <T, R>(
   }
 };
 
-export const fetchArtists = (
+export const fetchArtists = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   artistsData: ArtistsState,
   token?: string,
   force?: boolean,
-): void => {
-  fetchGeneric<ArtistsState, Record<string, Artist>>(
+) => {
+  await fetchGeneric<ArtistsState, Record<string, Artist>>(
     "/api/artists",
     dispatch,
     addArtists,
@@ -91,13 +91,13 @@ export const fetchArtists = (
   );
 };
 
-export const fetchWeeks = (
+export const fetchWeeks = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   weeksData: WeeksState,
   token?: string,
   force?: boolean,
-): void => {
-  fetchGeneric<WeeksState, Record<string, Week>>(
+) => {
+  await fetchGeneric<WeeksState, Record<string, Week>>(
     "/api/weeks",
     dispatch,
     addWeeks,
@@ -120,14 +120,14 @@ export const fetchWeeks = (
  * @param {string | undefined} token the token
  * @param {boolean | undefined} force whether to force a retrieval
  */
-export const fetchWorks = (
+export const fetchWorks = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   worksData: WorksState,
   query?: string,
   token?: string,
   force?: boolean,
-): void => {
-  fetchGeneric<WorksState, Record<string, Work>>(
+) => {
+  await fetchGeneric<WorksState, Record<string, Work>>(
     `/api/works${query}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.SEARCH),
@@ -138,13 +138,13 @@ export const fetchWorks = (
   );
 };
 
-export const fetchWorkById = (
+export const fetchWorkById = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   worksData: WorksState,
   id: string,
   token?: string,
-): void => {
-  fetchGeneric<WorksState, Record<string, Work>>(
+) => {
+  await fetchGeneric<WorksState, Record<string, Work>>(
     `/api/work?id=${id}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.DIRECT),
@@ -155,14 +155,14 @@ export const fetchWorkById = (
   );
 };
 
-export const fetchWorksByWeek = (
+export const fetchWorksByWeek = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   worksData: WorksState,
   week: number,
   token?: string,
   force?: boolean,
-): void => {
-  fetchGeneric<WorksState, Record<string, Work>>(
+) => {
+  await fetchGeneric<WorksState, Record<string, Work>>(
     `/api/works?week=${week}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.BY_WEEK, week),
@@ -173,14 +173,14 @@ export const fetchWorksByWeek = (
   );
 };
 
-export const fetchWorksByArtist = (
+export const fetchWorksByArtist = async (
   dispatch: ThunkDispatch<RootState, never, AnyAction>,
   worksData: WorksState,
   artist: string,
   token?: string,
   force?: boolean,
-): void => {
-  fetchGeneric<WorksState, Record<string, Work>>(
+) => {
+  await fetchGeneric<WorksState, Record<string, Work>>(
     `/api/works?artist=${artist}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.BY_ARTIST, artist),
