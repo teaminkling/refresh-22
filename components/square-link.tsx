@@ -25,7 +25,9 @@ const SquareLink = (props: SquareLinkProps) => {
     <span>
       <a
         href={props.location}
-        className={"hover:bg-gray-100 focus:bg-gray-200 p-3 m-1"}
+        className={
+          "hover:bg-gray-100 focus:bg-gray-200 p-3 m-1 hover:text-black focus:text-black"
+        }
         target={"_blank"}
         rel="noreferrer"
       >

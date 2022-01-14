@@ -65,6 +65,8 @@ const Weeks = () => {
           </h3>
 
           <Markdown markdown={week.information} />
+
+          <InterfaceLink location={`/?week=${week.week}`} nextLink title={"Filter by Week"} />
         </div>
       );
 

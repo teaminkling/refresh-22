@@ -1,6 +1,7 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faAngleDoubleLeft, faCheck} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import moment from "moment";
 import Link from "next/link";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
@@ -149,8 +150,12 @@ const GalleryItem = (props: ItemProps) => {
               </p> : <></>
             }
 
-            <p className={"px-4  text-sm"}>
+            <p className={"px-4 text-sm"}>
               by {props.artist}
+            </p>
+
+            <p className={"px-4 text-sm text-gray-400"}>
+              {moment(props.submittedTimestamp).format("LL").toString()}
             </p>
 
             <p className={"pt-8 px-4 hidden xl:block text-sm"}>

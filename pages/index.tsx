@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import GalleryItem from "../components/gallery-item";
+import Omnitool from "../components/omnitool";
 import StaticPage, {Header, Paragraph} from "../components/typography";
 import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 import Work from "../data/core/Work";
@@ -109,11 +110,9 @@ const Home: NextPage = () => {
       const matchesQuery = search ? JSON.stringify(
         work,
       ).replaceAll(
-        /\s/g, ""
+        /\s/g, "",
       ).toLowerCase().includes(
-        search.toLowerCase().replaceAll(
-          /\s/g, ""
-        )
+        search.toLowerCase().replaceAll(/\s/g, "")
       ) : true;
 
       return matchesArtist && matchesWeek && matchesQuery;
@@ -122,7 +121,7 @@ const Home: NextPage = () => {
 
   // Shuffling isn't really sorting, but we do that here if required.
 
-  if (sort === "shuffle") {
+  if (sort === "random") {
     works = shuffle(works);
   } else {
     // Default to descending sort.
@@ -136,7 +135,7 @@ const Home: NextPage = () => {
       }
     );
 
-    if (sort === "asc" || sort === "ascending") {
+    if (sort === "ascending") {
       works = works.reverse();
     }
   }
@@ -227,6 +226,8 @@ const Home: NextPage = () => {
       />
 
       {isLoading ? <StaticPage><Header>Loading...</Header></StaticPage> : mainContent}
+
+      <Omnitool sort={sort} artist={artist} week={week} page={page} search={search} />
     </>
   );
 };
