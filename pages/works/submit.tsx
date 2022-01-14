@@ -72,7 +72,7 @@ const SubmissionForm = () => {
     user,
     isLoading,
     isAuthenticated,
-    getAccessTokenSilently
+    getAccessTokenSilently,
   }: Auth0ContextInterface = useAuth0();
 
   const userId: string | undefined = getUserId(user);
@@ -82,17 +82,9 @@ const SubmissionForm = () => {
 
   const dispatch: Dispatch = useDispatch();
 
-  const artistsData: ArtistsState = useSelector(
-    (state: RootState) => state.artistsData,
-  );
-
-  const weeksData: WeeksState = useSelector(
-    (state: RootState) => state.weeksData,
-  );
-
-  const worksData: WorksState = useSelector(
-    (state: RootState) => state.worksData,
-  );
+  const artistsData: ArtistsState = useSelector((state: RootState) => state.artistsData);
+  const weeksData: WeeksState = useSelector((state: RootState) => state.weeksData);
+  const worksData: WorksState = useSelector((state: RootState) => state.worksData);
 
   // Uploading a thumbnail is unnecessary unless the user deliberately wants to use one.
 

@@ -5,6 +5,7 @@
 import {Auth0Provider} from "@auth0/auth0-react";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import type {AppProps} from "next/app";
+import Head from "next/head";
 import {FC, useEffect} from "react";
 import {useStore} from "react-redux";
 import {Store} from "redux";
@@ -57,13 +58,17 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
     console.log("%cDon't paste anything here.", "color: red; font-size: 32px");
 
     console.log("...except if you really know what you're doing.");
-    console.log("This console can allow would-be attackers from taking control of your account.");
+    console.log("This console can allow would-be attackers to pretend to be you.");
     console.log("Read about Self-XSS here: https://en.wikipedia.org/wiki/Self-XSS");
   }, []);
 
   // noinspection HtmlRequiredTitleElement
   return (
     <>
+      <Head>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" key={"viewport"} />
+      </Head>
+
       <Auth0Provider
         domain={NEXT_PUBLIC_AUTH0_DOMAIN}
         clientId={NEXT_PUBLIC_AUTH0_CLIENT_ID}
