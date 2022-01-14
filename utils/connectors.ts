@@ -138,36 +138,21 @@ export const fetchWorks = (
   );
 };
 
-/**
- * Fetch a work by ID directly without caching it or attempting to retrieve it from cache.
- *
- * @param {string} id the ID of the work
- * @param {string} token the user token
- * @returns {Promise<Work | undefined>} the work or, on 404, `undefined`
- */
-export const fetchWorkById = async (
-  id: string, token?: string,
-): Promise<Work | undefined> => {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    headers["Authorization"] = token;
-  }
-
-  const response: Response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/work/${id}`,
-    {headers: headers},
+export const fetchWorkById = (
+  dispatch: ThunkDispatch<RootState, never, AnyAction>,
+  worksData: WorksState,
+  id: string,
+  token?: string,
+): void => {
+  fetchGeneric<WorksState, Record<string, Work>>(
+    `/api/work?id=${id}`,
+    dispatch,
+    (works: Record<string, Work>) => addWorks(works, WorkSource.DIRECT),
+    worksData,
+    null,
+    token,
+    true,
   );
-
-  if (response.ok) {
-    return response.json();
-  } else if (response.status === 404) {
-    return undefined;
-  }
-
-  throw await response.text();
 };
 
 export const fetchWorksByWeek = (

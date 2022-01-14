@@ -2,7 +2,6 @@ import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faCheck, faLockOpen, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
-import {GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import {NextSeo} from "next-seo";
 import Head from "next/head";
 import Link from "next/link";
@@ -16,7 +15,7 @@ import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import SquareLink from "../../components/square-link";
 import StaticPage, {Header} from "../../components/typography";
-import {DEFAULT_IMAGE} from "../../data/constants/setup";
+import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
@@ -25,33 +24,7 @@ import {approveWorks, deleteWorks, fetchArtists, fetchWorkById} from "../../util
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
 
-/**
- * Retriever for a work for meta rendering.
- *
- * @param {GetServerSidePropsContext} context the context with the query string
- * @returns {Promise<GetServerSidePropsResult>} the props
- */
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<{ work: Work | undefined }>> => {
-  const _rawId: string | string[] | undefined = context.query.id || "unknown";
-  const id: string = typeof _rawId === "object" ? _rawId[0] : _rawId;
-
-  const work: Work | undefined = await fetchWorkById(id);
-
-  // FIXME: It's important that the artist's name is fetched here. We are just assuming that nobody
-  //        will change their name for now.
-
-  return {
-    props: {
-      work: work,
-    }
-  };
-};
-
-// TODO: Change to using defined props.
-
-const WorksById = (props: { work: Work | undefined }) => {
+const WorksById = () => {
   const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
   const isEditor = getIsEditor(user);
@@ -77,6 +50,7 @@ const WorksById = (props: { work: Work | undefined }) => {
   useEffect(
     () => {
       if (id !== "unknown" && id !== "noop") {
+        fetchWorkById(dispatch, worksData, id);
         fetchArtists(dispatch, artistsData);
       }
 
@@ -85,7 +59,7 @@ const WorksById = (props: { work: Work | undefined }) => {
     [id]
   );
 
-  const work: Work | undefined = props.work;
+  const work: Work | undefined = worksData.works[id];
   const artist: Artist | undefined = (
     work?.artistId ? artistsData.artists[work.artistId] : undefined
   );
@@ -98,14 +72,29 @@ const WorksById = (props: { work: Work | undefined }) => {
       <>
         <Head>
           <title>{work.title} - Design Refresh</title>
-
-          <meta name="description" content={work.description} />
-          <meta property="og:description" content={work.description} />
-          <meta name="twitter:description" content={work.description} />
-
-          <meta property="og:image" content={work.thumbnailUrl} />
-          <meta name="twitter:image" content={work.thumbnailUrl} />
         </Head>
+
+        <NextSeo
+          title={`Work: ${work.title} - Design Refresh`}
+          description={
+            (
+              `"${work.title}" by ${artistName}: ${work.description.slice(0, 155)}`
+            )
+          }
+          canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/${work.id}`}
+          openGraph={{
+            type: "website",
+            site_name: "Design Refresh",
+            images: [
+              {
+                url: work.thumbnailUrl || DEFAULT_IMAGE,
+              }
+            ],
+          }}
+          twitter={{
+            cardType: "summary_large_image",
+          }}
+        />
 
         <div className={"pt-6 px-4 py-4 flex-col 2xl:flex 2xl:flex-row"}>
           <div className={"px-2 py-2 md:px-3 md:py-5"}>
@@ -311,25 +300,23 @@ const WorksById = (props: { work: Work | undefined }) => {
 
   // Reduce the meta description if it's too long.
 
+  // FIXME: This is clearly wrong. The server must retrieve the work and artist before first render.
+  // FIXME: add the canonical value back.
+
   return (
     <>
       <Head>
-        <title>{work?.title} - Design Refresh</title>
+        <title>Work: {work.title} - Design Refresh</title>
       </Head>
       <NextSeo
-        title={`${work?.title} - Design Refresh`}
-        description={
-          (
-            `"${work?.title || "Untitled"}" by ${artistName}... ${work?.description.slice(0, 155)}`
-          )
-        }
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/works/${work?.id}`}
+        title={"Work - Design Refresh"}
+        description={DEFAULT_DESCRIPTION}
         openGraph={{
           type: "website",
           site_name: "Design Refresh",
           images: [
             {
-              url: work?.thumbnailUrl || DEFAULT_IMAGE,
+              url: DEFAULT_IMAGE,
             }
           ],
         }}
