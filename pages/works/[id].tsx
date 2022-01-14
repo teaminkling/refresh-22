@@ -306,8 +306,9 @@ const WorksById = () => {
   return (
     <>
       <Head>
-        <title>Work: {work.title} - Design Refresh</title>
+        <title>Work - Design Refresh</title>
       </Head>
+
       <NextSeo
         title={"Work - Design Refresh"}
         description={DEFAULT_DESCRIPTION}
