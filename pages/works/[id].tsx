@@ -46,6 +46,11 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
+/**
+ * @param {{work: Work | undefined}} props the props
+ * @returns {JSX.Element} the element
+ * @constructor
+ */
 const WorksById = (props: { work: Work | undefined }) => {
   const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
