@@ -123,7 +123,7 @@ export const postOrEditDiscordWork = async (
         "author": {
           "name": artistName,
           "icon_url": artistIcon,
-          "url": `https://refresh.fiveclawd.com/artists/${artistName}`,
+          "url": `https://refresh.fiveclawd.com/artists/${encodeURIComponent(artistName)}`,
         },
         "footer": {
           "text": work.weekNumbers.map(weekNumber => `Week ${weekNumber}`).join(", "),
