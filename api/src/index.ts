@@ -117,7 +117,6 @@ const worker = {
       allowedHeaders: ["user-agent"],
       allowedSearchParams: /(.*)/,
       environment: env.ENVIRONMENT,
-      debug: env.ENVIRONMENT === "development",
     });
 
     try {
