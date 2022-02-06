@@ -39,23 +39,21 @@ export const postOrEditDiscordWeek = async (
     method = "PATCH";
   } else {
     url = `${webhookUrl}?wait=true`;
-    method = "post";
+    method = "POST";
   }
 
   const response: Response = await fetch(url, {
     method: method, headers: {"Content-Type": "application/json"}, body: JSON.stringify(content),
   });
 
-  // Send a message if the discord ID is not provided. Can fail. First post write will run twice.
+  // Send a message if the discord ID is not provided. First post write will run twice. This
+  // call is not allowed to fail and will 500 otherwise.
 
-  let discordId: string | null = null;
-  try {
-    discordId = (await response.json<Record<string, string>>())["id"];
-  } catch {
-    console.error("Discord ID was not saved for week number: %s", week.week);
+  if (response.ok) {
+    return (await response.json<Record<string, string>>())["id"];
   }
 
-  return discordId;
+  throw new Error(await response.text());
 };
 
 /**
@@ -142,7 +140,7 @@ export const postOrEditDiscordWork = async (
     method = "PATCH";
   } else {
     url = `${env.WORKS_DISCORD_URL}?wait=true`;
-    method = "post";
+    method = "POST";
   }
 
   const response: Response = await fetch(url, {

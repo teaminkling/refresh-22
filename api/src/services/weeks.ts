@@ -80,12 +80,15 @@ export const putWeeks = async (
     return createBadRequestResponse(validation.error, env.ALLOWED_ORIGIN);
   }
 
-  // Make the post first to save a write.
+  // Make the post first to save a write. Capture Discord IDs for debugging purposes.
 
+  const updatedDiscordIds: string[] = [];
   for (const week of Object.values(input).filter((_week: Week) => _week.isPublished)) {
     const discordMessageId: string | null = await postOrEditDiscordWeek(
       week, env.WEEKS_DISCORD_URL,
     );
+
+    updatedDiscordIds.push(discordMessageId || "");
     if (discordMessageId) {
       week.discordId = discordMessageId;
 
@@ -97,5 +100,7 @@ export const putWeeks = async (
 
   await env.REFRESH_KV.put(`${WEEKS}/${ACTIVE_YEAR}`, JSON.stringify(input));
 
-  return createJsonResponse("{}", env.ALLOWED_ORIGIN);
+  return createJsonResponse(JSON.stringify({
+    "updatedDiscordIds": updatedDiscordIds,
+  }), env.ALLOWED_ORIGIN);
 };

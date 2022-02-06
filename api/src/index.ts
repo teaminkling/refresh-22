@@ -114,9 +114,6 @@ const worker = {
       dsn: env.SENTRY_DSN,
       context: context,
       request,
-      allowedHeaders: ["user-agent"],
-      allowedSearchParams: /(.*)/,
-      environment: env.ENVIRONMENT,
     });
 
     try {
@@ -162,7 +159,7 @@ const worker = {
       return new Response(JSON.stringify(
         {
           "message": "Internal Server Error",
-          "details": null,
+          "details": error || null,
           "_original": [],
         },
       ), {status: 500});
