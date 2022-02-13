@@ -99,7 +99,6 @@ export const putWeeks = async (
   // Update the weeks directly.
 
   await env.REFRESH_KV.put(`${WEEKS}/${ACTIVE_YEAR}`, JSON.stringify(input));
-
   return createJsonResponse(JSON.stringify({
     "updatedDiscordIds": updatedDiscordIds,
   }), env.ALLOWED_ORIGIN);

@@ -45,7 +45,7 @@ const Weeks = () => {
         (token: string) => fetchWeeks(dispatch, weeksData, token, isEditor)
       );
     } else {
-      fetchWeeks(dispatch, weeksData, undefined, isEditor);
+      fetchWeeks(dispatch, weeksData, undefined, isEditor).then();
     }
 
     setIsApiLoading(false);
