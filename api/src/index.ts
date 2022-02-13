@@ -112,7 +112,7 @@ const worker = {
   ) {
     const sentry = new Toucan({
       dsn: env.SENTRY_DSN,
-      context: context,
+      context,
       request,
     });
 
