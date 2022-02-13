@@ -258,7 +258,17 @@ const Edit = (): JSX.Element => {
               } else {
                 putWeeks(dispatch, weeksData, await getAccessTokenSilently(), weeks).then().catch(
                   (error: Error) => {
-                    errors.push(JSON.parse(error.message));
+                    try {
+                      errors.push(JSON.parse(error.message));
+                    } catch {
+                      // If for some reason we can't parse the JSON, try a fallback method.
+
+                      errors.push(
+                        new ValidationError(
+                          error.message, [], null,
+                        )
+                      );
+                    }
                   }
                 );
               }
