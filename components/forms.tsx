@@ -39,6 +39,11 @@ interface TextInputProps {
   blurCallback?: (event?: SyntheticEvent<HTMLInputElement, unknown>) => void;
 
   /**
+   * A function to callback on change.
+   */
+  changeCallback?: (event?: SyntheticEvent<HTMLInputElement, unknown>) => void;
+
+  /**
    * Whether this item should visually show that it's required.
    */
   isRequired?: boolean;
@@ -77,6 +82,7 @@ export const TextInput = (props: TextInputProps): JSX.Element => {
         }
         defaultValue={props.initialValue}
         onBlur={props.blurCallback}
+        onChange={props.changeCallback}
         required={props.isRequired}
         disabled={props.isDisabled}
       />
@@ -134,6 +140,11 @@ interface TextAreaProps {
   blurCallback?: (event?: SyntheticEvent<HTMLTextAreaElement, unknown>) => void;
 
   /**
+   * A function to callback on change.
+   */
+  changeCallback?: (event?: SyntheticEvent<HTMLTextAreaElement, unknown>) => void;
+
+  /**
    * Whether this textarea is required.
    */
   isRequired?: boolean;
@@ -166,6 +177,7 @@ export const TextareaInput = (props: TextAreaProps): JSX.Element => {
         defaultValue={props.initialValue}
         disabled={props.isDisabled || false}
         onBlur={props.blurCallback}
+        onChange={props.changeCallback}
         required={props.isRequired}
       />
     </div>

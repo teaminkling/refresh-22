@@ -51,6 +51,8 @@ const WeekEditor = (props: WeekEditorProps) => {
 
   /**
    * Export a week and save it in the parent state.
+   *
+   * Calling this method indicates that the information has changed.
    */
   const updateParentState = (): void => {
     if (!themeRef.current) {
@@ -72,6 +74,7 @@ const WeekEditor = (props: WeekEditorProps) => {
       information: descriptionRef.current?.value,
       isPublished: isPublishedRef.current?.checked,
       discordId: props.parentBackendStateWeeks[props.week]?.discordId || "",
+      isUpdating: true,
     };
 
     const newWeeksMap: Record<number, Week> = JSON.parse(
@@ -116,7 +119,7 @@ const WeekEditor = (props: WeekEditorProps) => {
         passedRef={themeRef}
         id={`week-${props.week}-title`}
         label={`Week ${props.week} Theme`}
-        blurCallback={updateParentState}
+        changeCallback={updateParentState}
         initialValue={props.parentBackendStateWeeks[props.week]?.theme || ""}
       />
 
@@ -124,7 +127,7 @@ const WeekEditor = (props: WeekEditorProps) => {
         passedRef={descriptionRef}
         id={`week-${props.week}-description`}
         label={`Week ${props.week} Description`}
-        blurCallback={updateParentState}
+        changeCallback={updateParentState}
         initialValue={props.parentBackendStateWeeks[props.week]?.information || ""}
       />
 
@@ -161,9 +164,7 @@ const Edit = (): JSX.Element => {
   // Handle the weeks cache.
 
   const dispatch = useDispatch();
-  const weeksData: WeeksState = useSelector(
-    (state: RootState) => state.weeksData,
-  );
+  const weeksData: WeeksState = useSelector((state: RootState) => state.weeksData);
 
   // Handle error/success messages.
 
@@ -179,7 +180,7 @@ const Edit = (): JSX.Element => {
         (token: string) => fetchWeeks(dispatch, weeksData, token, isEditor)
       );
     } else {
-      fetchWeeks(dispatch, weeksData, undefined, isEditor);
+      fetchWeeks(dispatch, weeksData, undefined, isEditor).then();
     }
 
     // If things were fetched, set the default state. Otherwise, default to everything empty.
@@ -197,6 +198,7 @@ const Edit = (): JSX.Element => {
           information: "",
           isPublished: false,
           discordId: "",
+          isUpdating: false,
         };
       }
 

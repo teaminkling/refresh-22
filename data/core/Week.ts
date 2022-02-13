@@ -34,6 +34,14 @@ export default interface Week {
    * If present, the Discord post ID for this week's prompt.
    */
   discordId?: string;
+
+  /**
+   * A frontend-set value that indicates if a week needs to be edited.
+   *
+   * Not stored by the backend. The backend just checks this value and if it's `true`, it will
+   * perform the usual API writes and Discord calls.
+   */
+  isUpdating?: boolean;
 }
 
 // Note: I can't find specifications for the length of a snowflake, so we limit it to 64 chars.
@@ -46,5 +54,6 @@ export const WEEK_SCHEMA = Joi.object(
     information: Joi.string().max(16384).allow("").optional(),
     isPublished: Joi.boolean().required(),
     discordId: Joi.string().alphanum().max(64).allow("").optional(),
+    isUpdating: Joi.boolean().optional(),
   },
 );
