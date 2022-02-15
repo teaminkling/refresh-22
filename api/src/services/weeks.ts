@@ -83,9 +83,9 @@ export const putWeeks = async (
   // Make the post first to save a write. Capture Discord IDs for debugging purposes.
 
   const updatedDiscordIds: string[] = [];
-  for (const week of Object.values(input).filter(
-    (_week: Week) => _week.isPublished && _week.isUpdating)
-    ) {
+  for (const week of Object.values(input).filter((_week: Week) => {
+    return _week.isPublished && _week.isUpdating;
+  })) {
     const discordMessageId: string | null = await postOrEditDiscordWeek(
       week, env.WEEKS_DISCORD_URL,
     );

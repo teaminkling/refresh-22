@@ -108,7 +108,7 @@ const handleJwt = async (
  */
 const worker = {
   async fetch(
-    request: Request, env: Environment, context: EventContext<Environment, never, unknown>
+    request: Request, env: Environment, context: EventContext<Environment, never, unknown>,
   ) {
     const sentry = new Toucan({
       dsn: env.SENTRY_DSN,
