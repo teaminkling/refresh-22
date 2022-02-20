@@ -93,9 +93,9 @@ export const putWeeks = async (
     updatedDiscordIds.push(discordMessageId || "");
     if (discordMessageId) {
       week.discordId = discordMessageId;
-
-      input[week.week] = week;
     }
+
+    input[week.week] = week;
   }
 
   // Update the weeks directly.
