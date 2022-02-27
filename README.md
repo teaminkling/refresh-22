@@ -13,6 +13,7 @@ to be free to operate with small enough levels of bandwidth/computing power.
 For the frontend:
 
 ```shell
+# in /
 npm install
 npm run dev
 ```
@@ -20,6 +21,7 @@ npm run dev
 For the backend:
 
 ```shell
+# in /
 npm run build
 wrangler dev --env development
 ```
@@ -34,6 +36,7 @@ For both environments, check you have the following files:
 To build the frontend, set up the deployment through Cloudflare Pages. Alternatively:
 
 ```shell
+# in /
 next build; next generate
 ```
 
@@ -43,7 +46,7 @@ Just make sure you don't do that for local development.
 The backend is more straightforward:
 
 ```shell
-cd api;
+# in /api
 wrangler publish --env production
 ```
 
