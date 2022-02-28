@@ -37,6 +37,15 @@ export const SHOWCASE_DAY = 6;
 export const SHOWCASE_HOUR = 12;
 
 /**
+ * When the showcase date matches these, replace them with the value.
+ */
+export const SHOWCASE_DATE_REPLACERS: Record<string, { day: number; hour: number }> = {
+  "2022-03-05": {
+    day: 5, hour: 22,
+  },
+};
+
+/**
  * The decimal integer colour number for the app's highlight.
  */
 export const APP_COLOR = 8158432;

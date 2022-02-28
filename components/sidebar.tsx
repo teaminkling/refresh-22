@@ -161,6 +161,8 @@ const Sidebar = (): JSX.Element => {
     </>
   );
 
+  const nextEventDate: Date = getDateOfNextEvent();
+
   return (
     <div className={"md:w-80 md:h-screen bg-white"}>
       {
@@ -213,8 +215,11 @@ const Sidebar = (): JSX.Element => {
           <div className={"items-center"} suppressHydrationWarning={true}>
             <InterfaceLink title={getNatureOfNextEvent()} strong />
             <Countdown
-              date={getDateOfNextEvent()} renderer={countdownRenderer}
+              date={nextEventDate} renderer={countdownRenderer}
             />
+            <p className={"text-xs pl-11 text-gray-400"}>
+              {nextEventDate.toLocaleDateString()} {nextEventDate.toLocaleTimeString()}
+            </p>
           </div>
 
           <hr className={"my-5 md:hidden border-black"} />
