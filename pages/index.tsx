@@ -51,7 +51,7 @@ const Home: NextPage = () => {
       fetchWeeks(dispatch, weeksData).then(
         () => {
           const latestWeek = Math.max(
-            2, // FIXME: Fix hardcoding.
+            Math.max(...Object.keys(weeksData.weeks).map(numberString => parseInt(numberString))),
             ...Object.values(
               weeksData.weeks
             ).filter(
@@ -124,8 +124,8 @@ const Home: NextPage = () => {
 
       const matchesArtist = artist ? artistName === artist : true;
       const matchesWeek = week ? work.weekNumbers.map(
-        week => week.toString()).includes(week.toString()
-      ) : true;
+        _week => _week.toString()
+      ).includes(week.toString()) : true;
 
       const matchesQuery = search ? JSON.stringify(
         work,
