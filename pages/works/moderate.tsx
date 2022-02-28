@@ -70,6 +70,7 @@ const Moderate: NextPage = () => {
                 id={work.id}
                 title={work.title}
                 artist={artistName}
+                weeks={work.weekNumbers}
                 medium={work.medium}
                 description={work.description}
                 retinaPreview={work.thumbnailUrl || "/placeholders/submission.png"}
