@@ -6,6 +6,7 @@ import moment from "moment-timezone";
 import {
   PROMPT_RELEASE_DAY,
   PROMPT_RELEASE_HOUR,
+  SHOWCASE_DATE_REPLACERS,
   SHOWCASE_DAY,
   SHOWCASE_HOUR
 } from "../data/constants/setup";
@@ -50,26 +51,42 @@ const getNextDay = (day: number): moment.Moment => {
 export const getDateOfNextEvent = (): Date => {
   const now = moment().tz("Australia/Melbourne");
 
+  // Make sure that we're not using a custom override for the showcase date.
+
   let targetDay = SHOWCASE_DAY;
-  let targetHours = SHOWCASE_HOUR;
+  let targetHour = SHOWCASE_HOUR;
 
   // This assumes that the showcase is always before the prompt release day.
 
   if (now.day() === PROMPT_RELEASE_DAY) {
     if (now.hour() < PROMPT_RELEASE_HOUR) {
       targetDay = PROMPT_RELEASE_DAY;
-      targetHours = PROMPT_RELEASE_HOUR;
+      targetHour = PROMPT_RELEASE_HOUR;
     }
   } else if (now.day() === SHOWCASE_DAY) {
     if (now.hour() >= SHOWCASE_HOUR) {
       targetDay = PROMPT_RELEASE_DAY;
-      targetHours = PROMPT_RELEASE_HOUR;
+      targetHour = PROMPT_RELEASE_HOUR;
     }
   }
 
-  const nextDay: moment.Moment = getNextDay(targetDay);
+  let nextDay: moment.Moment = getNextDay(targetDay);
 
-  nextDay.hours(targetHours);
+  // Normally, we'd be satisfied getting the next day based on the target hours and target day.
+  // However, if we specifically replace out this day with another one using a custom map, we
+  // would change both the target day and the target hours.
+
+  const isoDate = nextDay.toISOString(true).slice(0, 10);
+
+  const replacement: { day: number; hour: number } | undefined = SHOWCASE_DATE_REPLACERS[isoDate];
+  if (replacement) {
+    targetDay = replacement.day;
+    targetHour = replacement.hour;
+
+    nextDay = getNextDay(targetDay);
+  }
+
+  nextDay.hours(targetHour);
   nextDay.minutes(0);
   nextDay.seconds(0);
   nextDay.milliseconds(0);
