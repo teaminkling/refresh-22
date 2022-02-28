@@ -35,6 +35,11 @@ interface ItemProps {
   medium?: string;
 
   /**
+   * The weeks of the work.
+   */
+  weeks: number[];
+
+  /**
    * The description of the piece.
    */
   description: string;
@@ -155,7 +160,9 @@ const GalleryItem = (props: ItemProps) => {
             </p>
 
             <p className={"px-4 text-sm text-gray-400"}>
-              {moment(props.submittedTimestamp).format("LL").toString()}
+              {
+                moment(props.submittedTimestamp).format("LL").toString()
+              } (Week {props.weeks.join(",")})
             </p>
 
             <p className={"pt-8 px-4 hidden xl:block text-sm"}>
