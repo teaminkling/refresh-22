@@ -33,15 +33,19 @@ export const SHOWCASE_DAY = 6;
 
 /**
  * The hour that a showcase happens.
+ *
+ * The timezone is Melbourne time.
  */
 export const SHOWCASE_HOUR = 12;
 
 /**
  * When the showcase date matches these, replace them with the value.
+ *
+ * "5" means "Friday". The timezone is Melbourne time.
  */
 export const SHOWCASE_DATE_REPLACERS: Record<string, { day: number; hour: number }> = {
   "2022-03-05": {
-    day: 5, hour: 22,
+    day: 5, hour: 19,
   },
 };
 
@@ -72,9 +76,9 @@ export const UPLOAD_EXPIRY = 5 * 60;
 /**
  * The bytes limit of any one uploaded file.
  *
- * This is 32 MiB.
+ * This is 16 MiB.
  */
-export const MAXIMUM_CONTENT_LENGTH = 32 * 1024 * 1024;
+export const MAXIMUM_CONTENT_LENGTH = 16 * 1024 * 1024;
 
 /**
  * The maximum amount of files per post.
