@@ -8,7 +8,12 @@ import {ResponseMessages} from "../../components/errors";
 import {TextareaInput, TextInput} from "../../components/forms";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, SubHeader} from "../../components/typography";
-import {ACTIVE_YEAR, DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
+import {
+  ACTIVE_YEAR,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_IMAGE,
+  LAST_ACTIVE_WEEK
+} from "../../data/constants/setup";
 import Week, {WEEK_SCHEMA} from "../../data/core/Week";
 import {RootState, WeeksState} from "../../store/state";
 import {getIsEditor} from "../../utils/auth";
@@ -202,25 +207,26 @@ const Edit = (): JSX.Element => {
   useEffect(() => {
     // If anything was fetched, set the default state. Otherwise, default to everything empty.
 
-    if (Object.values(weeksData.weeks).length > 0) {
-      setWeeks(weeksData.weeks);
-    } else {
-      const defaultState: Record<number, Week> = {};
-
-      for (let i = 1; i <= 16; i++) {
-        defaultState[i] = {
-          year: ACTIVE_YEAR,
-          week: i,
-          theme: "",
-          information: "",
-          isPublished: false,
-          discordId: "",
-          isUpdating: false,
-        };
-      }
-
-      setWeeks(defaultState);
+    const tempState: Record<number, Week> = {};
+    for (let i = 1; i <= LAST_ACTIVE_WEEK; i++) {
+      tempState[i] = {
+        year: ACTIVE_YEAR,
+        week: i,
+        theme: "",
+        information: "",
+        isPublished: false,
+        discordId: "",
+        isUpdating: false,
+      };
     }
+
+    if (Object.values(weeksData.weeks).length > 0) {
+      Object.values(weeksData.weeks).forEach((week: Week) => {
+        tempState[week.week] = week;
+      });
+    }
+
+    setWeeks(tempState);
   }, [Object.values(weeksData.weeks).length]);
 
   let response = <NotFound />;
