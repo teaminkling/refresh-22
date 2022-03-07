@@ -188,7 +188,6 @@ const Edit = (): JSX.Element => {
     // Start by fetching the week. This is mandatory every time for an admin user.
 
     let token: string | undefined = undefined;
-
     if (user) {
       getAccessTokenSilently().then(
         (_token: string) => {
@@ -197,32 +196,32 @@ const Edit = (): JSX.Element => {
       );
     }
 
-    fetchWeeks(dispatch, weeksData, token, isEditor).then(
-      () => {
-        // If anything was fetched, set the default state. Otherwise, default to everything empty.
-
-        if (Object.values(weeksData.weeks).length > 0) {
-          setWeeks(weeksData.weeks);
-        } else {
-          const defaultState: Record<number, Week> = {};
-
-          for (let i = 1; i <= 16; i++) {
-            defaultState[i] = {
-              year: ACTIVE_YEAR,
-              week: i,
-              theme: "",
-              information: "",
-              isPublished: false,
-              discordId: "",
-              isUpdating: false,
-            };
-          }
-
-          setWeeks(defaultState);
-        }
-      }
-    );
+    fetchWeeks(dispatch, weeksData, token, isEditor).then();
   }, []);
+
+  useEffect(() => {
+    // If anything was fetched, set the default state. Otherwise, default to everything empty.
+
+    if (Object.values(weeksData.weeks).length > 0) {
+      setWeeks(weeksData.weeks);
+    } else {
+      const defaultState: Record<number, Week> = {};
+
+      for (let i = 1; i <= 16; i++) {
+        defaultState[i] = {
+          year: ACTIVE_YEAR,
+          week: i,
+          theme: "",
+          information: "",
+          isPublished: false,
+          discordId: "",
+          isUpdating: false,
+        };
+      }
+
+      setWeeks(defaultState);
+    }
+  }, [Object.values(weeksData.weeks).length]);
 
   let response = <NotFound />;
   if (isEditor) {
