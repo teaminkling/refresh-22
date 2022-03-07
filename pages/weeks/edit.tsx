@@ -108,6 +108,26 @@ const WeekEditor = (props: WeekEditorProps) => {
   useEffect(() => {
     if (isPublishedRef.current) {
       highlightPublished(isPublishedRef.current);
+
+      // Set the initial data unit so we don't lose it in case we change nothing.
+
+      const week: Week = {
+        year: ACTIVE_YEAR,
+        week: props.week,
+        theme: props.parentBackendStateWeeks[props.week]?.theme || "",
+        information: props.parentBackendStateWeeks[props.week]?.information || "",
+        isPublished: isPublishedRef.current?.checked,
+        discordId: props.parentBackendStateWeeks[props.week]?.discordId || "",
+        isUpdating: false,
+      };
+
+      const newWeeksMap: Record<number, Week> = JSON.parse(
+        JSON.stringify(props.parentStateWeeks)
+      );
+
+      newWeeksMap[props.week] = week;
+
+      props.parentSetter(newWeeksMap);
     }
   }, [isPublishedRef.current]);
 
