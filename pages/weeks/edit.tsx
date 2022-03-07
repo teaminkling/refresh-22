@@ -192,29 +192,29 @@ const Edit = (): JSX.Element => {
         (token: string) => fetchWeeks(dispatch, weeksData, token, isEditor)
       );
     } else {
-      fetchWeeks(dispatch, weeksData, undefined, isEditor).then();
-    }
+      fetchWeeks(dispatch, weeksData, undefined, isEditor).then(() => {
+        // If things were fetched, set the default state. Otherwise, default to everything empty.
 
-    // If things were fetched, set the default state. Otherwise, default to everything empty.
+        if (Object.values(weeksData.weeks).length > 0) {
+          setWeeks(weeksData.weeks);
+        } else {
+          const defaultState: Record<number, Week> = {};
 
-    if (Object.values(weeksData.weeks).length > 0) {
-      setWeeks(weeksData.weeks);
-    } else {
-      const defaultState: Record<number, Week> = {};
+          for (let i = 1; i <= 16; i++) {
+            defaultState[i] = {
+              year: ACTIVE_YEAR,
+              week: i,
+              theme: "",
+              information: "",
+              isPublished: false,
+              discordId: "",
+              isUpdating: false,
+            };
+          }
 
-      for (let i = 1; i <= 16; i++) {
-        defaultState[i] = {
-          year: ACTIVE_YEAR,
-          week: i,
-          theme: "",
-          information: "",
-          isPublished: false,
-          discordId: "",
-          isUpdating: false,
-        };
-      }
-
-      setWeeks(defaultState);
+          setWeeks(defaultState);
+        }
+      });
     }
   }, []);
 
