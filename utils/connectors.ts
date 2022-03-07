@@ -57,20 +57,17 @@ const fetchGeneric = async <T, R>(
       headers["Authorization"] = token;
     }
 
-    await fetch(
+    const response: Response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}${endpoint}`,
       {headers: headers},
-    ).then(
-      (response: Response) => response.json().then(
-        (_data: R) => {
-          if (response.ok) {
-            dispatch(action(_data));
-          } else {
-            throw _data;
-          }
-        }
-      )
     );
+
+    const json: R = await response.json();
+    if (response.ok) {
+      return dispatch(action(json));
+    }
+
+    throw json;
   }
 };
 
@@ -80,7 +77,7 @@ export const fetchArtists = async (
   token?: string,
   force?: boolean,
 ) => {
-  await fetchGeneric<ArtistsState, Record<string, Artist>>(
+  return fetchGeneric<ArtistsState, Record<string, Artist>>(
     "/api/artists",
     dispatch,
     addArtists,
@@ -97,7 +94,7 @@ export const fetchWeeks = async (
   token?: string,
   force?: boolean,
 ) => {
-  await fetchGeneric<WeeksState, Record<string, Week>>(
+  return fetchGeneric<WeeksState, Record<string, Week>>(
     "/api/weeks",
     dispatch,
     addWeeks,
@@ -127,7 +124,7 @@ export const fetchWorks = async (
   token?: string,
   force?: boolean,
 ) => {
-  await fetchGeneric<WorksState, Record<string, Work>>(
+  return fetchGeneric<WorksState, Record<string, Work>>(
     `/api/works${query}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.SEARCH),
@@ -144,7 +141,7 @@ export const fetchWorkById = async (
   id: string,
   token?: string,
 ) => {
-  await fetchGeneric<WorksState, Record<string, Work>>(
+  return fetchGeneric<WorksState, Record<string, Work>>(
     `/api/work?id=${id}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.DIRECT),
@@ -162,7 +159,7 @@ export const fetchWorksByWeek = async (
   token?: string,
   force?: boolean,
 ) => {
-  await fetchGeneric<WorksState, Record<string, Work>>(
+  return fetchGeneric<WorksState, Record<string, Work>>(
     `/api/works?week=${week}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.BY_WEEK, week),
@@ -180,7 +177,7 @@ export const fetchWorksByArtist = async (
   token?: string,
   force?: boolean,
 ) => {
-  await fetchGeneric<WorksState, Record<string, Work>>(
+  return fetchGeneric<WorksState, Record<string, Work>>(
     `/api/works?artist=${artist}`,
     dispatch,
     (works: Record<string, Work>) => addWorks(works, WorkSource.BY_ARTIST, artist),
