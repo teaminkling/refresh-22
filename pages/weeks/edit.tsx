@@ -45,6 +45,8 @@ interface WeekEditorProps {
  * @constructor
  */
 const WeekEditor = (props: WeekEditorProps) => {
+  const [isSetToUpdate, setIsSetToUpdate] = useState<boolean>(false);
+
   const themeRef = createRef<HTMLInputElement>();
   const descriptionRef = createRef<HTMLTextAreaElement>();
   const isPublishedRef = createRef<HTMLInputElement>();
@@ -53,8 +55,16 @@ const WeekEditor = (props: WeekEditorProps) => {
    * Export a week and save it in the parent state.
    *
    * Calling this method indicates that the information has changed.
+   *
+   * @param {boolean} willSetToUpdate whether this will set the week to update
    */
-  const updateParentState = (): void => {
+  const updateParentState = (willSetToUpdate = true): void => {
+    // Don't allow un-updating if a change was already made.
+
+    if (!isSetToUpdate) {
+      setIsSetToUpdate(willSetToUpdate);
+    }
+
     if (!themeRef.current) {
       throw new Error("Theme ref doesn't point to anything.");
     }
@@ -74,7 +84,7 @@ const WeekEditor = (props: WeekEditorProps) => {
       information: descriptionRef.current?.value,
       isPublished: isPublishedRef.current?.checked,
       discordId: props.parentBackendStateWeeks[props.week]?.discordId || "",
-      isUpdating: true,
+      isUpdating: isSetToUpdate,
     };
 
     const newWeeksMap: Record<number, Week> = JSON.parse(
@@ -108,26 +118,6 @@ const WeekEditor = (props: WeekEditorProps) => {
   useEffect(() => {
     if (isPublishedRef.current) {
       highlightPublished(isPublishedRef.current);
-
-      // Set the initial data unit so we don't lose it in case we change nothing.
-
-      const week: Week = {
-        year: ACTIVE_YEAR,
-        week: props.week,
-        theme: props.parentBackendStateWeeks[props.week]?.theme || "",
-        information: props.parentBackendStateWeeks[props.week]?.information || "",
-        isPublished: isPublishedRef.current?.checked,
-        discordId: props.parentBackendStateWeeks[props.week]?.discordId || "",
-        isUpdating: false,
-      };
-
-      const newWeeksMap: Record<number, Week> = JSON.parse(
-        JSON.stringify(props.parentStateWeeks)
-      );
-
-      newWeeksMap[props.week] = week;
-
-      props.parentSetter(newWeeksMap);
     }
   }, [isPublishedRef.current]);
 
@@ -139,7 +129,8 @@ const WeekEditor = (props: WeekEditorProps) => {
         passedRef={themeRef}
         id={`week-${props.week}-title`}
         label={`Week ${props.week} Theme`}
-        changeCallback={updateParentState}
+        blurCallback={() => updateParentState(false)}
+        changeCallback={() => updateParentState(true)}
         initialValue={props.parentBackendStateWeeks[props.week]?.theme || ""}
       />
 
@@ -147,7 +138,8 @@ const WeekEditor = (props: WeekEditorProps) => {
         passedRef={descriptionRef}
         id={`week-${props.week}-description`}
         label={`Week ${props.week} Description`}
-        changeCallback={updateParentState}
+        blurCallback={() => updateParentState(false)}
+        changeCallback={() => updateParentState(true)}
         initialValue={props.parentBackendStateWeeks[props.week]?.information || ""}
       />
 
