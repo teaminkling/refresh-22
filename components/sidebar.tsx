@@ -16,6 +16,7 @@ import {
   faUser
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import moment from "moment";
 import Link from "next/link";
 import {ReactNode, useState} from "react";
 import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
@@ -161,7 +162,10 @@ const Sidebar = (): JSX.Element => {
     </>
   );
 
+  // Sort out the next event's datetime and humanise it.
+
   const nextEventDate: Date = getDateOfNextEvent();
+  const nextEventMoment: moment.Moment = moment(nextEventDate);
 
   return (
     <div className={"md:w-80 md:h-screen bg-white"}>
@@ -217,8 +221,8 @@ const Sidebar = (): JSX.Element => {
             <Countdown
               date={nextEventDate} renderer={countdownRenderer}
             />
-            <p className={"text-xs pl-11 text-gray-400"}>
-              {nextEventDate.toLocaleDateString()} {nextEventDate.toLocaleTimeString()}
+            <p className={"text-xs pl-11 text-gray-400"} suppressHydrationWarning={true}>
+              {nextEventMoment.calendar()}
             </p>
           </div>
 
