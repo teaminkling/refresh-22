@@ -48,24 +48,26 @@ const Home: NextPage = () => {
 
       // Find the current week.
 
-      fetchWeeks(dispatch, weeksData).then(
-        () => {
-          const latestWeek = Math.max(
-            Math.max(...Object.keys(weeksData.weeks).map(numberString => parseInt(numberString))),
-            ...Object.values(
-              weeksData.weeks
-            ).filter(
-              week => week.isPublished
-            ).map(
-              week => week.week
-            )
-          );
-
-          fetchWorksByWeek(dispatch, worksData, latestWeek).then();
-        }
-      );
+      fetchWeeks(dispatch, weeksData);
     },
     []
+  );
+  
+  useEffect(
+    () => {
+      const latestWeek = Math.max(
+        Math.max(...Object.keys(weeksData.weeks).map(numberString => parseInt(numberString))),
+        ...Object.values(
+          weeksData.weeks
+        ).filter(
+          week => week.isPublished
+        ).map(
+          week => week.week
+        )
+      );
+
+      fetchWorksByWeek(dispatch, worksData, latestWeek).then();
+    }, [weeksData.weeks],
   );
 
   // Parse the query string for artist, week, search, and sort filters.
