@@ -410,7 +410,7 @@ enum PrivilegedStateChange {
 /**
  * Make one of the generic privileged state changes to a work.
  *
- * The request body contains all of the work IDs to be changed. In order to avoid race conditions,
+ * The request body contains all the work IDs to be changed. In order to avoid race conditions,
  * the mutations happens one by one and then is updated with whatever the backend states on
  * request for the aggregated writes.
  *
