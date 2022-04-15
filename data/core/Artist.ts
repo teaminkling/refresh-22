@@ -25,7 +25,7 @@ export default interface Artist {
   thumbnailUrl: string;
 
   /**
-   * All of the socials for the artist in a deterministic order.
+   * All the socials for the artist in a deterministic order.
    *
    * These are listed as URLs, not as usernames. The frontend will need to some parsing to
    * recognise accepted providers.

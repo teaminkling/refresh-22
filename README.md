@@ -1,12 +1,16 @@
 # Design Refresh
 
 This is the repository for the Design Refresh. It supersedes work done for the 2021 Refresh and will
-act as the source website for all future content, 2022 and onwards (potentially).
+act as the source website for all future content, 2022 and onwards.
 
 ## Architecture
 
-This is a NextJS SSR + Serverless API app running on Vercel and Cloudflare Workers. It is designed
-to be free to operate with small enough levels of bandwidth/computing power.
+This is a NextJS app running on Vercel and backend running on Cloudflare Workers.
+
+This project is unique in that it runs entirely on free tiers of IaaS. Choices were made to make
+operation free or as cheap as possible.
+
+Some licenses for proprietary software were purchased (e.g., Fancybox) but those are perpetual.
 
 ## Local Development
 
@@ -26,7 +30,7 @@ npm run build
 wrangler dev --env development
 ```
 
-For both environments, check you have the following files:
+For both environments, ensure you have the following files and edit them as needed:
 
 - `.env.local` based on `.env.example`
 - `api/wrangler.toml` based on `api/wrangler.example.toml`
@@ -37,7 +41,8 @@ To build the frontend, set up the deployment through Cloudflare Pages. Alternati
 
 ```shell
 # in /
-next build; next generate
+next build
+next generate
 ```
 
 ...then serve the `out` directory. On Pages, you might need to delete the `api` directory first.
