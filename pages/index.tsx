@@ -27,8 +27,6 @@ const POSTS_PER_PAGE = 8;
  * @constructor
  */
 const Home: NextPage = () => {
-  // Fetch the items.
-
   const dispatch: Dispatch = useDispatch();
 
   const weeksData: WeeksState = useSelector((state: RootState) => state.weeksData);
@@ -38,36 +36,30 @@ const Home: NextPage = () => {
   // Perform the initial retrieval of weeks and artists, then all works by the current week. Any
   // additional retrievals needed will be provided when the route's search parameters are parsed.
 
-  // We retrieve the current week's works regardless of anything since it is helpful for typical
-  // users of the site going through week-by-week.
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(
     () => {
       fetchArtists(dispatch, artistsData).then();
+      fetchWeeks(dispatch, weeksData).then(() => {
+        // After the weeks are fetched, fetch works by the latest week. If -Infinity, use week 1.
 
-      // Find the current week.
+        const latestWeek = Math.max(
+          Math.max(
+            ...Object.keys(weeksData.weeks).map(numberString => parseInt(numberString)), 1,
+          ),
+          ...Object.values(
+            weeksData.weeks
+          ).filter(
+            week => week.isPublished
+          ).map(
+            week => week.week
+          )
+        );
 
-      fetchWeeks(dispatch, weeksData);
+        fetchWorksByWeek(dispatch, worksData, latestWeek).then();
+      });
     },
     []
-  );
-  
-  useEffect(
-    () => {
-      const latestWeek = Math.max(
-        Math.max(...Object.keys(weeksData.weeks).map(numberString => parseInt(numberString))),
-        ...Object.values(
-          weeksData.weeks
-        ).filter(
-          week => week.isPublished
-        ).map(
-          week => week.week
-        )
-      );
-
-      fetchWorksByWeek(dispatch, worksData, latestWeek).then();
-    }, [weeksData.weeks],
   );
 
   // Parse the query string for artist, week, search, and sort filters.
