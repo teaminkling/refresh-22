@@ -28,7 +28,7 @@ export const WORKS_WITH_ID_INDEX = "works/by-id";
 /**
  * A key for all works in a list.
  *
- * This is used entirely for the `getWorks` endpoint to reduce calls when requesting all of the
+ * This is used entirely for the `getWorks` endpoint to reduce calls when requesting all the
  * data at once. It is the "main list" conceptually.
  */
 export const WORKS_WITHOUT_INDEX = "works/all";

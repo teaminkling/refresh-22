@@ -124,7 +124,7 @@ const worksReducer: Reducer<WorksState, AddWorksAction> = (
   return state;
 };
 
-// Define all of the reducers in the app and then combine them. It is up to contributors to keep
+// Define all the reducers in the app and then combine them. It is up to contributors to keep
 // track of what the reducer names are as they map directly to the root state object.
 
 export default combineReducers<RootState>(
