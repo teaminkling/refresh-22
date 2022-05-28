@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@types/node": "16.11.36",
-    "@types/react": "17.0.37",
+    "@types/react": "17.0.45",
     "@types/react-beautiful-dnd": "13.1.2",
     "@types/remove-markdown": "0.3.1",
     "@types/uuid": "8.3.4",
