@@ -1,10 +1,5 @@
-/**
- * Define HTTP entry points for this API worker.
- */
-
 import {createRemoteJWKSet, FlattenedJWSInput, JWSHeaderParameters, jwtVerify} from "jose";
 import {GetKeyFunction} from "jose/dist/types/types";
-import Toucan from "toucan-js";
 import {getArtists, putArtist} from "./services/artists";
 import {getWeeks, putWeeks} from "./services/weeks";
 import {deleteWork, getWork, getWorks, postApprove, postUpload, putWork} from "./services/works";
@@ -110,12 +105,6 @@ const worker = {
   async fetch(
     request: Request, env: Environment, context: EventContext<Environment, never, unknown>,
   ) {
-    const sentry = new Toucan({
-      dsn: env.SENTRY_DSN,
-      context,
-      request,
-    });
-
     try {
       const method: string = request.method.toLowerCase();
 
@@ -155,7 +144,6 @@ const worker = {
         identifier,
       );
     } catch (error: unknown) {
-      sentry.captureException(error);
       return new Response(JSON.stringify(
         {
           "message": "Internal Server Error",
