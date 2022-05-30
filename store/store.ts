@@ -4,9 +4,9 @@
  * This file will not need to be edited frequently, if at all.
  */
 
+import {composeWithDevTools} from "@redux-devtools/extension";
 import {createWrapper} from "next-redux-wrapper";
 import {applyMiddleware, createStore, Reducer, Store} from "redux";
-import {composeWithDevTools} from "redux-devtools-extension";
 import {persistReducer} from "redux-persist";
 import thunkMiddleware from "redux-thunk";
 import reducers from "./reducers";
