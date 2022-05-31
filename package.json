@@ -34,7 +34,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@types/node": "16.11.36",
+    "@types/node": "16.11.38",
     "@types/react": "17.0.45",
     "@types/react-beautiful-dnd": "13.1.2",
     "@types/remove-markdown": "0.3.1",
