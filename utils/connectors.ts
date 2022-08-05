@@ -250,33 +250,36 @@ export const putWork = async (
   token: string,
   work: Work,
 ): Promise<Work> => {
-  const response: Response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/work`,
-    {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(work),
-    }
-  );
-
-  // Parse the work that was posted if successful.
-
-  if (response.ok) {
-    const returnedWork: Work = await response.json();
-
-    if (returnedWork.id !== "noop") {
-      worksData.works[returnedWork.id] = returnedWork;
-
-      dispatch(addWorks(worksData.works, WorkSource.DIRECT));
-    }
-
-    return returnedWork;
-  }
-
-  throw new Error(await response.text());
+  // FIXME: Deliberately break the function in order to prevent actual works being sent out.
+  return work;
+  //
+  // const response: Response = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787"}/api/work`,
+  //   {
+  //     method: "put",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": `Bearer ${token}`,
+  //     },
+  //     body: JSON.stringify(work),
+  //   }
+  // );
+  //
+  // // Parse the work that was posted if successful.
+  //
+  // if (response.ok) {
+  //   const returnedWork: Work = await response.json();
+  //
+  //   if (returnedWork.id !== "noop") {
+  //     worksData.works[returnedWork.id] = returnedWork;
+  //
+  //     dispatch(addWorks(worksData.works, WorkSource.DIRECT));
+  //   }
+  //
+  //   return returnedWork;
+  // }
+  //
+  // throw new Error(await response.text());
 };
 
 /**
