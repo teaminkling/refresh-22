@@ -37,17 +37,17 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@types/node": "16.11.43",
-    "@types/react": "17.0.47",
+    "@types/node": "16.11.56",
+    "@types/react": "17.0.49",
     "@types/react-beautiful-dnd": "13.1.2",
     "@types/remove-markdown": "0.3.1",
     "@types/uuid": "8.3.4",
-    "@typescript-eslint/eslint-plugin": "5.30.5",
-    "@typescript-eslint/parser": "5.30.5",
-    "eslint": "8.19.0",
-    "eslint-config-next": "12.2.1",
+    "@typescript-eslint/eslint-plugin": "5.36.1",
+    "@typescript-eslint/parser": "5.36.1",
+    "eslint": "8.23.0",
+    "eslint-config-next": "12.2.5",
     "eslint-plugin-import": "2.26.0",
-    "eslint-plugin-react": "7.30.1",
-    "typescript": "4.7.4"
+    "eslint-plugin-react": "7.31.1",
+    "typescript": "4.8.2"
   }
 }
