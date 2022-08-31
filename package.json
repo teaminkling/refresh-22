@@ -19,7 +19,7 @@
     "autoprefixer": "10.4.8",
     "joi": "17.6.0",
     "moment": "2.29.4",
-    "moment-timezone": "0.5.34",
+    "moment-timezone": "0.5.35",
     "next": "12.2.4",
     "next-redux-wrapper": "7.0.5",
     "next-seo": "5.5.0",
