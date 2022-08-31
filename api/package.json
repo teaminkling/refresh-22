@@ -8,20 +8,20 @@
     "build": "tsc; esbuild dist/api/src/index.js --bundle --format=esm --minify --outfile=out/index.js"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "3.14.0",
+    "@cloudflare/workers-types": "3.18.0",
     "@types/uuid": "8.3.4",
-    "@typescript-eslint/eslint-plugin": "5.30.5",
-    "@typescript-eslint/parser": "5.30.5",
-    "aws4fetch": "1.0.13",
+    "@typescript-eslint/eslint-plugin": "5.42.0",
+    "@typescript-eslint/parser": "5.42.0",
+    "aws4fetch": "1.0.17",
     "cheerio": "1.0.0-rc.12",
-    "esbuild": "0.14.48",
-    "eslint": "8.19.0",
+    "esbuild": "0.15.13",
+    "eslint": "8.27.0",
     "eslint-plugin-import": "2.26.0",
-    "joi": "17.6.0",
-    "jose": "4.8.3",
-    "toucan-js": "2.6.1",
-    "typescript": "4.7.4",
-    "uuid": "8.3.2",
-    "xss": "1.0.13"
+    "joi": "17.7.0",
+    "jose": "4.10.4",
+    "toucan-js": "2.7.0",
+    "typescript": "4.8.4",
+    "uuid": "9.0.0",
+    "xss": "1.0.14"
   }
 }
