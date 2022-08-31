@@ -2,9 +2,14 @@
   "extends": [
     "config:base"
   ],
+  "timezone": "Australia/Melbourne",
+  "schedule": [
+    "before 7am on Monday",
+    "before 7am on Thursday"
+  ],
   "packageRules": [
     {
-      "groupName": "Dev Dependency Safe Update",
+      "groupName": "chore: dev dependencies safe update",
       "matchDepTypes": [
         "devDependencies"
       ],
@@ -14,7 +19,7 @@
       ]
     },
     {
-      "groupName": "Dependency Safe Update",
+      "groupName": "task: dependencies safe update",
       "matchDepTypes": [
         "dependencies"
       ],
@@ -24,7 +29,7 @@
       ]
     },
     {
-      "groupName": "Peer Dependency Safe Update",
+      "groupName": "task: dependencies safe update",
       "matchDepTypes": [
         "peerDependencies"
       ],
