@@ -496,7 +496,7 @@ const SubmissionForm = () => {
                 setMessagesView(<ResponseMessages errors={errors} successElement={
                   <>
                     Nice! Check out your work&nbsp;
-                    <Link href={`/works/${work.id}`}>
+                    <Link href={`/works/${work.id}`} legacyBehavior>
                       <a className={"underline"} style={{color: "#7C7CE0"}}>
                         here
                       </a>

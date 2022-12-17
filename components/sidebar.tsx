@@ -255,7 +255,7 @@ const Sidebar = (): JSX.Element => {
             <div className={"m-auto text-center bg-yellow-200 rounded-3xl my-3 py-1.5 mx-4"}>
               <p>
                 Website is in Beta
-                <Link href={"/beta"}>
+                <Link href={"/beta"} legacyBehavior>
                   <a className={"pl-2"}>
                     <FontAwesomeIcon icon={faQuestionCircle} />
                   </a>

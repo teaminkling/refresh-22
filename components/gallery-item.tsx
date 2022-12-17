@@ -108,7 +108,7 @@ const GalleryItem = (props: ItemProps) => {
     response = (
       <div className={"flex-col xl:flex xl:flex-row"}>
         <div className={"px-2 py-2 md:px-3 md:py-4 hover:opacity-95"}>
-          <Link href={`/works/${props.id}`}>
+          <Link href={`/works/${props.id}`} legacyBehavior>
             <a>
               <img
                 src={props.retinaPreview}
