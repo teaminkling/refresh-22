@@ -182,7 +182,7 @@ const WorksById = () => {
 
               <h2 className={"text-3xl pb-4"}>
                 by&nbsp;
-                <Link href={`/artists/${artistName}`}>
+                <Link href={`/artists/${artistName}`} legacyBehavior>
                   <a className={"underline"} style={{color: "#7C7CE0"}}>{artistName}</a>
                 </Link>
 

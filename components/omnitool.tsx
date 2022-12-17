@@ -112,7 +112,7 @@ const Omnitool = (props: OmnitoolProps): JSX.Element => {
 
       <div className={"flex flex-row py-2 justify-center"}>
         <span>
-          <Link href={`?${previousPageText}`}>
+          <Link href={`?${previousPageText}`} legacyBehavior>
             <a className={"hover:bg-gray-100 p-3 m-1 hover:text-black"}>
               <FontAwesomeIcon icon={faAngleLeft} fixedWidth />
             </a>
@@ -122,7 +122,7 @@ const Omnitool = (props: OmnitoolProps): JSX.Element => {
         <p className={"px-2"}>Page {page}</p>
 
         <span>
-          <Link href={`?${nextPageText}`}>
+          <Link href={`?${nextPageText}`} legacyBehavior>
             <a className={"hover:bg-gray-100 p-3 m-1 hover:text-black"}>
               <FontAwesomeIcon icon={faAngleRight} fixedWidth />
             </a>
@@ -161,7 +161,7 @@ const Omnitool = (props: OmnitoolProps): JSX.Element => {
         </p>
 
         <span>
-          <Link href={`?${sortDescendingText}`}>
+          <Link href={`?${sortDescendingText}`} legacyBehavior>
             <a className={
               "hover:bg-gray-100 p-3 m-1 hover:text-black " + (
                 !sort || sort === "descending" ? "bg-gray-200 text-black" : ""
@@ -173,7 +173,7 @@ const Omnitool = (props: OmnitoolProps): JSX.Element => {
         </span>
 
         <span>
-          <Link href={`?${sortAscendingText}`}>
+          <Link href={`?${sortAscendingText}`} legacyBehavior>
             <a className={
               "hover:bg-gray-100 p-3 m-1 hover:text-black " + (
                 sort === "ascending" ? "bg-gray-200 text-black" : ""
@@ -185,7 +185,7 @@ const Omnitool = (props: OmnitoolProps): JSX.Element => {
         </span>
 
         <span>
-          <Link href={`?${sortRandomText}`}>
+          <Link href={`?${sortRandomText}`} legacyBehavior>
             <a className={
               "hover:bg-gray-100 p-3 m-1 hover:text-black " + (
                 sort === "random" ? "bg-gray-200 text-black" : ""

@@ -91,7 +91,7 @@ const InterfaceLink = (props: NavItemProps) => {
 
   if (props.nextLink && props.location) {
     return (
-      <Link href={props.location} passHref={false}>
+      <Link href={props.location} passHref={false} legacyBehavior>
         <a className={
           "block uppercase px-4 py-1 md:text-md focus:text-gray-900 "
           + boldedClasses
