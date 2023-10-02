@@ -8,7 +8,7 @@
     "build": "tsc; esbuild dist/api/src/index.js --bundle --format=esm --minify --outfile=out/index.js"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "3.19.0",
+    "@cloudflare/workers-types": "4.20231002.0",
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
