@@ -1,4 +1,3 @@
-import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {NextSeo} from "next-seo";
@@ -17,12 +16,6 @@ import {fetchArtists} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
 
-/**
- * A component that retrieves an existing user.
- *
- * @returns {JSX.Element} the element
- * @constructor
- */
 const SingleArtist = (): JSX.Element => {
   const router = useRouter();
   const query: ParsedUrlQuery = router.query;
@@ -31,13 +24,6 @@ const SingleArtist = (): JSX.Element => {
 
   const _rawName: string | string[] | undefined = query.name || "unknown";
   const name: string = typeof _rawName === "object" ? _rawName[0] : _rawName;
-
-  // Determine the current user's ID.
-
-  const {user}: Auth0ContextInterface = useAuth0();
-
-  const _userParts: string[] = user?.sub?.split("|") || [];
-  const idFromAuth0: string = _userParts.length > 0 ? _userParts[_userParts.length - 1] : "";
 
   // Update artists cache if necessary.
 
@@ -50,8 +36,6 @@ const SingleArtist = (): JSX.Element => {
 
     setIsLoading(false);
   }, []);
-
-  // Try to grab the ID from the state rather than from Auth0.
 
   const idFromState: string | undefined = artistsData.usernameToId[name];
 
@@ -123,13 +107,6 @@ const SingleArtist = (): JSX.Element => {
         <Paragraph>
           <b>Discord ID:</b> {artist.discordId}
         </Paragraph>
-
-        {
-          idFromAuth0 === artist.discordId ?
-            <>
-              <InterfaceLink title={"Edit Profile"} location={"/artists/edit"} nextLink />
-            </> : null
-        }
 
         <InterfaceLink
           title={"View Filtered Gallery"}

@@ -1,4 +1,3 @@
-import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faAngleDown, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {NextSeo} from "next-seo";
@@ -14,10 +13,6 @@ import Week from "../../data/core/Week";
 import {RootState, WeeksState} from "../../store/state";
 import {fetchWeeks} from "../../utils/connectors";
 
-/**
- * @returns {JSX.Element} the element
- * @constructor
- */
 const Weeks = () => {
   const [isWeeksExpanded, setIsWeeksExpanded] = useState<boolean>(false);
 
@@ -26,19 +21,9 @@ const Weeks = () => {
     (state: RootState) => state.weeksData,
   );
 
-  // Check that the user is allowed to see the edit button.
-
-  const {user, isLoading, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
-
   const [isApiLoading, setIsApiLoading] = useState<boolean>(true);
   useEffect(() => {
-    if (user) {
-      getAccessTokenSilently().then(
-        (token: string) => fetchWeeks(dispatch, weeksData, token)
-      );
-    } else {
-      fetchWeeks(dispatch, weeksData, undefined).then();
-    }
+    void fetchWeeks(dispatch, weeksData);
 
     setIsApiLoading(false);
   }, []);
@@ -104,7 +89,7 @@ const Weeks = () => {
         </StaticPage>
       </>
     );
-  } else if (isLoading || isApiLoading) {
+  } else if (isApiLoading) {
     response = <StaticPage><Header>Loading...</Header></StaticPage>;
   } else {
     response = (

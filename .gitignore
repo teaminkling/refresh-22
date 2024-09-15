@@ -26,3 +26,4 @@ tsconfig.tsbuildinfo
 ## Project
 
 wrangler.toml
+**/.wrangler/*
