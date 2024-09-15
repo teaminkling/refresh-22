@@ -1,7 +1,3 @@
-/**
- * The main app.
- */
-
 import {Auth0Provider} from "@auth0/auth0-react";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import type {AppProps} from "next/app";
@@ -77,8 +73,6 @@ const WrappedApp: FC<AppProps> = ({Component, pageProps}: AppProps) => {
       >
         <PersistGate loading={null} persistor={persistStore(store)}>
           {
-            // This is needed for proper pre-rendering of head tags.
-
             () => (
               <Layout>
                 <Component {...pageProps} />

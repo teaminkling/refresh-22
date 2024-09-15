@@ -1,8 +1,3 @@
-/**
- * An artist.
- */
-import Joi from "joi";
-
 export default interface Artist {
   /**
    * The ID of this user.
@@ -39,18 +34,3 @@ export default interface Artist {
    */
   worksCount?: number;
 }
-
-// Note: I can't find specifications for the length of a snowflake, so we limit it to 64 chars.
-
-export const ARTIST_SCHEMA = Joi.object(
-  {
-    discordId: Joi.string().alphanum().max(64).required(),
-    name: Joi.string().min(3).max(128).required(),
-    thumbnailUrl: Joi.string().uri().required(),
-    socials: Joi.array().items(Joi.string().uri({
-      scheme: "https",
-      allowRelative: false
-    })).required(),
-    worksCount: Joi.number().integer().optional(),
-  },
-);

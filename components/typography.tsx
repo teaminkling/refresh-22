@@ -1,12 +1,5 @@
 import {PropsWithChildren} from "react";
 
-/**
- * A page with textual content.
- *
- * @param {PropsWithChildren} children the children elements
- * @returns {JSX.Element} the element
- * @constructor
- */
 const StaticPage = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
     <div className={"xl:mr-10 my-4 pb-8"}>
@@ -19,13 +12,6 @@ const StaticPage = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   );
 };
 
-/**
- * A large H1 header.
- *
- * @param {PropsWithChildren} children the children elements
- * @returns {JSX.Element} the element
- * @constructor
- */
 export const Header = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
     <h1 className={"text-5xl font-bold py-3 md:pt-10"}>
@@ -34,15 +20,6 @@ export const Header = ({children}: PropsWithChildren<Record<string, unknown>>) =
   );
 };
 
-/**
- * A medium-sized H2 header.
- *
- * Note that H2 is the smallest header size we'll be using for now.
- *
- * @param {PropsWithChildren} children the children elements
- * @returns {JSX.Element} the element
- * @constructor
- */
 export const SubHeader = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
     <h2 className={"text-3xl font-bold py-3"}>
@@ -50,13 +27,7 @@ export const SubHeader = ({children}: PropsWithChildren<Record<string, unknown>>
     </h2>
   );
 };
-/**
- * A paragraph.
- *
- * @param {PropsWithChildren} children the children elements
- * @returns {JSX.Element} the element
- * @constructor
- */
+
 export const Paragraph = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
     <p className={"py-3"}>
@@ -65,13 +36,6 @@ export const Paragraph = ({children}: PropsWithChildren<Record<string, unknown>>
   );
 };
 
-/**
- * An unordered list.
- *
- * @param {PropsWithChildren} children the children elements
- * @returns {JSX.Element} the element
- * @constructor
- */
 export const UnorderedList = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return (
     <ul className={"list-disc px-6 py-3"}>
@@ -80,13 +44,6 @@ export const UnorderedList = ({children}: PropsWithChildren<Record<string, unkno
   );
 };
 
-/**
- * A list item.
- *
- * @param {PropsWithChildren} children the children elements
- * @returns {JSX.Element} the element
- * @constructor
- */
 export const ListItem = ({children}: PropsWithChildren<Record<string, unknown>>) => {
   return <li><p>{children}</p></li>;
 };

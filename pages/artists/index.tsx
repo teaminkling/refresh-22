@@ -10,10 +10,6 @@ import Artist from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
 import {fetchArtists} from "../../utils/connectors";
 
-/**
- * @returns {JSX.Element} the element
- * @constructor
- */
 const Artists = () => {
   const dispatch: Dispatch = useDispatch();
   const artistsData: ArtistsState = useSelector(

@@ -4,10 +4,6 @@ import Head from "next/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
 import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 
-/**
- * @returns {JSX.Element} the element
- * @constructor
- */
 const About: NextPage = () => {
   return (
     <>

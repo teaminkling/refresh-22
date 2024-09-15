@@ -1,6 +1,3 @@
-/**
- * Utils surrounding social media.
- */
 import {
   faApple,
   faDeviantart,
@@ -14,37 +11,13 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import {faLink, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 
-/**
- * A parsed social.
- */
 export interface ParsedSocial {
-  /**
-   * The URL.
-   */
   link: string;
-
-  /**
-   * An icon representing this social media.
-   */
   icon: IconDefinition;
-
-  /**
-   * Text that can be used for the link. Best case scenario is a username.
-   */
   text: string;
-
-  /**
-   * The hex colour of the icon.
-   */
   color: string;
 }
 
-/**
- * Given a URL string, return an icon that matches it and the text of the link.
- *
- * @param {string} url the URL
- * @returns {ParsedSocial} the parsed social object
- */
 export const parseSocial = (url: string): ParsedSocial => {
   let parsedUrl: URL;
   if (!url.includes("http")) {

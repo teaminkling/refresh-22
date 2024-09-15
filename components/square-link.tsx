@@ -1,6 +1,3 @@
-/**
- * The props for a {@link SquareLink}.
- */
 interface SquareLinkProps {
   /**
    * The external URL.
@@ -13,13 +10,6 @@ interface SquareLinkProps {
   icon: JSX.Element;
 }
 
-/**
- * An external link containing an icon.
- *
- * @param {SquareLinkProps} props the props
- * @returns {JSX.Element} the element
- * @constructor
- */
 const SquareLink = (props: SquareLinkProps) => {
   return (
     <span>

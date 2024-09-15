@@ -1,9 +1,4 @@
-/**
- * A work.
- */
-import Joi from "joi";
-import {LAST_ACTIVE_WEEK} from "../constants/setup";
-import Artist, {ARTIST_SCHEMA} from "./Artist";
+import Artist from "./Artist";
 
 export interface UrlItem {
   url: string;
@@ -119,36 +114,3 @@ export default interface Work {
    */
   isSoftDeleted?: boolean;
 }
-
-// Note: I can't find specifications for the length of a snowflake, so we limit it to 64 chars.
-
-export const URL_ITEM_SCHEMA = Joi.object(
-  {
-    url: Joi.string().uri({allowRelative: false}).min(1).required(),
-    meta: Joi.string().uri({allowRelative: false}).min(1).optional(),
-    smallThumbnail: Joi.string().uri({allowRelative: false}).min(1).optional(),
-    hiDpiThumbnail: Joi.string().uri({allowRelative: false}).min(1).optional(),
-  }
-);
-
-export const WORK_SCHEMA = Joi.object(
-  {
-    id: Joi.string().min(4).max(12).required(),
-    year: Joi.number().min(2022).max(2077).required(),
-    weekNumbers: Joi.array().items(
-      Joi.number().min(1).max(LAST_ACTIVE_WEEK),
-    ).min(1).max(6).required(),
-    artistId: Joi.string().alphanum().max(64).required(),
-    firstSeenArtistInfo: ARTIST_SCHEMA.optional(),
-    title: Joi.string().min(1).max(128).required(),
-    medium: Joi.string().max(128).allow("").optional(),
-    description: Joi.string().min(3).max(1920).required(),
-    items: Joi.array().items(URL_ITEM_SCHEMA).min(1).required(),
-    smallThumbnailUrl: Joi.string().uri().allow("").optional(),
-    thumbnailUrl: Joi.string().uri().allow("").optional(),
-    isApproved: Joi.boolean().required(),
-    discordId: Joi.string().alphanum().max(64).allow("").optional(),
-    submittedTimestamp: Joi.string().isoDate().required(),
-    isSoftDeleted: Joi.boolean().optional(),
-  },
-);

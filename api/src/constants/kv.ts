@@ -1,10 +1,4 @@
 /**
- * Constants used to access parts of the KV namespace.
- */
-
-// REFRESH KV.
-
-/**
  * A key for a map of works indexed by the artist's name.
  *
  * E.g., `works/by-artist/papapastry` returns a map of work IDs to a single work each.

@@ -10,9 +10,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
 import {Draggable, DraggableProvided} from "react-beautiful-dnd";
 
-/**
- * The modes each item can be in.
- */
 enum FileItemMode {
   DEFAULT_MODE,
   IMAGE_MODE,
@@ -295,13 +292,6 @@ const UrlModeView = (props: FileItemProps) => {
   </>;
 };
 
-/**
- * A single file item.
- *
- * @param {FileItemProps} props the props
- * @returns {JSX.Element} the element
- * @constructor
- */
 const FileItem = (props: FileItemProps) => {
   const [mode, setMode] = useState<FileItemMode>(FileItemMode.DEFAULT_MODE);
 

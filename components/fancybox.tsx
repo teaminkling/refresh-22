@@ -4,8 +4,6 @@ import "@fancyapps/ui/dist/fancybox.css";
 import {Fancybox as NativeFancybox} from "@fancyapps/ui/dist/fancybox.umd.js";
 import {useEffect} from "react";
 
-// I guess we hold out until we get type declarations.
-
 interface FancyboxProps {
   delegate?: string;
   options?: Record<string, unknown>;

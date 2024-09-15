@@ -4,10 +4,6 @@ import Head from "next/head";
 import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography";
 import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 
-/**
- * @returns {JSX.Element} the element
- * @constructor
- */
 const Privacy: NextPage = () => {
   return (
     <StaticPage>

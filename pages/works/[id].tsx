@@ -1,5 +1,3 @@
-import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {faCheck, faLockOpen, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import {NextSeo} from "next-seo";
@@ -11,7 +9,6 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import Fancybox from "../../components/fancybox";
-import InterfaceLink from "../../components/interface-link";
 import {Markdown} from "../../components/markdown";
 import SquareLink from "../../components/square-link";
 import StaticPage, {Header} from "../../components/typography";
@@ -19,17 +16,11 @@ import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Artist from "../../data/core/Artist";
 import Work, {UrlItem} from "../../data/core/Work";
 import {ArtistsState, RootState, WorksState} from "../../store/state";
-import {getIsEditor, getUserId} from "../../utils/auth";
-import {approveWorks, deleteWorks, fetchArtists, fetchWorkById} from "../../utils/connectors";
+import {fetchArtists, fetchWorkById} from "../../utils/connectors";
 import {ParsedSocial, parseSocial} from "../../utils/socials";
 import NotFound from "../404";
 
 const WorksById = () => {
-  const {user, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
-
-  const isEditor = getIsEditor(user);
-  const userId: string | undefined = user ? getUserId(user) : undefined;
-
   const router = useRouter();
   const query: ParsedUrlQuery = router.query;
 
@@ -50,7 +41,7 @@ const WorksById = () => {
   useEffect(
     () => {
       if (id !== "unknown" && id !== "noop") {
-        fetchWorkById(dispatch, worksData, id);
+        fetchWorkById(dispatch, id);
         fetchArtists(dispatch, artistsData);
       }
 
@@ -230,65 +221,6 @@ const WorksById = () => {
               </p>
 
               <Markdown markdown={work.description} />
-
-              {
-                isEditor && !work.isApproved ?
-                  <div>
-                    <InterfaceLink
-                      title={"(ADMIN) Approve Work"}
-                      location={"#"}
-                      icon={<FontAwesomeIcon icon={faCheck} fixedWidth />}
-                      customWaitMessage={"Please wait..."}
-                      clickBack={
-                        async () => {
-                          await approveWorks(
-                            await getAccessTokenSilently(),
-                            [work.id],
-                            dispatch,
-                            worksData,
-                          );
-                        }
-                      }
-                    />
-                  </div> : <></>
-              }
-
-              {
-                isEditor ?
-                  <div className={"text-red-600"}>
-                    <InterfaceLink
-                      title={"(ADMIN) Delete Work"}
-                      location={"#"}
-                      icon={<FontAwesomeIcon icon={faTrash} fixedWidth />}
-                      customWaitMessage={"Please wait..."}
-                      clickBack={
-                        async () => {
-                          await deleteWorks(
-                            await getAccessTokenSilently(),
-                            [work.id],
-                            dispatch,
-                            worksData,
-                          );
-                        }
-                      }
-                      isDangerous
-                    />
-                  </div> : <></>
-              }
-
-              {
-                (isEditor || (work.artistId === userId)) ?
-                  <div>
-                    <InterfaceLink
-                      title={"Edit Work"}
-                      location={`/works/submit?edit=${work.id}`}
-                      icon={
-                        <FontAwesomeIcon icon={faLockOpen} fixedWidth />
-                      }
-                      nextLink
-                    />
-                  </div> : <></>
-              }
             </div>
           </div>
         </div>

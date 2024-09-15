@@ -1,10 +1,5 @@
 import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {
-  faAngleDown,
-  faAngleRight,
-  faHandMiddleFinger,
-  faLockOpen
-} from "@fortawesome/free-solid-svg-icons";
+import {faAngleDown, faAngleRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {NextSeo} from "next-seo";
 import Head from "next/head";
@@ -17,7 +12,6 @@ import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typogra
 import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Week from "../../data/core/Week";
 import {RootState, WeeksState} from "../../store/state";
-import {getIsEditor} from "../../utils/auth";
 import {fetchWeeks} from "../../utils/connectors";
 
 /**
@@ -36,16 +30,14 @@ const Weeks = () => {
 
   const {user, isLoading, getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
 
-  const isEditor: boolean = getIsEditor(user);
-
   const [isApiLoading, setIsApiLoading] = useState<boolean>(true);
   useEffect(() => {
     if (user) {
       getAccessTokenSilently().then(
-        (token: string) => fetchWeeks(dispatch, weeksData, token, isEditor)
+        (token: string) => fetchWeeks(dispatch, weeksData, token)
       );
     } else {
-      fetchWeeks(dispatch, weeksData, undefined, isEditor).then();
+      fetchWeeks(dispatch, weeksData, undefined).then();
     }
 
     setIsApiLoading(false);
@@ -85,16 +77,6 @@ const Weeks = () => {
         </Head>
         <StaticPage>
           <Header>Viewing Weeks</Header>
-
-          {
-            isEditor ? <InterfaceLink
-              location={"/weeks/edit"}
-              title={"Edit Weeks"} nextLink
-              icon={
-                <FontAwesomeIcon icon={faLockOpen} />
-              }
-            /> : <></>
-          }
 
           <SubHeader>
             Current Week
@@ -142,16 +124,6 @@ const Weeks = () => {
           <Paragraph>
             The prompt will be up soon (i.e., once Cindy figures out how to use the site).
           </Paragraph>
-
-          {
-            isEditor ?
-              <InterfaceLink
-                location={"/weeks/edit"}
-                title={"(Admin) Fuck you, Tom"}
-                icon={<FontAwesomeIcon icon={faHandMiddleFinger} />}
-                nextLink
-              /> : <></>
-          }
         </div>
       </div>
     );

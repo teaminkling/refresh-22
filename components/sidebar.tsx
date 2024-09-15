@@ -1,60 +1,11 @@
-/**
- * The logo of the app and the responsive icon that appears on smaller aspect ratios.
- *
- * @returns {JSX.Element} the element
- * @constructor
- */
-import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
 import {faDiscord, faGithub, faTwitch} from "@fortawesome/free-brands-svg-icons";
-import {
-  faBars,
-  faClock,
-  faHardHat,
-  faLink,
-  faQuestionCircle,
-  faTimes,
-  faUser
-} from "@fortawesome/free-solid-svg-icons";
+import {faBars, faLink, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import moment from "moment";
-import Link from "next/link";
-import {ReactNode, useState} from "react";
-import Countdown, {CountdownRendererFn, CountdownRenderProps} from "react-countdown";
-import {getIsEditor} from "../utils/auth";
-import {getDateOfNextEvent, getNatureOfNextEvent} from "../utils/time";
+import {useState} from "react";
 import InterfaceLink from "./interface-link";
 import SquareLink from "./square-link";
 
-/**
- * A renderer for a {@link Countdown}.
- *
- * @param {CountdownRenderProps} the props
- * @returns {string} the rendered countdown
- */
-const countdownRenderer: CountdownRendererFn = (
-  {days, hours, minutes, seconds}: CountdownRenderProps
-): ReactNode => {
-  const dayWording = days === 1 ? "day" : "days";
-
-  const paddedHours = String(hours).padStart(2, "0");
-  const paddedMinutes = String(minutes).padStart(2, "0");
-  const paddedSeconds = String(seconds).padStart(2, "0");
-
-  return (
-    <InterfaceLink
-      title={`${days} ${dayWording} & ${paddedHours}:${paddedMinutes}:${paddedSeconds}`}
-      icon={<FontAwesomeIcon icon={faClock} />}
-    />
-  );
-};
-
-/**
- * The sidebar which controls all content on the right side of the screen.
- *
- * @returns {JSX.Element} the element
- * @constructor
- */
-const Sidebar = (): JSX.Element => {
+const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [logoHits, setLogoHits] = useState<number>(0);
 
@@ -104,69 +55,6 @@ const Sidebar = (): JSX.Element => {
     </div>
   );
 
-  // Handle authentication views.
-
-  const {
-    user, isLoading, isAuthenticated, loginWithRedirect, logout
-  }: Auth0ContextInterface = useAuth0();
-
-  const isEditor = getIsEditor(user);
-
-  const loading = <InterfaceLink title={"Loading..."} />;
-  const auth = isAuthenticated ? (
-    <>
-      <InterfaceLink
-        location={"#"}
-        clickBack={async () => logout()}
-        title={"Logout"}
-        strong
-      />
-      <InterfaceLink
-        location={"/artists/edit"}
-        title={user?.name || "Error"}
-        icon={<FontAwesomeIcon icon={faUser} />}
-        nextLink
-      />
-
-      <div className={"my-5"} />
-
-      <InterfaceLink location={"/works/submit"} title={"Submit"} nextLink />
-
-      {
-        isEditor ?
-          <InterfaceLink
-            location={"/works/moderate"}
-            title={"Moderate"}
-            icon={<FontAwesomeIcon icon={faHardHat} fixedWidth />}
-            nextLink
-          />
-          : <></>
-      }
-    </>
-  ) : (
-    <>
-      <InterfaceLink
-        location={"#"}
-        clickBack={
-          () => loginWithRedirect(
-            {
-              redirectUri: `${process.env.NEXT_PUBLIC_BASE_URI}/artists/edit`,
-              connection: "discord"
-            }
-          )
-        }
-        title={"Login"}
-        strong
-        icon={<FontAwesomeIcon icon={faDiscord} />}
-      />
-    </>
-  );
-
-  // Sort out the next event's datetime and humanise it.
-
-  const nextEventDate: Date = getDateOfNextEvent();
-  const nextEventMoment: moment.Moment = moment(nextEventDate);
-
   return (
     <div className={"md:w-80 md:h-screen bg-white"}>
       {
@@ -210,20 +98,6 @@ const Sidebar = (): JSX.Element => {
             <InterfaceLink location={"/artists/"} title={"Artists"} nextLink />
 
             <div className={"my-5"} />
-
-            {isLoading ? loading : auth}
-          </div>
-
-          <hr className={"my-5 md:hidden border-black"} />
-
-          <div className={"items-center"} suppressHydrationWarning={true}>
-            <InterfaceLink title={getNatureOfNextEvent()} strong />
-            <Countdown
-              date={nextEventDate} renderer={countdownRenderer}
-            />
-            <p className={"text-xs pl-11 text-gray-400"} suppressHydrationWarning={true}>
-              {nextEventMoment.calendar()}
-            </p>
           </div>
 
           <hr className={"my-5 md:hidden border-black"} />
@@ -252,16 +126,6 @@ const Sidebar = (): JSX.Element => {
 
             <InterfaceLink location={"/terms"} title={"Terms"} nextLink />
             <InterfaceLink location={"/privacy"} title={"Privacy"} nextLink />
-            <div className={"m-auto text-center bg-yellow-200 rounded-3xl my-3 py-1.5 mx-4"}>
-              <p>
-                Website is in Beta
-                <Link href={"/beta"} legacyBehavior>
-                  <a className={"pl-2"}>
-                    <FontAwesomeIcon icon={faQuestionCircle} />
-                  </a>
-                </Link>
-              </p>
-            </div>
           </div>
         </nav>
       </div>

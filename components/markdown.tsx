@@ -2,24 +2,12 @@ import {ClassAttributes, PropsWithChildren} from "react";
 import ReactMarkdown from "react-markdown";
 import {ListItem, Paragraph, UnorderedList} from "./typography";
 
-/**
- * The props for the Markdown block.
- */
 interface MarkdownProps {
-  /**
-   * The Markdown string.
-   */
   markdown: string;
 }
 
-/**
- * A general purpose markdown block.
- *
- * @param {MarkdownProps} props the props
- * @returns {JSX.Element} the element
- * @constructor
- */
 export const Markdown = (props: MarkdownProps): JSX.Element => {
+  // noinspection JSUnusedGlobalSymbols
   return (
     <div>
       <ReactMarkdown components={{

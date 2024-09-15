@@ -1,11 +1,5 @@
 import {Head, Html, Main, NextScript} from "next/document";
 
-/**
- * The overridden document element.
- *
- * @returns {JSX.Element} the element
- * @constructor
- */
 export const Document = () => {
   // noinspection HtmlRequiredTitleElement
   return (

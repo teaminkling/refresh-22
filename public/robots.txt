@@ -1,8 +1,1 @@
 User-agent: *
-
-Disallow: /weeks/edit
-Disallow: /works/submit
-Disallow: /works/moderate
-Disallow: /privacy
-Disallow: /terms
-Disallow: /beta

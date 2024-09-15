@@ -1,18 +1,10 @@
-import {Auth0ContextInterface, useAuth0} from "@auth0/auth0-react";
-import {faAngleDoubleLeft, faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import Link from "next/link";
-import {useDispatch, useSelector} from "react-redux";
-import {Dispatch} from "redux";
 import removeMd from "remove-markdown";
-import {RootState, WorksState} from "../store/state";
-import {approveWorks} from "../utils/connectors";
 import InterfaceLink from "./interface-link";
 
-/**
- * The props on the {@link GalleryItem}.
- */
 interface ItemProps {
   /**
    * The ID of the piece.
@@ -65,24 +57,7 @@ interface ItemProps {
   isEditor?: boolean;
 }
 
-/**
- * A single gallery item.
- *
- * All items are exactly 1024 x 720 on the screen.
- *
- * @param {ItemProps} props the props
- * @returns {JSX.Element} the element
- * @constructor
- */
 const GalleryItem = (props: ItemProps) => {
-  const {getAccessTokenSilently}: Auth0ContextInterface = useAuth0();
-
-  // Get the work data, but don't fetch for it.
-
-  const dispatch: Dispatch = useDispatch();
-
-  const worksData: WorksState = useSelector((state: RootState) => state.worksData);
-
   // Build the response.
 
   let response = <></>;
@@ -176,26 +151,6 @@ const GalleryItem = (props: ItemProps) => {
                 icon={<FontAwesomeIcon icon={faAngleDoubleLeft} />}
                 nextLink
               />
-
-              {
-                props.isEditor ?
-                  <InterfaceLink
-                    title={"Approve?"}
-                    location={"#"}
-                    icon={<FontAwesomeIcon icon={faCheck} />}
-                    customWaitMessage={"Please Wait"}
-                    clickBack={
-                      async () => {
-                        await approveWorks(
-                          await getAccessTokenSilently(),
-                          [props.id],
-                          dispatch,
-                          worksData,
-                        );
-                      }
-                    }
-                  /> : <></>
-              }
             </p>
           </span>
         </div>

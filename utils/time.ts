@@ -1,7 +1,3 @@
-/**
- * Frontend/universal utils related to time.
- */
-
 import moment from "moment-timezone";
 import {
   PROMPT_RELEASE_DAY,

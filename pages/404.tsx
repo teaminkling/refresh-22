@@ -1,11 +1,5 @@
 import {Header, Paragraph, SubHeader} from "../components/typography";
 
-/**
- * A 404 page that shows after 2 seconds.
- *
- * @returns {JSX.Element} the element
- * @constructor
- */
 const NotFound = (): JSX.Element => {
   const response = (
     <>

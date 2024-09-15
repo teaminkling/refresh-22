@@ -1,11 +1,6 @@
-/**
- * The actual state objects used in the Redux store.
- */
-
 import Artist from "../data/core/Artist";
 import Week from "../data/core/Week";
 import Work from "../data/core/Work";
-import {Filter, Sort} from "./enums";
 
 /**
  * The default root state interface.
@@ -16,24 +11,6 @@ export interface RootState {
   artistsData: ArtistsState;
   weeksData: WeeksState;
   worksData: WorksState;
-}
-
-/**
- * The state related to the gallery interface.
- *
- * Note that we do not remember pagination. Pagination changes the URL so users can directly
- * link to pages as long as the sort isn't random!
- */
-export interface GalleryState {
-  /**
-   * The filter to use to overwrite the URL query string.
-   */
-  galleryLastFilter: Filter;
-
-  /**
-   * The sort to use to overwrite the URL query string.
-   */
-  galleryLastSort: Sort;
 }
 
 /**

@@ -15,9 +15,6 @@ import {shuffle} from "../data/utils/data-structures";
 import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
 import {fetchArtists, fetchWeeks, fetchWorksByArtist, fetchWorksByWeek} from "../utils/connectors";
 
-/**
- * The number of posts that appears on a single page.
- */
 const POSTS_PER_PAGE = 8;
 
 /**

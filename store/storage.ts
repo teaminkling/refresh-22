@@ -1,6 +1,3 @@
-/**
- * Storage/persistence.
- */
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import {WebStorage} from "redux-persist/lib/types";
 
