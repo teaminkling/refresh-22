@@ -1,11 +1,6 @@
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import {WebStorage} from "redux-persist/lib/types";
 
-/**
- * Create a no-op storage.
- *
- * @returns {WebStorage} the storage container
- */
 const createNoOpStorage = (): WebStorage => {
   return {
     getItem(_key: string) {

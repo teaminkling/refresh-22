@@ -26,12 +26,6 @@
     "semi": [
       0
     ],
-    "@typescript-eslint/semi": [
-      "error"
-    ],
-    "@typescript-eslint/member-delimiter-style": [
-      "error"
-    ],
     "quotes": [
       "warn",
       "double"
@@ -50,9 +44,6 @@
     ],
     "no-unused-vars": [
       0
-    ],
-    "@typescript-eslint/no-invalid-this": [
-      "error"
     ],
     "@typescript-eslint/no-unused-vars": [
       "warn",
