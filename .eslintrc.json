@@ -10,7 +10,6 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "next/core-web-vitals",
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -61,9 +60,6 @@
       }
     ],
     "react-hooks/exhaustive-deps": [
-      0
-    ],
-    "@next/next/no-img-element": [
       0
     ]
   },
