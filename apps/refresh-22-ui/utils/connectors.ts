@@ -9,7 +9,9 @@ export function fetchArtists() {
   const artists = savedArtists as Record<string, Artist>;
 
   Object.values(artists).forEach((artist) => {
-    artist.worksCount = savedWorks.filter((work) => work.artistId === artist.discordId).length;
+    artist.worksCount = savedWorks.filter(
+      (work) => work.artistId === artist.discordId && !work.isSoftDeleted && work.isApproved,
+    ).length;
   });
 
   return artists;
@@ -24,5 +26,5 @@ export function fetchWorkById(id: string) {
 }
 
 export function fetchWorks() {
-  return Object.values(savedWorks) as Work[];
+  return Object.values(savedWorks).filter((work) => !work.isSoftDeleted && work.isApproved) as Work[];
 }

@@ -102,6 +102,8 @@ export function parseSocial(url: string): ParsedSocial {
 }
 
 export async function fetchDiscordThumbnail(userId: string) {
+  // This very easily can rate limit us.
+
   const response = await fetch(`https://discord.com/api/v10/users/${userId}`, {
     headers: {
       Authorization: `Bot ${import.meta.env.VITE_DISCORD_BOT_TOKEN}`,
@@ -110,9 +112,11 @@ export async function fetchDiscordThumbnail(userId: string) {
 
   const user = (await response.json()) as { avatar: string; discriminator: number };
 
-  console.log(user);
-
   const avatarHash = user.avatar;
+
+  // Sleep for 5 seconds to avoid rate limiting.
+
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   if (avatarHash) {
     return `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png`;

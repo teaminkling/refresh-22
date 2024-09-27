@@ -34,7 +34,10 @@ export default function Index() {
     }
 
     if (artist) {
-      const artistId = Object.keys(artists).find((id) => artists[id].name === artist);
+      const artistId = Object.keys(artists).find((id) => {
+        return artists[id].name === artist;
+      });
+
       resultSet = resultSet.filter((work) => work.artistId === artistId);
     }
 
@@ -89,8 +92,8 @@ export default function Index() {
                   weeks={work.weekNumbers}
                   medium={work.medium}
                   description={work.description}
-                  retinaPreview={work.thumbnailUrl || "/placeholders/submission.png"}
-                  preview={work.smallThumbnailUrl || "/placeholders/submission.png"}
+                  retinaPreview={work.thumbnailUrl || "/img/placeholders/submission.png"}
+                  preview={work.smallThumbnailUrl || "/img/placeholders/submission.png"}
                   submittedTimestamp={work.submittedTimestamp}
                 />
               );
