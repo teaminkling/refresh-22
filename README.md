@@ -1,64 +1,33 @@
 # Design Refresh
 
-This is the repository for the Design Refresh. It supersedes work done for the 2021 Refresh and will
-act as the source website for all future content, 2022 and onwards.
+This is the repository for the 2022 Design Refresh. It has lived through various stages:
 
-## Architecture
-
-This is a NextJS app running on Vercel and backend running on Cloudflare Workers.
-
-This project is unique in that it runs entirely on free tiers of IaaS. Choices were made to make
-operation free or as cheap as possible.
-
-Some licenses for proprietary software were purchased (e.g., Fancybox) but those are perpetual.
+1. pre-2022: a temporary build site.
+2. 2022: a full-fledged site with API, user-generated content, forms, and more.
+3. post-2022: a static site that behaves the same way as the 2022 site but statically generated.
 
 ## Local Development
 
 For the frontend:
 
 ```shell
-# in /
 npm install
 npm run dev
 ```
 
-For the backend:
-
-```shell
-# in /
-npm run build
-wrangler dev --env development
-```
-
-For both environments, ensure you have the following files and edit them as needed:
-
-- `.env.local` based on `.env.example`
-- `api/wrangler.toml` based on `api/wrangler.example.toml`
+Ensure `.env` is populated with a valid Discord bot token to grab user profile images on build.
 
 ## Deployment
 
-To build the frontend, set up the deployment through Cloudflare Pages. Alternatively:
+The frontend is statically generated/prerendered from `./dist/client`:
 
 ```shell
-# in /
-next build
-next generate
-```
-
-...then serve the `out` directory. On Pages, you might need to delete the `api` directory first.
-Just make sure you don't do that for local development.
-
-The backend is more straightforward:
-
-```shell
-# in /api
-wrangler publish --env production
+npm run build
 ```
 
 ## License
 
-The source code is licensed by Apache 2.0. You are free to copy, adapt, and read any of the code as
-you please.
+Apache 2.0: You are free to copy, adapt, and read any of the code as you please.
 
-However, "Design Refresh", "FiveClawd", marketing materials (including the logo), and user-generated
-content is All Rights Reserved of their respective copyright holders.
+However, "Design Refresh", "FiveClawd", "Inkling Interactive", marketing materials (including the logo), and
+user-generated content is All Rights Reserved of their respective copyright holders.
