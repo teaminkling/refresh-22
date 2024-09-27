@@ -1,5 +1,0 @@
-export const ADD_ARTISTS_TYPE = "ADD_ARTISTS_TYPE";
-
-export const ADD_WEEKS_TYPE = "ADD_WEEKS_TYPE";
-
-export const ADD_WORKS_TYPE = "ADD_WORKS_TYPE";
