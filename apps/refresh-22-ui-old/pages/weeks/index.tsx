@@ -90,7 +90,7 @@ const Weeks = () => {
       <div className={"flex items-center justify-center h-full"}>
         <div className={"text-center pb-16"}>
           <img
-            src={"/art/user404.png"}
+            src={"/img/art/user-404.png"}
             alt={"A lost user."}
             className={"w-96 pt-16 m-auto"}
           />

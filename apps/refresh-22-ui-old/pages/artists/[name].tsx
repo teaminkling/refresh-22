@@ -1,6 +1,5 @@
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {NextSeo} from "next-seo";
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
@@ -9,7 +8,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header, Paragraph, SubHeader} from "../../components/typography";
-import {DEFAULT_IMAGE} from "../../data/constants/setup";
 import Artist from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
 import {fetchArtists} from "../../utils/connectors";
@@ -74,29 +72,6 @@ const SingleArtist = (): JSX.Element => {
         <Head>
           <title>{artist.name} - Design Refresh</title>
         </Head>
-
-        <NextSeo
-          title={`Profile: ${artist.name} - Design Refresh`}
-          description={
-            (
-              "The Design Refresh art portfolio of the illustrious participant and " +
-              "artist \"" + artist.name + "\"!"
-            )
-          }
-          canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/artists/${artist.name}`}
-          openGraph={{
-            type: "website",
-            site_name: "Design Refresh",
-            images: [
-              {
-                url: DEFAULT_IMAGE,
-              }
-            ],
-          }}
-          twitter={{
-            cardType: "summary_large_image",
-          }}
-        />
 
         <img src={artist.thumbnailUrl} alt={"The user's thumbnail URL."} className={"pt-8"} />
 
