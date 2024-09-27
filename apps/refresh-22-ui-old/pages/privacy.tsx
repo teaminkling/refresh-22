@@ -1,8 +1,6 @@
 import type {NextPage} from "next";
-import {NextSeo} from "next-seo";
 import Head from "next/head";
 import StaticPage, {Header, Paragraph, SubHeader} from "../components/typography";
-import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 
 const Privacy: NextPage = () => {
   return (
@@ -10,24 +8,6 @@ const Privacy: NextPage = () => {
       <Head>
         <title>Privacy - Design Refresh</title>
       </Head>
-
-      <NextSeo
-        title={"Privacy - Design Refresh"}
-        description={DEFAULT_DESCRIPTION}
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/privacy`}
-        openGraph={{
-          type: "website",
-          site_name: "Design Refresh",
-          images: [
-            {
-              url: DEFAULT_IMAGE,
-            }
-          ],
-        }}
-        twitter={{
-          cardType: "summary_large_image",
-        }}
-      />
 
       <Header>
         Privacy <span className={"hidden sm:inline-block"}>Policy</span>

@@ -1,8 +1,6 @@
 import type {NextPage} from "next";
-import {NextSeo} from "next-seo";
 import Head from "next/head";
 import StaticPage, {ListItem, Paragraph, SubHeader, UnorderedList} from "../components/typography";
-import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 
 const Guide: NextPage = () => {
   return (
@@ -10,24 +8,6 @@ const Guide: NextPage = () => {
       <Head>
         <title>Guide - Design Refresh</title>
       </Head>
-
-      <NextSeo
-        title={"Guide - Design Refresh"}
-        description={DEFAULT_DESCRIPTION}
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/guide`}
-        openGraph={{
-          type: "website",
-          site_name: "Design Refresh",
-          images: [
-            {
-              url: DEFAULT_IMAGE,
-            }
-          ],
-        }}
-        twitter={{
-          cardType: "summary_large_image",
-        }}
-      />
 
       <img
         src={"/art/guide.png"}

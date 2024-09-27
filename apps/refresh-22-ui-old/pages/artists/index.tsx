@@ -1,11 +1,9 @@
-import {NextSeo} from "next-seo";
 import Head from "next/head";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import InterfaceLink from "../../components/interface-link";
 import StaticPage, {Header} from "../../components/typography";
-import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../../data/constants/setup";
 import Artist from "../../data/core/Artist";
 import {ArtistsState, RootState} from "../../store/state";
 import {fetchArtists} from "../../utils/connectors";
@@ -48,24 +46,6 @@ const Artists = () => {
       <Head>
         <title>Artists - Design Refresh</title>
       </Head>
-
-      <NextSeo
-        title={"Artists - Design Refresh"}
-        description={DEFAULT_DESCRIPTION}
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/artists`}
-        openGraph={{
-          type: "website",
-          site_name: "Design Refresh",
-          images: [
-            {
-              url: DEFAULT_IMAGE,
-            }
-          ],
-        }}
-        twitter={{
-          cardType: "summary_large_image",
-        }}
-      />
 
       <Header>Artists</Header>
 

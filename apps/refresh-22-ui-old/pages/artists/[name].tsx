@@ -120,7 +120,7 @@ const SingleArtist = (): JSX.Element => {
           <>
             {socialsElements}
           </> : <Paragraph>
-            This artist does not have any socials yet!
+            This artist did not provide any socials!
           </Paragraph>}
       </StaticPage>
     );

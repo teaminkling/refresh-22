@@ -1,8 +1,6 @@
 import type {NextPage} from "next";
-import {NextSeo} from "next-seo";
 import Head from "next/head";
 import StaticPage, {Header, Paragraph, SubHeader, UnorderedList} from "../components/typography";
-import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 
 const Terms: NextPage = () => {
   return (
@@ -11,23 +9,6 @@ const Terms: NextPage = () => {
         <title>Terms - Design Refresh</title>
       </Head>
 
-      <NextSeo
-        title={"Terms - Design Refresh"}
-        description={DEFAULT_DESCRIPTION}
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}/terms`}
-        openGraph={{
-          type: "website",
-          site_name: "Design Refresh",
-          images: [
-            {
-              url: DEFAULT_IMAGE,
-            }
-          ],
-        }}
-        twitter={{
-          cardType: "summary_large_image",
-        }}
-      />
       <StaticPage>
         <Header>
           Terms <span className={"hidden sm:inline-block"}>of Use</span>

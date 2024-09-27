@@ -17,12 +17,6 @@ import {fetchArtists, fetchWeeks, fetchWorksByArtist, fetchWorksByWeek} from "..
 
 const POSTS_PER_PAGE = 8;
 
-/**
- * The home page/gallery.
- *
- * @returns {JSX.Element} the element
- * @constructor
- */
 const Home: NextPage = () => {
   const dispatch: Dispatch = useDispatch();
 

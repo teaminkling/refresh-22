@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "next-seo": "6.6.0",
-    "remove-markdown": "0.5.5"
-  },
-  "devDependencies": {
-    "@types/remove-markdown": "0.3.4",
-  }
-}
