@@ -1,37 +1,32 @@
 import Artist from "../data/Artist.ts";
 import Week from "../data/Week.ts";
 import Work from "../data/Work.ts";
+import savedArtists from "../data/saved/artists.json";
 import savedWeeks from "../data/saved/weeks.json";
+import savedWorks from "../data/saved/works.json";
 
-// TODO: Replace network calls with local data.
-// TODO: Replace runtime calls with build-time calls.
+export function fetchArtists() {
+  const artists = savedArtists as Record<string, Artist>;
 
-async function fetchGeneric<T = unknown>(endpoint: string) {
-  const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8787"}${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+  Object.values(artists).forEach((artist) => {
+    artist.worksCount = savedWorks.filter(work => work.artistId === artist.discordId).length;
   });
 
-  return (await response.json()) as T;
-}
-
-export async function fetchArtists() {
-  return fetchGeneric<Artist[]>("/api/artists");
+  return artists;
 }
 
 export function fetchWeeks() {
   return savedWeeks as Record<string, Week>;
 }
 
-export async function fetchWorkById(id: string) {
-  return fetchGeneric<Work>(`/api/work?id=${id}`);
+export function fetchWorkById(id: string) {
+  return Object.values(savedWorks).find(work => work.id === id) as Work;
 }
 
-export async function fetchWorksByWeek(week: number) {
-  return fetchGeneric<Work[]>(`/api/works?week=${week}`);
+export function fetchWorksByWeek(week: number) {
+  return Object.values(savedWorks).filter(work => work.weekNumbers.includes(week)) as Work[];
 }
 
-export async function fetchWorksByArtist(artist: string) {
-  return fetchGeneric<Work[]>(`/api/works?artist=${artist}`);
+export function fetchWorksByArtist(artist: string) {
+  return Object.values(savedWorks).filter(work => work.artistId === artist) as Work[];
 }

@@ -9,7 +9,6 @@ import Week from "../../data/Week.ts";
 
 export default function Weeks() {
   const data: Record<string, Week> = useData();
-
   return (
     <>
       <Helmet>
@@ -29,7 +28,7 @@ export default function Weeks() {
 
                   <Markdown markdown={week.information} />
 
-                  <InterfaceLink location={`/?week=${week.week}`} title={"Filter by Week"} />
+                  <InterfaceLink location={`/?week=${week.week}`} title="Filter by Week" />
                 </div>
               );
 
