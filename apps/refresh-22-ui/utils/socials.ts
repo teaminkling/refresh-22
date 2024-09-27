@@ -7,9 +7,9 @@ import {
   faSpotify,
   faTwitch,
   faTwitter,
-  faYoutube
+  faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
-import {faLink, IconDefinition} from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition, faLink } from "@fortawesome/free-solid-svg-icons";
 
 export interface ParsedSocial {
   link: string;
@@ -30,62 +30,60 @@ export const parseSocial = (url: string): ParsedSocial => {
   let text = parsedUrl.hostname;
   let color = "#000000";
 
-  const pathParts: string[] = parsedUrl.pathname.split("/").filter(
-    (value: string) => value
-  );
+  const pathParts: string[] = parsedUrl.pathname.split("/").filter((value: string) => value);
 
   switch (parsedUrl.hostname) {
-    case ("instagram.com"):
+    case "instagram.com":
       icon = faInstagram;
       text = `${pathParts[0]}`;
       color = "#C13584";
 
       break;
-    case ("twitter.com"):
+    case "twitter.com":
       icon = faTwitter;
       text = `${pathParts[0]}`;
       color = "#1DA1F2";
 
       break;
-    case ("deviantart.com"):
+    case "deviantart.com":
       icon = faDeviantart;
       text = `${pathParts[0]}`;
       color = "#05CC46";
 
       break;
-    case ("facebook.com"):
+    case "facebook.com":
       icon = faFacebook;
       text = `${pathParts[0]}`;
       color = "#1778F2";
 
       break;
-    case ("youtube.com"):
-    case ("youtu.be"):
+    case "youtube.com":
+    case "youtu.be":
       icon = faYoutube;
       text = "YouTube";
       color = "#FF0000";
 
       break;
-    case ("twitch.tv"):
+    case "twitch.tv":
       icon = faTwitch;
       text = `${pathParts[0]}`;
       color = "#6441A4";
 
       break;
-    case ("soundcloud.com"):
+    case "soundcloud.com":
       icon = faSoundcloud;
       text = `${pathParts[0]}`;
       color = "#FE5000";
 
       break;
-    case ("spotify.com"):
-    case ("open.spotify.com"):
+    case "spotify.com":
+    case "open.spotify.com":
       icon = faSpotify;
       text = "Spotify";
       color = "#1DB954";
 
       break;
-    case ("music.apple.com"):
+    case "music.apple.com":
       icon = faApple;
       text = "Apple Music";
       color = "#000000";
@@ -94,6 +92,9 @@ export const parseSocial = (url: string): ParsedSocial => {
   }
 
   return {
-    link: parsedUrl.toString(), icon: icon, text: text, color: color,
+    link: parsedUrl.toString(),
+    icon: icon,
+    text: text,
+    color: color,
   };
 };
