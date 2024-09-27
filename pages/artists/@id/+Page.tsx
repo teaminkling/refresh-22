@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { useData } from "vike-react/useData";
 
+import { DEFAULT_DESCRIPTION } from "../../+Head.tsx";
 import InterfaceLink from "../../../components/markup/interface-link.tsx";
 import { Header, Paragraph, StaticPage, SubHeader } from "../../../components/markup/typography.tsx";
 import type Artist from "../../../data/Artist.ts";
@@ -10,13 +11,13 @@ import { parseSocial } from "../../../utils/socials.tsx";
 import NotFoundError from "../../_error/+Page.tsx";
 
 export default function SingleArtist() {
-  const data: Artist | null = useData();
-  if (!data) {
+  const artist: Artist | null = useData();
+  if (!artist) {
     return <NotFoundError />;
   }
 
   const socialsElements: ReactElement[] = [];
-  data.socials.forEach((socialUrl: string) => {
+  artist.socials.forEach((socialUrl: string) => {
     const parsedSocial = parseSocial(socialUrl);
     const Icon = parsedSocial.icon;
     socialsElements.push(
@@ -41,13 +42,30 @@ export default function SingleArtist() {
   return (
     <StaticPage>
       <Helmet>
-        <title>
-          {data.name} - {"Design Refresh '22"}
-        </title>
+        <title>{`${artist.name} | Design Refresh '22`}</title>
+
+        <meta property="og:title" content={`${artist.name} | Design Refresh '22`} />
+        <meta name="twitter:title" content={`${artist.name} | Design Refresh '22`} />
+
+        <meta property="og:image" content={artist.thumbnailUrl} />
+        <meta name="twitter:image" content={artist.thumbnailUrl} />
+
+        <meta
+          name="description"
+          content={`Participant and artist page for ${artist.name} on the Design Refresh. ${DEFAULT_DESCRIPTION}`}
+        />
+        <meta
+          property="og:description"
+          content={`Participant and artist page for ${artist.name} on the Design Refresh. ${DEFAULT_DESCRIPTION}`}
+        />
+        <meta
+          name="twitter:description"
+          content={`Participant and artist page for ${artist.name} on the Design Refresh. ${DEFAULT_DESCRIPTION}`}
+        />
       </Helmet>
 
       <img
-        src={data.thumbnailUrl}
+        src={artist.thumbnailUrl}
         alt="the artist's Discord profile image"
         className="pt-8"
         style={{
@@ -55,17 +73,17 @@ export default function SingleArtist() {
         }}
       />
 
-      <Header>{data.name}</Header>
+      <Header>{artist.name}</Header>
 
       <Paragraph>
-        <b>Discord ID:</b> {data.discordId}
+        <b>Discord ID:</b> {artist.discordId}
       </Paragraph>
 
-      <InterfaceLink title="View Filtered Gallery" location={`/?artist=${data.name}&sort=descending`} />
+      <InterfaceLink title="View Filtered Gallery" location={`/?artist=${artist.name}&sort=descending`} />
 
       <SubHeader>Socials</SubHeader>
 
-      {data.socials.length > 0 ? (
+      {artist.socials.length > 0 ? (
         <>{socialsElements}</>
       ) : (
         <Paragraph>This artist did not provide any socials!</Paragraph>
