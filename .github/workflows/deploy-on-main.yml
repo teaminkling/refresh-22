@@ -19,6 +19,11 @@ jobs:
         with:
           node-version: "20"
       - run: npm ci
+      - name: load UI envars
+        run: |
+          echo "$ENV_LOCAL" > .env
+        env:
+          ENV_LOCAL: ${{ secrets.ENV_LOCAL }}
       - run: NODE_ENV=production npm run build
       - uses: cloudflare/pages-action@v1
         with:
