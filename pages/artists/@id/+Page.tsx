@@ -3,10 +3,10 @@ import { Helmet } from "react-helmet-async";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { useData } from "vike-react/useData";
 
-import { DEFAULT_DESCRIPTION } from "../../+Head.tsx";
 import InterfaceLink from "../../../components/markup/interface-link.tsx";
 import { Header, Paragraph, StaticPage, SubHeader } from "../../../components/markup/typography.tsx";
 import type Artist from "../../../data/Artist.ts";
+import { DEFAULT_DESCRIPTION } from "../../../data/constants.ts";
 import { parseSocial } from "../../../utils/socials.tsx";
 import NotFoundError from "../../_error/+Page.tsx";
 
