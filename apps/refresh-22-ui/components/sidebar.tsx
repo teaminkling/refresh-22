@@ -57,7 +57,6 @@ const Sidebar = () => {
 
             <InterfaceLink location="/" title="Home" />
             <InterfaceLink location="/about/" title="About" />
-            <InterfaceLink location="/guide/" title="Guide" />
 
             <div className="my-5" />
 

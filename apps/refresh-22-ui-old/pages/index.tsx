@@ -213,24 +213,6 @@ const Home: NextPage = () => {
         <title>Gallery - Design Refresh</title>
       </Head>
 
-      <NextSeo
-        title={"Gallery - Design Refresh"}
-        description={DEFAULT_DESCRIPTION}
-        canonical={`${process.env.NEXT_PUBLIC_BASE_URI}`}
-        openGraph={{
-          type: "website",
-          site_name: "Design Refresh",
-          images: [
-            {
-              url: DEFAULT_IMAGE,
-            }
-          ],
-        }}
-        twitter={{
-          cardType: "summary_large_image",
-        }}
-      />
-
       {isLoading ? <StaticPage><Header>Loading...</Header></StaticPage> : mainContent}
 
       <Omnitool sort={sort} artist={artist} week={week} page={page} search={search} />
