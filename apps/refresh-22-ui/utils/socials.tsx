@@ -1,19 +1,21 @@
+import { type ReactElement } from "react";
+import { type IconBaseProps } from "react-icons";
 import {
-  faApple,
-  faDeviantart,
-  faFacebook,
-  faInstagram,
-  faSoundcloud,
-  faSpotify,
-  faTwitch,
-  faTwitter,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
-import { IconDefinition, faLink } from "@fortawesome/free-solid-svg-icons";
+  FaApple,
+  FaDeviantart,
+  FaFacebook,
+  FaInstagram,
+  FaLink,
+  FaSoundcloud,
+  FaSpotify,
+  FaTwitch,
+  FaTwitter,
+  FaYoutube,
+} from "react-icons/fa";
 
 export interface ParsedSocial {
   link: string;
-  icon: IconDefinition;
+  icon: (props: IconBaseProps) => ReactElement;
   text: string;
   color: string;
 }
@@ -26,7 +28,7 @@ export const parseSocial = (url: string): ParsedSocial => {
     parsedUrl = new URL(url.replace("www.", ""));
   }
 
-  let icon = faLink;
+  let icon: (props: IconBaseProps) => ReactElement = FaLink;
   let text = parsedUrl.hostname;
   let color = "#000000";
 
@@ -34,57 +36,57 @@ export const parseSocial = (url: string): ParsedSocial => {
 
   switch (parsedUrl.hostname) {
     case "instagram.com":
-      icon = faInstagram;
+      icon = FaInstagram;
       text = `${pathParts[0]}`;
       color = "#C13584";
 
       break;
     case "twitter.com":
-      icon = faTwitter;
+      icon = FaTwitter;
       text = `${pathParts[0]}`;
       color = "#1DA1F2";
 
       break;
     case "deviantart.com":
-      icon = faDeviantart;
+      icon = FaDeviantart;
       text = `${pathParts[0]}`;
       color = "#05CC46";
 
       break;
     case "facebook.com":
-      icon = faFacebook;
+      icon = FaFacebook;
       text = `${pathParts[0]}`;
       color = "#1778F2";
 
       break;
     case "youtube.com":
     case "youtu.be":
-      icon = faYoutube;
+      icon = FaYoutube;
       text = "YouTube";
       color = "#FF0000";
 
       break;
     case "twitch.tv":
-      icon = faTwitch;
+      icon = FaTwitch;
       text = `${pathParts[0]}`;
       color = "#6441A4";
 
       break;
     case "soundcloud.com":
-      icon = faSoundcloud;
+      icon = FaSoundcloud;
       text = `${pathParts[0]}`;
       color = "#FE5000";
 
       break;
     case "spotify.com":
     case "open.spotify.com":
-      icon = faSpotify;
+      icon = FaSpotify;
       text = "Spotify";
       color = "#1DB954";
 
       break;
     case "music.apple.com":
-      icon = faApple;
+      icon = FaApple;
       text = "Apple Music";
       color = "#000000";
 

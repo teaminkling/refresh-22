@@ -9,7 +9,7 @@ export function fetchArtists() {
   const artists = savedArtists as Record<string, Artist>;
 
   Object.values(artists).forEach((artist) => {
-    artist.worksCount = savedWorks.filter(work => work.artistId === artist.discordId).length;
+    artist.worksCount = savedWorks.filter((work) => work.artistId === artist.discordId).length;
   });
 
   return artists;
@@ -20,13 +20,13 @@ export function fetchWeeks() {
 }
 
 export function fetchWorkById(id: string) {
-  return Object.values(savedWorks).find(work => work.id === id) as Work;
+  return Object.values(savedWorks).find((work) => work.id === id) as Work;
 }
 
 export function fetchWorksByWeek(week: number) {
-  return Object.values(savedWorks).filter(work => work.weekNumbers.includes(week)) as Work[];
+  return Object.values(savedWorks).filter((work) => work.weekNumbers.includes(week)) as Work[];
 }
 
 export function fetchWorksByArtist(artist: string) {
-  return Object.values(savedWorks).filter(work => work.artistId === artist) as Work[];
+  return Object.values(savedWorks).filter((work) => work.artistId === artist) as Work[];
 }
