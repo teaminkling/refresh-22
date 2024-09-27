@@ -59,11 +59,3 @@ export const EDITORS: string[] = [
  * The default image used in social/meta shares.
  */
 export const DEFAULT_IMAGE = "/logo/temp_social.png";
-
-/**
- * The default description used in social/meta shares.
- */
-export const DEFAULT_DESCRIPTION = (
-  "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
-  "CindryTuna AKA FiveClawD, sponsored by Inkling Interactive."
-);
