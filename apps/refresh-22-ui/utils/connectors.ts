@@ -20,7 +20,7 @@ export function fetchWeeks() {
 }
 
 export function fetchWorkById(id: string) {
-  return Object.values(savedWorks).find((work) => work.id === id) as Work;
+  return Object.values(savedWorks).find((work) => work.id === id) as Work | undefined;
 }
 
 export function fetchWorksByWeek(week: number) {
