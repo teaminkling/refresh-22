@@ -95,7 +95,7 @@ export default function SingleWork() {
                       srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail} 2x`}
                       className="align-bottom object-cover"
                       style={{ width: 800, minHeight: 600 }}
-                      alt={`the ${index}th image for: ${work.title || "Untitled"}.`}
+                      alt={`image number ${index + 1} for: ${work.title || "Untitled"}.`}
                     />
                     <p className="uppercase text-gray-400 py-2 text-xs">{subtext}</p>
                   </a>
