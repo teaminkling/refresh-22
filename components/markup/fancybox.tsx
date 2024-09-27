@@ -1,8 +1,6 @@
-import "@fancyapps/ui/dist/fancybox.css";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Fancybox as NativeFancybox } from "@fancyapps/ui/dist/fancybox.umd.js";
-import { type ReactElement, useEffect } from "react";
+import { Fancybox as NativeFancybox } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
+import { type ReactElement, useEffect, useRef } from "react";
 
 interface FancyboxProps {
   delegate?: string;
@@ -11,17 +9,25 @@ interface FancyboxProps {
 }
 
 export default function Fancybox(props: FancyboxProps) {
-  const delegate = props.delegate || "[data-fancybox]";
+  const containerRef = useRef(null);
 
   useEffect(() => {
+    const container = containerRef.current;
+
+    const delegate = props.delegate || "[data-fancybox]";
+    const options = props.options || {};
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-    NativeFancybox.bind(delegate, props.options || {});
+    NativeFancybox.bind(container, delegate, options);
 
     return () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-      NativeFancybox.destroy();
-    };
-  }, [delegate, props.options]);
+      NativeFancybox.unbind(container);
 
-  return <>{props.children}</>;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+      NativeFancybox.close();
+    };
+  });
+
+  return <div ref={containerRef}>{props.children}</div>;
 }
