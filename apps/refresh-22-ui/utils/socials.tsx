@@ -13,14 +13,14 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 
-export interface ParsedSocial {
+interface ParsedSocial {
   link: string;
   icon: (props: IconBaseProps) => ReactElement;
   text: string;
   color: string;
 }
 
-export const parseSocial = (url: string): ParsedSocial => {
+export function parseSocial(url: string): ParsedSocial {
   let parsedUrl: URL;
   if (!url.includes("http")) {
     parsedUrl = new URL(`https://${url}`.replace("www.", ""));
@@ -99,4 +99,24 @@ export const parseSocial = (url: string): ParsedSocial => {
     text: text,
     color: color,
   };
-};
+}
+
+export async function fetchDiscordThumbnail(userId: string) {
+  const response = await fetch(`https://discord.com/api/v10/users/${userId}`, {
+    headers: {
+      Authorization: `Bot ${import.meta.env.VITE_DISCORD_BOT_TOKEN}`,
+    },
+  });
+
+  const user = (await response.json()) as { avatar: string; discriminator: number };
+
+  console.log(user);
+
+  const avatarHash = user.avatar;
+
+  if (avatarHash) {
+    return `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png`;
+  }
+
+  return `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
+}

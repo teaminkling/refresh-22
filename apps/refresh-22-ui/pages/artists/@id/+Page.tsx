@@ -6,18 +6,18 @@ import { useData } from "vike-react/useData";
 import InterfaceLink from "../../../components/markup/interface-link.tsx";
 import { Header, Paragraph, StaticPage, SubHeader } from "../../../components/markup/typography.tsx";
 import type Artist from "../../../data/Artist.ts";
-import { type ParsedSocial, parseSocial } from "../../../utils/socials.tsx";
+import { parseSocial } from "../../../utils/socials.tsx";
 import NotFoundError from "../../_error/+Page.tsx";
 
 export default function SingleArtist() {
-  const data: Artist = useData();
+  const data: Artist | null = useData();
   if (!data) {
     return <NotFoundError />;
   }
 
   const socialsElements: ReactElement[] = [];
   data.socials.forEach((socialUrl: string) => {
-    const parsedSocial: ParsedSocial = parseSocial(socialUrl);
+    const parsedSocial = parseSocial(socialUrl);
     const Icon = parsedSocial.icon;
     socialsElements.push(
       <div key={socialUrl} className="hover:bg-gray-100">
@@ -41,10 +41,19 @@ export default function SingleArtist() {
   return (
     <StaticPage>
       <Helmet>
-        <title>{data.name} - Design Refresh</title>
+        <title>
+          {data.name} - {"Design Refresh '22"}
+        </title>
       </Helmet>
 
-      <img src={data.thumbnailUrl} alt={"the artist's Discord profile image"} className={"pt-8"} />
+      <img
+        src={data.thumbnailUrl}
+        alt="the artist's Discord profile image"
+        className="pt-8"
+        style={{
+          width: "128px",
+        }}
+      />
 
       <Header>{data.name}</Header>
 

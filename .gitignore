@@ -10,6 +10,7 @@ out/
 dist/
 coverage/
 /target/
+.env
 .env.local
 .env.uat
 .env.production
