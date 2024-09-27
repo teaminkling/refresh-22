@@ -8,8 +8,7 @@ import Paginator from "../../components/paginator.tsx";
 import Sorter from "../../components/sorter.tsx";
 import Artist from "../../data/Artist.ts";
 import Work from "../../data/Work.ts";
-
-export const POSTS_PER_PAGE = 8;
+import { POSTS_PER_PAGE } from "../../data/constants.ts";
 
 export default function Index() {
   const [worksMatchingQuery, setWorksMatchingQuery] = useState<Work[]>([]);

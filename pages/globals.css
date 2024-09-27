@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: "Work Sans Variable", sans-serif;
+}
+
 .rotate-forever {
   -webkit-animation: spin 20s linear infinite;
   -moz-animation: spin 20s linear infinite;

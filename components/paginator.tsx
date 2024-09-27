@@ -2,7 +2,7 @@ import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
 import { FaShuffle } from "react-icons/fa6";
 
 import type Work from "../data/Work.ts";
-import { POSTS_PER_PAGE } from "../pages/index/+Page.tsx";
+import { POSTS_PER_PAGE } from "../data/constants.ts";
 import InterfaceLink from "./markup/interface-link.tsx";
 import SquareLink from "./markup/square-link.tsx";
 

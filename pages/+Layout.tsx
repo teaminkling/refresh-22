@@ -1,4 +1,4 @@
-import "@fontsource/work-sans/400.css";
+import "@fontsource-variable/work-sans";
 import { PropsWithChildren, StrictMode } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 

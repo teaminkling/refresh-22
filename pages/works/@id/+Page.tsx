@@ -129,10 +129,8 @@ export default function SingleWork() {
 
             <h2 className="text-3xl pb-4">
               by&nbsp;
-              <a href={`/artists/${artistName}`}>
-                <a className="underline" style={{ color: "#7C7CE0" }}>
-                  {artistName}
-                </a>
+              <a href={`/artists/${artistName}`} className="underline" style={{color: "#7C7CE0"}}>
+                {artistName}
               </a>
               <p className="text-sm mt-3 text-gray-400">
                 Posted {formatDistanceToNow(new Date(work.submittedTimestamp), { addSuffix: true })} (
