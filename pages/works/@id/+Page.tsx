@@ -4,7 +4,6 @@ import { type ReactElement } from "react";
 import { Helmet } from "react-helmet-async";
 import { useData } from "vike-react/useData";
 
-import { DEFAULT_DESCRIPTION } from "../../+Head.tsx";
 import Fancybox from "../../../components/markup/fancybox.tsx";
 import { Markdown } from "../../../components/markup/markdown.tsx";
 import SquareLink from "../../../components/markup/square-link.tsx";
