@@ -1,8 +1,8 @@
 import "@fontsource/cousine/400.css";
-import { MantineProvider } from "@mantine/core";
+import {MantineProvider} from "@mantine/core";
 import "@mantine/core/styles.css";
-import { PropsWithChildren, StrictMode } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import {PropsWithChildren, StrictMode} from "react";
+import {Helmet, HelmetProvider} from "react-helmet-async";
 
 import "./globals.css";
 
@@ -15,14 +15,14 @@ export default function Layout({ children }: PropsWithChildren) {
     <StrictMode>
       <HelmetProvider>
         <Helmet>
-          <meta property="og:title" content="Inkling Interactive" />
-          <meta name="twitter:title" content="Inkling Interactive" />
+          <meta property="og:title" content="Design Refresh '22" />
+          <meta name="twitter:title" content="Design Refresh '22" />
 
-          <link rel="canonical" href="https://inklinginteractive.com" />
-          <meta property="og:url" content="https://inklinginteractive.com" />
+          <link rel="canonical" href="https://refresh.fiveclawd.com" />
+          <meta property="og:url" content="https://refresh.fiveclawd.com" />
 
-          <meta property="og:image" content="https://inklinginteractive.com/img/meta.png" />
-          <meta name="twitter:image" content="https://inklinginteractive.com/img/meta.png" />
+          <meta property="og:image" content="https://refresh.fiveclawd.com/img/meta.png" />
+          <meta name="twitter:image" content="https://refresh.fiveclawd.com/img/meta.png" />
 
           <meta name="description" content={DEFAULT_DESCRIPTION} />
           <meta property="og:description" content={DEFAULT_DESCRIPTION} />
