@@ -61,7 +61,7 @@ export default function SingleArtist() {
         <b>Discord ID:</b> {data.discordId}
       </Paragraph>
 
-      <InterfaceLink title="View Filtered Gallery" location={`/?artist=${data.name}`} />
+      <InterfaceLink title="View Filtered Gallery" location={`/?artist=${data.name}?sort=descending`} />
 
       <SubHeader>Socials</SubHeader>
 

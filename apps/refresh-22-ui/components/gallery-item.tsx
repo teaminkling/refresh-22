@@ -36,7 +36,13 @@ const GalleryItem = (props: ItemProps) => {
   if (title) {
     return (
       <div className="flex-col xl:flex xl:flex-row">
-        <div className="px-2 py-2 md:px-3 md:py-4 hover:opacity-95">
+        <div
+          className="px-2 py-2 md:px-3 md:py-4 hover:opacity-95"
+          style={{
+            minWidth: 800,
+            minHeight: 600,
+          }}
+        >
           <a href={`/works/${props.id}`}>
             <img
               src={props.retinaPreview}

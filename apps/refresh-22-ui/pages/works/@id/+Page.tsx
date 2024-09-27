@@ -69,7 +69,7 @@ export default function SingleWork() {
                       src={item.hiDpiThumbnail}
                       srcSet={`${item.smallThumbnail}, ${item.hiDpiThumbnail} 2x`}
                       className="align-bottom object-cover"
-                      style={{ width: 800 }}
+                      style={{ width: 800, minHeight: 600 }}
                       alt={`the ${index}th image for: ${work.title || "Untitled"}.`}
                     />
                     {item.meta ? (
