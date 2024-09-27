@@ -1,5 +1,4 @@
 import type {NextPage} from "next";
-import {NextSeo} from "next-seo";
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {ParsedUrlQuery} from "querystring";
@@ -9,7 +8,6 @@ import {Dispatch} from "redux";
 import GalleryItem from "../components/gallery-item";
 import Omnitool from "../components/omnitool";
 import StaticPage, {Header, Paragraph} from "../components/typography";
-import {DEFAULT_DESCRIPTION, DEFAULT_IMAGE} from "../data/constants/setup";
 import Work from "../data/core/Work";
 import {shuffle} from "../data/utils/data-structures";
 import {ArtistsState, RootState, WeeksState, WorksState} from "../store/state";
