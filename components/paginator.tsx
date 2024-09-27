@@ -1,7 +1,9 @@
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
+import { FaShuffle } from "react-icons/fa6";
 
 import type Work from "../data/Work.ts";
 import { POSTS_PER_PAGE } from "../pages/index/+Page.tsx";
+import InterfaceLink from "./markup/interface-link.tsx";
 import SquareLink from "./markup/square-link.tsx";
 
 interface PaginatorProps {
@@ -29,6 +31,19 @@ export default function Paginator({ worksMatchingQuery }: PaginatorProps) {
   const searchParam = search ? `&q=${search}` : "";
 
   const newParams = `${sortParam}${artistParam}${weekParam}${searchParam}`;
+
+  const isRandom = sort === "random" || !sort;
+  if (isRandom) {
+    return (
+      <div className="pb-5" style={{ maxWidth: "132px" }}>
+        <InterfaceLink
+          location={`?rand=${Math.random().toString().replace(".", "")}${newParams}`}
+          title="Shuffle"
+          icon={<FaShuffle />}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex pb-5">
