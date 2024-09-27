@@ -109,9 +109,8 @@ const SingleArtist = (): JSX.Element => {
         </Paragraph>
 
         <InterfaceLink
-          title={"View Filtered Gallery"}
+          title="View Filtered Gallery"
           location={`/?artist=${name}`}
-          nextLink
         />
 
         <SubHeader>Social Media</SubHeader>

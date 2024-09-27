@@ -1,8 +1,8 @@
 import "@fancyapps/ui/dist/fancybox.css";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {Fancybox as NativeFancybox} from "@fancyapps/ui/dist/fancybox.umd.js";
-import {useEffect} from "react";
+import { Fancybox as NativeFancybox } from "@fancyapps/ui/dist/fancybox.umd.js";
+import { useEffect } from "react";
 
 interface FancyboxProps {
   delegate?: string;
@@ -21,9 +21,7 @@ const Fancybox = (props: FancyboxProps) => {
     };
   }, []);
 
-  return <>
-    {props.children}
-  </>;
+  return <>{props.children}</>;
 };
 
 export default Fancybox;

@@ -41,7 +41,7 @@ const Weeks = () => {
 
           <Markdown markdown={week.information} />
 
-          <InterfaceLink location={`/?week=${week.week}`} nextLink title={"Filter by Week"} />
+          <InterfaceLink location={`/?week=${week.week}`} title={"Filter by Week"} />
         </div>
       );
 
@@ -72,13 +72,9 @@ const Weeks = () => {
           </SubHeader>
 
           <InterfaceLink
-            location={"#"}
             title={`${isWeeksExpanded ? "Hide" : "Show"} All Weeks`}
-            icon={
-              isWeeksExpanded ? <FontAwesomeIcon icon={faAngleDown} />
-                : <FontAwesomeIcon icon={faAngleRight} />
-            }
-            clickBack={async () => setIsWeeksExpanded(!isWeeksExpanded)}
+            icon={isWeeksExpanded ? <FaAngleDown /> : <FaAngleRight />}
+            onClick={() => setIsWeeksExpanded(!isWeeksExpanded)}
           />
 
           <div className={isWeeksExpanded ? "" : "hidden"}>

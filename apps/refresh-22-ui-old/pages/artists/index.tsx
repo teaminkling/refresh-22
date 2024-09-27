@@ -30,7 +30,6 @@ const Artists = () => {
             <InterfaceLink
               location={`/artists/${artist.name}`}
               title={artist.name}
-              nextLink
             />
           </td>
           <td className={"text-center"}>
