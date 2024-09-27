@@ -1,5 +1,5 @@
-const DEFAULT_DESCRIPTION =
-  "The 2022 Design Refresh is a weekly design/art/creative challenge hosted on Twitch by " +
+export const DEFAULT_DESCRIPTION =
+  "The 2022 Design Refresh was a weekly design/art/creative challenge hosted on Twitch by " +
   "CindryShoo AKA FiveClawD, sponsored by Inkling Interactive.";
 
 export default function Head() {
@@ -16,7 +16,7 @@ export default function Head() {
 
       <meta name="description" content={DEFAULT_DESCRIPTION} />
       <meta property="og:description" content={DEFAULT_DESCRIPTION} />
-      <meta name="description" content={DEFAULT_DESCRIPTION} />
+      <meta name="twitter:description" content={DEFAULT_DESCRIPTION} />
 
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@fiveclawd" />

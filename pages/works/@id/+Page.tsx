@@ -4,6 +4,7 @@ import { type ReactElement } from "react";
 import { Helmet } from "react-helmet-async";
 import { useData } from "vike-react/useData";
 
+import { DEFAULT_DESCRIPTION } from "../../+Head.tsx";
 import Fancybox from "../../../components/markup/fancybox.tsx";
 import { Markdown } from "../../../components/markup/markdown.tsx";
 import SquareLink from "../../../components/markup/square-link.tsx";
@@ -30,9 +31,25 @@ export default function SingleWork() {
   return (
     <>
       <Helmet>
-        <title>
-          {work.title} | {"Design Refresh '22"}
-        </title>
+        <title>{`${work.title} by ${artistName} | Design Refresh '22`}</title>
+        <meta property="og:title" content={`${work.title} | Design Refresh '22`} />
+        <meta name="twitter:title" content={`${work.title} | Design Refresh '22`} />
+
+        <meta property="og:image" content={work.items[0].hiDpiThumbnail || "/img/placeholders/submission.png"} />
+        <meta name="twitter:image" content={work.items[0].hiDpiThumbnail || "/img/placeholders/submission.png"} />
+
+        <meta
+          name="description"
+          content={`A piece by ${artistName} for the '22 Design Refresh: ${work.description}.`}
+        />
+        <meta
+          property="og:description"
+          content={`A piece by ${artistName} for the '22 Design Refresh: ${work.description}.`}
+        />
+        <meta
+          name="twitter:description"
+          content={`A piece by ${artistName} for the '22 Design Refresh: ${work.description}.`}
+        />
       </Helmet>
 
       <div className="pt-6 px-4 py-4 flex-col 2xl:flex 2xl:flex-row">
