@@ -1,0 +1,31 @@
+name: Deploy Internal Site on Main
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "!README.md"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to deploy"
+        required: true
+        default: "main"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: NODE_ENV=production npm run build
+      - uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.FIVECLAWD_CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.FIVECLAWD_CLOUDFLARE_ACCOUNT_ID }}
+          projectName: refresh-ui
+          directory: ./dist/client
+          branch: main
