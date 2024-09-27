@@ -338,8 +338,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/fbfd5b9f-8852-49b6-8d9e-a58f2bd9fa2b.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -638,8 +638,8 @@
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/e7d42f1d-d500-40c8-a4be-b82f017077b4.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -722,16 +722,16 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/b23c8bea-f91e-41d4-ad7f-7d2afc3d6ec3.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
     "submittedTimestamp": "2022-04-29T13:51:57.095Z",
     "discordId": "969596944366333962",
     "isSoftDeleted": false,
-    "thumbnailUrl": "/placeholders/audio_submission.png",
-    "smallThumbnailUrl": "/placeholders/audio_submission.png"
+    "thumbnailUrl": "/img/placeholders/audio-submission.png",
+    "smallThumbnailUrl": "/img/placeholders/audio-submission.png"
   },
   {
     "id": "ng0p8jwa",
@@ -946,8 +946,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/4d15b8c2-a3a7-4ec5-8211-ab76080dcb0c.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -1247,8 +1247,8 @@
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/e33706e6-6005-4bc0-8f41-5634fe245f65.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/5bcd3f1a-cb03-4427-9cc2-e3b4fa5a5cc2.png",
@@ -1308,15 +1308,15 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/8b5d8aeb-682b-4e16-b68d-9200e1ff7ae3.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
     "submittedTimestamp": "2022-04-08T15:58:23.811Z",
     "isSoftDeleted": false,
-    "thumbnailUrl": "/placeholders/audio_submission.png",
-    "smallThumbnailUrl": "/placeholders/audio_submission.png"
+    "thumbnailUrl": "/img/placeholders/audio-submission.png",
+    "smallThumbnailUrl": "/img/placeholders/audio-submission.png"
   },
   {
     "id": "othqnn9o",
@@ -1556,16 +1556,16 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/2837b64c-644f-4cf7-9736-890722710266.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
     "submittedTimestamp": "2022-03-25T10:50:04.902Z",
     "discordId": "956867686749581382",
     "isSoftDeleted": false,
-    "thumbnailUrl": "/placeholders/audio_submission.png",
-    "smallThumbnailUrl": "/placeholders/audio_submission.png"
+    "thumbnailUrl": "/img/placeholders/audio-submission.png",
+    "smallThumbnailUrl": "/img/placeholders/audio-submission.png"
   },
   {
     "id": "5shlqodt",
@@ -1584,8 +1584,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/40bde829-adc6-4de2-9419-aeca8ad4bda1.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -1913,15 +1913,15 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/d78b6c7e-fc9b-4de9-bb72-5afd681fe256.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
     "submittedTimestamp": "2022-03-12T00:45:20.695Z",
     "isSoftDeleted": false,
-    "thumbnailUrl": "/placeholders/audio_submission.png",
-    "smallThumbnailUrl": "/placeholders/audio_submission.png"
+    "thumbnailUrl": "/img/placeholders/audio-submission.png",
+    "smallThumbnailUrl": "/img/placeholders/audio-submission.png"
   },
   {
     "id": "5bzxanui",
@@ -1968,16 +1968,16 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/f1c423ed-fa14-4e26-bb35-70d47defaa3f.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
     "submittedTimestamp": "2022-03-11T15:03:53.899Z",
     "discordId": "951858086480605184",
     "isSoftDeleted": false,
-    "thumbnailUrl": "/placeholders/audio_submission.png",
-    "smallThumbnailUrl": "/placeholders/audio_submission.png"
+    "thumbnailUrl": "/img/placeholders/audio-submission.png",
+    "smallThumbnailUrl": "/img/placeholders/audio-submission.png"
   },
   {
     "id": "wmprnlyy",
@@ -2225,8 +2225,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/0ce2925c-8651-4f49-b9f1-744d14a2a951.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       },
       {
         "url": "https://www.youtube.com/watch?v=Y0WrfNYGssc&feature=youtu.be",
@@ -5318,18 +5318,18 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/5db91bae-eabc-4122-9470-4b05557b4abb.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/26572694-ef23-4dd5-8f84-bdeef55ccf96.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/a441df54-408c-4b7a-a8ea-fd73696bdf4b.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -5816,8 +5816,8 @@
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/31daa9c6-9d16-4d5e-b352-eb16d37944a5.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -6780,8 +6780,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/090e4fc6-ac67-4ce7-804f-3e786808ea15.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/5c6fe4b2-4bfd-4ac9-a5d0-74c732d108e1.png",
@@ -6790,8 +6790,8 @@
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/f366eb0c-6042-4635-ba2e-4813be3e5a6f.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,
@@ -7675,8 +7675,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/efa7189d-cbc4-42f7-abd6-a6bc7331a3a7.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       },
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/a9113f3d-135e-4f78-a49c-5f54e431d663.png",
@@ -8555,8 +8555,8 @@
     "items": [
       {
         "url": "https://refresh-cdn.fiveclawd.com/file/inkling-refresh/ugc/212546139029766144/cec147bb-85a2-4c21-a5aa-af8e3aee79f2.mp3",
-        "smallThumbnail": "/placeholders/audio_submission.png",
-        "hiDpiThumbnail": "/placeholders/audio_submission.png"
+        "smallThumbnail": "/img/placeholders/audio-submission.png",
+        "hiDpiThumbnail": "/img/placeholders/audio-submission.png"
       }
     ],
     "isApproved": true,

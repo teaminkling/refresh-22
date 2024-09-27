@@ -1,5 +1,6 @@
 import { format } from "date-fns/format";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { type ReactElement } from "react";
 import { Helmet } from "react-helmet-async";
 import { useData } from "vike-react/useData";
 
@@ -55,6 +56,30 @@ export default function SingleWork() {
                   item.meta = undefined;
                 }
 
+                if (!item.hiDpiThumbnail) {
+                  item.hiDpiThumbnail = "/img/placeholders/submission.png";
+                }
+
+                if (!item.smallThumbnail) {
+                  item.smallThumbnail = "/img/placeholders/submission.png";
+                }
+
+                let subtext: ReactElement;
+                if (item.url.includes("discordapp")) {
+                  subtext = (
+                    <>{"This is a Discord file. Since it's been a while since 2022, this might no longer be there."}</>
+                  );
+                } else if (item.meta) {
+                  subtext = (
+                    <>
+                      This is an external URL: <code>{new URL(item.url).hostname}</code>.{" "}
+                      {"Since we don't host it, it might not be there anymore."}
+                    </>
+                  );
+                } else {
+                  subtext = <>Click above to expand.</>;
+                }
+
                 return (
                   <a
                     key={item.meta ? item.meta : item.url}
@@ -72,15 +97,7 @@ export default function SingleWork() {
                       style={{ width: 800, minHeight: 600 }}
                       alt={`the ${index}th image for: ${work.title || "Untitled"}.`}
                     />
-                    {item.meta ? (
-                      <p className="uppercase text-gray-400 py-2 text-xs">
-                        This is a URL: <code>{new URL(item.url).hostname}</code>. Please be careful!
-                      </p>
-                    ) : (
-                      <>
-                        <p className="uppercase text-gray-400 py-2 text-xs">Click above to expand.</p>
-                      </>
-                    )}
+                    <p className="uppercase text-gray-400 py-2 text-xs">{subtext}</p>
                   </a>
                 );
               })}
