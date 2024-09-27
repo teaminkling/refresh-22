@@ -1,23 +1,11 @@
-import {
-  faAngleLeft,
-  faAngleRight,
-  faFilter,
-  faRandom,
-  faSortAmountDown,
-  faSortAmountUp,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
 import { useState } from "react";
 
 interface OmnitoolProps {
-  artist?: string;
-  week?: number;
-  sort?: string;
-  search?: string;
-  page?: number;
+  artist?: string | null;
+  week?: number | null;
+  sort?: string | null;
+  search?: string | null;
+  page?: number | null;
 }
 
 export default function Omnitool(props: OmnitoolProps) {

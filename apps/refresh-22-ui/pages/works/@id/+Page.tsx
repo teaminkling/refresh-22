@@ -78,7 +78,7 @@ export default function SingleWork() {
                       </p>
                     ) : (
                       <>
-                        <p className="uppercase text-gray-400 text-center py-2 text-xs">Click me to expand!</p>
+                        <p className="uppercase text-gray-400 py-2 text-xs">Click above to expand.</p>
                       </>
                     )}
                   </a>

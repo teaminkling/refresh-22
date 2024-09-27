@@ -1,6 +1,5 @@
-import { faAngleDoubleLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import moment from "moment";
+import { format } from "date-fns/format";
+import { FaAngleDoubleLeft } from "react-icons/fa";
 import removeMd from "remove-markdown";
 
 import InterfaceLink from "./markup/interface-link";
@@ -19,10 +18,6 @@ interface ItemProps {
 }
 
 const GalleryItem = (props: ItemProps) => {
-  let response = <></>;
-
-  // These checks are redundant, but they were once required, so I am keeping them here.
-
   let title = props.title;
   if (title && title.length > 128) {
     title = title.substring(0, 128) + "...";
@@ -39,64 +34,56 @@ const GalleryItem = (props: ItemProps) => {
   }
 
   if (title) {
-    response = (
-      <div className={"flex-col xl:flex xl:flex-row"}>
-        <div className={"px-2 py-2 md:px-3 md:py-4 hover:opacity-95"}>
-          <Link href={`/works/${props.id}`} legacyBehavior>
-            <a>
-              <img
-                src={props.retinaPreview}
-                srcSet={`${props.preview}, ${props.retinaPreview} 2x`}
-                className={"align-bottom object-cover"}
-                style={{ width: 800 }}
-                alt={`A gallery preview image with the title: ${props.title}.`}
-              />
-            </a>
-          </Link>
+    return (
+      <div className="flex-col xl:flex xl:flex-row">
+        <div className="px-2 py-2 md:px-3 md:py-4 hover:opacity-95">
+          <a href={`/works/${props.id}`}>
+            <img
+              src={props.retinaPreview}
+              srcSet={`${props.preview}, ${props.retinaPreview} 2x`}
+              className="align-bottom object-cover"
+              style={{ width: 800 }}
+              alt={`a gallery preview image with the title: "${props.title}"`}
+            />
+          </a>
         </div>
 
-        {/* Smaller screen gallery caption and horizontal rule + pad. */}
-
-        <div className={"px-2 flex xl:hidden text-xs xl:text-sm"} style={{ maxWidth: 800 }}>
-          <div className={"flex-grow"}>
+        <div className="px-2 flex xl:hidden text-xs xl:text-sm" style={{ maxWidth: 800 }}>
+          <div className="flex-grow">
             <p>
               <b>{title}</b>
             </p>
           </div>
-          <div className={"self-end"}>
+          <div className="self-end">
             <i>{props.artist}</i>
           </div>
         </div>
 
-        <div className={"px-2 py-2 2xl:hidden"} style={{ maxWidth: 824 }}>
-          <hr className={"border-t"} />
+        <div className="px-2 py-2 2xl:hidden" style={{ maxWidth: 824 }}>
+          <hr className="border-t" />
         </div>
 
-        {/* Responsive caption on the right side for wider screens. */}
-
-        <div className={"py-4 w-80 hidden xl:flex"} style={{ hyphens: "auto" }}>
-          <span className={"self-end"}>
-            <p className={"px-4 text-sm"}>
+        <div className="py-4 w-80 hidden xl:flex" style={{ hyphens: "auto" }}>
+          <span className="self-end">
+            <p className="px-4 text-sm">
               <b>{title}</b>
             </p>
 
             {medium ? (
-              <p className={"hidden 2xl:block px-4 text-sm"}>
+              <p className="hidden 2xl:block px-4 text-sm">
                 <i>{medium}</i>
               </p>
-            ) : (
-              <></>
-            )}
+            ) : null}
 
-            <p className={"px-4 text-sm"}>by {props.artist}</p>
+            <p className="px-4 text-sm">by {props.artist}</p>
 
-            <p className={"px-4 text-sm text-gray-400"}>
-              {moment(props.submittedTimestamp).format("LL").toString()} (Week {props.weeks.join(",")})
+            <p className="px-4 text-sm text-gray-400">
+              {format(new Date(props.submittedTimestamp), "PPP")} (Week {props.weeks.join(",")})
             </p>
 
-            <p className={"pt-8 px-4 hidden xl:block text-sm"}>{description}</p>
+            <p className="pt-8 px-4 hidden xl:block text-sm">{description}</p>
 
-            <p className={"pt-8 px-4 hidden xl:block"}>
+            <p className="pt-8 px-4 hidden xl:block">
               <InterfaceLink location={`/works/${props.id}`} title="See More" icon={<FaAngleDoubleLeft />} />
             </p>
           </span>
@@ -105,7 +92,7 @@ const GalleryItem = (props: ItemProps) => {
     );
   }
 
-  return response;
+  return null;
 };
 
 export default GalleryItem;

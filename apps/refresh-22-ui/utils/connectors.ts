@@ -23,10 +23,6 @@ export function fetchWorkById(id: string) {
   return Object.values(savedWorks).find((work) => work.id === id) as Work | undefined;
 }
 
-export function fetchWorksByWeek(week: number) {
-  return Object.values(savedWorks).filter((work) => work.weekNumbers.includes(week)) as Work[];
-}
-
-export function fetchWorksByArtist(artist: string) {
-  return Object.values(savedWorks).filter((work) => work.artistId === artist) as Work[];
+export function fetchWorks() {
+  return Object.values(savedWorks) as Work[];
 }
