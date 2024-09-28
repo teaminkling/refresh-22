@@ -14,7 +14,7 @@ export default function Head() {
 
   const workTitle = work?.title || "Untitled";
   const artistName = artist?.name || work?.firstSeenArtistInfo?.name || "Unknown";
-  const description = `A piece by ${artistName} for the '22 Design Refresh... ${work?.description.replace(/\n/, " ")}.`;
+  const description = `A piece by ${artistName} for the '22 Design Refresh... ${work?.description.replace(/\n/, " ")}`;
 
   return (
     <>
