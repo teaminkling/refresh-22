@@ -35,7 +35,7 @@ export default function Paginator({ worksMatchingQuery }: PaginatorProps) {
   const isRandom = sort === "random" || !sort;
   if (isRandom) {
     return (
-      <div className="pb-5" style={{ maxWidth: "132px" }}>
+      <div className="pb-5 mx-auto md:mx-0" style={{ maxWidth: "132px" }}>
         <InterfaceLink
           location={`?rand=${Math.random().toString().replace(".", "")}${newParams}`}
           title="Shuffle"
@@ -46,7 +46,7 @@ export default function Paginator({ worksMatchingQuery }: PaginatorProps) {
   }
 
   return (
-    <div className="flex pb-5">
+    <div className="flex pb-5 mx-auto md:mx-0">
       <SquareLink
         location={`?p=${previousPage}${newParams}`}
         icon={<FaAngleDoubleLeft />}
