@@ -22,7 +22,7 @@ export default function Sorter(props: SorterProps) {
   const newParams = `${searchParam}${artistParam}${weekParam}`;
 
   return (
-    <div className="flex flex-row py-2 items-center justify-center md:justify-start">
+    <div className="flex flex-row ml-0 md:ml-3 py-2 items-center justify-center md:justify-start">
       <p className="px-2 text-center">
         <b>Sort:</b>
       </p>

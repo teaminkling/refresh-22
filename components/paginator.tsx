@@ -46,7 +46,7 @@ export default function Paginator({ worksMatchingQuery }: PaginatorProps) {
   }
 
   return (
-    <div className="flex pb-5 mx-auto md:mx-0">
+    <div className="flex pb-5 justify-center md:justify-start">
       <SquareLink
         location={`?p=${previousPage}${newParams}`}
         icon={<FaAngleDoubleLeft />}

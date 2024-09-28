@@ -18,17 +18,17 @@ export default function Head() {
 
   return (
     <>
-      <meta property="og:title" content={`${workTitle} | Design Refresh '22`}/>
-      <meta name="twitter:title" content={`${workTitle} | Design Refresh '22`}/>
+      <meta property="og:title" content={`${workTitle} | Design Refresh '22`} />
+      <meta name="twitter:title" content={`${workTitle} | Design Refresh '22`} />
 
-      <meta property="og:image" content={work?.items[0].hiDpiThumbnail || "/img/placeholders/submission.png"}/>
-      <meta name="twitter:image" content={work?.items[0].hiDpiThumbnail || "/img/placeholders/submission.png"}/>
+      <meta property="og:image" content={work?.items[0].hiDpiThumbnail || "/img/placeholders/submission.png"} />
+      <meta name="twitter:image" content={work?.items[0].hiDpiThumbnail || "/img/placeholders/submission.png"} />
 
-      <meta name="description" content={description}/>
-      <meta property="og:description" content={description}/>
-      <meta name="twitter:description" content={description}/>
+      <meta name="description" content={description} />
+      <meta property="og:description" content={description} />
+      <meta name="twitter:description" content={description} />
 
-      <meta name="twitter:card" content="summary_large_image"/>
+      <meta name="twitter:card" content="summary_large_image" />
     </>
   );
 }

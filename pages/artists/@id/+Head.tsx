@@ -11,17 +11,17 @@ export default function Head() {
 
   return (
     <>
-      <meta property="og:title" content={`${artistName} | Design Refresh '22`}/>
-      <meta name="twitter:title" content={`${artistName} | Design Refresh '22`}/>
+      <meta property="og:title" content={`${artistName} | Design Refresh '22`} />
+      <meta name="twitter:title" content={`${artistName} | Design Refresh '22`} />
 
-      <meta property="og:image" content={artist?.thumbnailUrl || "/img/meta.png"}/>
-      <meta name="twitter:image" content={artist?.thumbnailUrl || "/img/meta.png"}/>
+      <meta property="og:image" content={artist?.thumbnailUrl || "/img/meta.png"} />
+      <meta name="twitter:image" content={artist?.thumbnailUrl || "/img/meta.png"} />
 
-      <meta name="description" content={description}/>
-      <meta property="og:description" content={description}/>
-      <meta name="twitter:description" content={description}/>
+      <meta name="description" content={description} />
+      <meta property="og:description" content={description} />
+      <meta name="twitter:description" content={description} />
 
-      <meta name="twitter:card" content="summary"/>
+      <meta name="twitter:card" content="summary" />
     </>
   );
 }
