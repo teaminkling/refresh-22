@@ -6,7 +6,6 @@ import { useData } from "vike-react/useData";
 import InterfaceLink from "../../../components/markup/interface-link.tsx";
 import { Header, Paragraph, StaticPage, SubHeader } from "../../../components/markup/typography.tsx";
 import type Artist from "../../../data/Artist.ts";
-import { DEFAULT_DESCRIPTION } from "../../../data/constants.ts";
 import { parseSocial } from "../../../utils/socials.tsx";
 import NotFoundError from "../../_error/+Page.tsx";
 
@@ -43,25 +42,6 @@ export default function SingleArtist() {
     <StaticPage>
       <Helmet>
         <title>{`${artist.name} | Design Refresh '22`}</title>
-
-        <meta property="og:title" content={`${artist.name} | Design Refresh '22`} />
-        <meta name="twitter:title" content={`${artist.name} | Design Refresh '22`} />
-
-        <meta property="og:image" content={artist.thumbnailUrl} />
-        <meta name="twitter:image" content={artist.thumbnailUrl} />
-
-        <meta
-          name="description"
-          content={`Participant and artist page for ${artist.name} on the Design Refresh. ${DEFAULT_DESCRIPTION}`}
-        />
-        <meta
-          property="og:description"
-          content={`Participant and artist page for ${artist.name} on the Design Refresh. ${DEFAULT_DESCRIPTION}`}
-        />
-        <meta
-          name="twitter:description"
-          content={`Participant and artist page for ${artist.name} on the Design Refresh. ${DEFAULT_DESCRIPTION}`}
-        />
       </Helmet>
 
       <img
