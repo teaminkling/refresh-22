@@ -21,8 +21,6 @@ export default function Terms() {
           Terms <span className={"hidden sm:inline-block"}>of Use</span>
         </Header>
 
-        <Paragraph>This website was developed, produced, and sponsored by Inkling Interactive.</Paragraph>
-
         <SubHeader>Jurisdiction</SubHeader>
 
         <Paragraph>We comply with Australian and international law as required to operate around the world.</Paragraph>
@@ -58,8 +56,8 @@ export default function Terms() {
             must not post them anywhere online.
           </ListItem>
           <ListItem>
-            Not attempt to decompile or reverse-engineer any software owned by the development company, Inkling
-            Interactive, without divulging findings to Inkling Interactive engineers within 24 hours.
+            Not attempt to decompile or reverse-engineer any software owned by the developer without divulging
+            findings to them within 24 hours.
           </ListItem>
           <ListItem>Not remove any copyright or proprietary notations from the materials.</ListItem>
           <ListItem>
@@ -70,8 +68,8 @@ export default function Terms() {
 
         <Paragraph>
           The license to use this website is immediately revoked upon violation of these restrictions and may be
-          terminated by the Inkling Interactive or FiveClawD teams at any time. Upon termination of this license, you
-          must destroy any downloaded materials in your possession whether in electronic or printed format.
+          terminated by the FiveClawD teams at any time. Upon termination of this license, you must destroy any
+          downloaded materials in your possession whether in electronic or printed format.
         </Paragraph>
 
         <SubHeader>&quot;Permalinking&quot;</SubHeader>
@@ -83,9 +81,9 @@ export default function Terms() {
         </Paragraph>
 
         <Paragraph>
-          However, Inkling Interactive provides a provisional license to permalink using chat applications when media is
-          to be consumed in a transitory form. If you are in doubt, just link to the blog post/submission containing the
-          work to which you want to link.
+          However, FiveClawD provides a provisional license to permalink using chat applications when media is to be
+          consumed in a transitory form. If you are in doubt, just link to the blog post/submission containing the work
+          to which you want to link.
         </Paragraph>
 
         <Paragraph>
@@ -95,7 +93,7 @@ export default function Terms() {
 
         <SubHeader>Intellectual Property</SubHeader>
 
-        <Paragraph>FiveClawD and Inkling Interactive take intellectual property (IP) extremely seriously.</Paragraph>
+        <Paragraph>FiveClawD takes intellectual property (IP) extremely seriously.</Paragraph>
 
         <Paragraph>
           The Design Refresh respects international IP law. Content and media on this website is owned by their original
@@ -110,13 +108,13 @@ export default function Terms() {
         </Paragraph>
 
         <Paragraph>
-          We will respect the wishes of IP holders present and future. Please contact Inkling Interactive at any time
-          via Discord or email with the subject line “Intellectual Property”, and we’ll get right on that.
+          We will respect the wishes of IP holders present and future. Please contact FiveClawD at any time via Discord
+          or email with the subject line “Intellectual Property”, and we’ll get right on that.
         </Paragraph>
 
         <Paragraph>
-          Also, Inkling Interactive takes great effort to ensure we are complying with international Intellectual
-          Property (IP) law. We make frequent use of Open Source Software (OSS), abiding by licenses as required.
+          Also, FiveClawD takes great effort to ensure we are complying with international Intellectual Property (IP)
+          law. We make frequent use of Open Source Software (OSS), abiding by licenses as required.
         </Paragraph>
 
         <SubHeader>Disclaimer</SubHeader>
@@ -124,39 +122,37 @@ export default function Terms() {
         <Paragraph>The materials on this website and on our products are provided “as is.”</Paragraph>
 
         <Paragraph>
-          FiveClawD and Inkling Interactive makes no warranties, expressed or implied, and hereby disclaims and negates
-          all other warranties, including without limitation, implied warranties or conditions of merchantability,
-          fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+          FiveClawD makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties,
+          including without limitation, implied warranties or conditions of merchantability, fitness for a particular
+          purpose, or non-infringement of intellectual property or other violation of rights.
         </Paragraph>
 
         <Paragraph>
-          Further, FiveClawD and Inkling Interactive does not warrant or make any representations concerning the
-          accuracy, likely results, or reliability of the use of the materials on its website, products, services, or
-          otherwise relating to such materials elsewhere linked to this website, our products, and/or services.
+          Further, FiveClawD does not warrant or make any representations concerning the accuracy, likely results, or
+          reliability of the use of the materials on its website, products, services, or otherwise relating to such
+          materials elsewhere linked to this website, our products, and/or services.
         </Paragraph>
 
         <SubHeader>Limitations</SubHeader>
 
         <Paragraph>
-          In no event shall FiveClawD, Inkling Interactive, or their suppliers be liable for any damages (including,
-          without limitation, damages for loss of data or profit, or due to business interruption) arising out of the
-          use or inability to use the materials on this website or any of our products and services, even if Inkling
-          Interactive or an FiveClawD or Inkling Interactive authorized representative has been notified orally or in
-          writing of the possibility of such damage.
+          In no event shall FiveClawD or their suppliers be liable for any damages (including, without limitation,
+          damages for loss of data or profit, or due to business interruption) arising out of the use or inability to
+          use the materials on this website or any of our products and services, even if FiveClawD or a FiveClawD
+          authorized representative has been notified orally or in writing of the possibility of such damage.
         </Paragraph>
 
         <SubHeader>Revisions and Errata</SubHeader>
 
         <Paragraph>
           The materials appearing on this website and in our products and/or services could include technical,
-          typographical, or visual errors. FiveClawD and Inkling Interactive do not warrant that any of the materials on
-          its website, products, or services are accurate, complete, or current.
+          typographical, or visual errors. FiveClawD does not warrant that any of the materials on its website,
+          products, or services are accurate, complete, or current.
         </Paragraph>
 
         <Paragraph>
-          FiveClawD or Inkling Interactive may make changes to the materials contained on its website at any time
-          without notice. FiveClawD and Inkling Interactive do not, however, make any such commitment to update these
-          materials.
+          FiveClawD may make changes to the materials contained on its website at any time without notice. FiveClawD
+          does not, however, make any such commitment to update these materials.
         </Paragraph>
 
         <Paragraph>
@@ -167,20 +163,20 @@ export default function Terms() {
         <SubHeader>Revisions and Errata</SubHeader>
 
         <Paragraph>
-          FiveClawD and Inkling Interactive have not reviewed all the sites/third parties linked to this internet
-          website nor public accessors to our services and products (e.g., third party store hyperlinks). Neither
-          FiveClawD nor Inkling Interactive take responsibility for the contents of any such website or third party.
+          FiveClawD have not reviewed all the sites/third parties linked to this internet website nor public accessors
+          to our services and products (e.g., third party store hyperlinks). FiveClawD does not take responsibility
+          for the contents of any such website or third party.
         </Paragraph>
 
         <Paragraph>
-          The inclusion of any link on the third party website, resource, etc. does not imply endorsement by FiveClawD
-          nor Inkling Interactive. Use of any such linked website, resource, etc. is at the user’s own risk.
+          The inclusion of any link on the third party website, resource, etc. does not imply endorsement by FiveClawD.
+          Use of any such linked website, resource, etc. is at the user's own risk.
         </Paragraph>
 
         <SubHeader>Governing Law</SubHeader>
 
         <Paragraph>
-          Any claim relating to FiveClawD and Inkling Interactive’s website, products, or services shall be governed by
+          Any claim relating to FiveClawD's website, products, or services shall be governed by
           the laws of the Commonwealth of Australia without regard to its conflict of law provisions.
         </Paragraph>
       </StaticPage>

@@ -13,8 +13,6 @@ export default function Privacy() {
         Privacy <span className={"hidden sm:inline-block"}>Policy</span>
       </Header>
 
-      <Paragraph>This website was developed, produced, and sponsored by Inkling Interactive.</Paragraph>
-
       <SubHeader>Jurisdiction</SubHeader>
 
       <Paragraph>The Design Refresh web page complies with the Australian Privacy Act of 1988.</Paragraph>

@@ -73,7 +73,7 @@ const Sidebar = () => {
               <SquareLink location="https://fiveclawd.com" icon={<FaLink />} />
               <SquareLink location="https://twitch.tv/cindryshoo" icon={<FaTwitch />} />
               <SquareLink location="https://discord.gg/NuUB469UXM" icon={<FaDiscord />} />
-              <SquareLink location="https://github.com/teaminkling/refresh-22" icon={<FaGithub />} />
+              <SquareLink location="https://github.com/paced/refresh-22-static" icon={<FaGithub />} />
             </div>
 
             <div className="mt-5">

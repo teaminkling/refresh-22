@@ -29,5 +29,5 @@ npm run build
 
 Apache 2.0: You are free to copy, adapt, and read any of the code as you please.
 
-However, "Design Refresh", "FiveClawd", "Inkling Interactive", marketing materials (including the logo), and
-user-generated content is All Rights Reserved of their respective copyright holders.
+However, "Design Refresh", "FiveClawd", marketing materials (including the logo), and user-generated content is All
+Rights Reserved of their respective copyright holders.

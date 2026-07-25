@@ -50,16 +50,6 @@ export default function About() {
 
         <SubHeader>Behind the Scenes</SubHeader>
 
-        <Paragraph>
-          This project was produced and sponsored by <b>Inkling Interactive</b>.
-        </Paragraph>
-
-        <img
-          src="/img/logos/inkling-banner.png"
-          alt="the sole sponsor Inkling Interactive's banner"
-          className="w-96 p-8"
-        />
-
         <UnorderedList>
           <ListItem>
             <b>Design</b>: {'Cindy "cindryshoo" Xu (she/her)'}
